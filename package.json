@@ -1,5 +1,5 @@
 {
-  "name": "y",
+  "name": "HakureiJS",
   "version": "0.0.1",
   "description": "HakureiJS is a HTML5 2D game engine for doujin game.",
   "main": "index.js",
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/sairoutine/hakurejs.git"
+    "url": "git+ssh://git@github.com/sairoutine/hakureijs.git"
   },
   "author": "sairoutine",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sairoutine/hakurejs/issues"
+    "url": "https://github.com/sairoutine/hakureijs/issues"
   },
-  "homepage": "https://github.com/sairoutine/hakurejs#readme"
+  "homepage": "https://github.com/sairoutine/hakureijs#readme"
 }
