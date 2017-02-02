@@ -1,26 +1,22 @@
 'use strict';
 
 var Core = function(canvas) {
-	// メインCanvas
 	this.ctx = canvas.getContext('2d');
 
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
 
-	// シーン一覧
-	this.scenes = [];
+	this.current_scene = null;
+	this.scenes = {};
 
-	// 経過フレーム数
 	this.frame_count = 0;
 
-	// requestAnimationFrame の ID
 	this.request_id = null;
 };
 Core.prototype.init = function () {
-	// 経過フレーム数を初期化
+	this.current_scene = null;
 	this.frame_count = 0;
 
-	// requestAnimationFrame の ID
 	this.request_id = null;
 };
 Core.prototype.isRunning = function () {
@@ -32,11 +28,16 @@ Core.prototype.startRun = function () {
 	this.run();
 };
 Core.prototype.run = function(){
-	/*
-	this.handleGamePad();
+	//this.handleGamePad();
 
-	this.currentScene().run();
-	this.currentScene().updateDisplay();
+	var current_scene = this.currentScene();
+	if(current_scene) {
+		current_scene.beforeDraw();
+		current_scene.draw();
+		current_scene.afterDraw();
+	}
+
+	/*
 
 	if(Config.DEBUG) {
 		this._renderFPS();
@@ -55,5 +56,36 @@ Core.prototype.run = function(){
 	// 次の描画タイミングで再呼び出ししてループ
 	this.request_id = requestAnimationFrame(this.run.bind(this));
 };
+Core.prototype.currentScene = function() {
+	if(this.current_scene === null) {
+		return;
+	}
+
+	return this.scenes[this.current_scene];
+};
+
+Core.prototype.addScene = function(name, scene) {
+	this.scenes[name] = scene;
+};
+Core.prototype.changeScene = function(name) {
+	this.current_scene = name;
+	this.currentScene().init();
+};
+Core.prototype.clearCanvas = function() {
+	this.ctx.clearRect(0, 0, this.width, this.height);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = Core;

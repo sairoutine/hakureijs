@@ -2,4 +2,7 @@
 module.exports = {
 	util: require("./util"),
 	core: require("./core"),
+	scene: {
+		base: require("./scene/base"),
+	},
 };
