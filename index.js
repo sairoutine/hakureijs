@@ -5,4 +5,8 @@ module.exports = {
 	scene: {
 		base: require("./scene/base"),
 	},
+	object: {
+		base: require("./object/base"),
+	},
+
 };

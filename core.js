@@ -33,6 +33,10 @@ Core.prototype.run = function(){
 	var current_scene = this.currentScene();
 	if(current_scene) {
 		current_scene.beforeDraw();
+
+		// clear already rendered canvas
+		this.clearCanvas();
+
 		current_scene.draw();
 		current_scene.afterDraw();
 	}
