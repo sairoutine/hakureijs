@@ -7,6 +7,7 @@ module.exports = {
 	},
 	object: {
 		base: require("./object/base"),
+		pool_manager: require("./object/pool_manager"),
 	},
 
 };
