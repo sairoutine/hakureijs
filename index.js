@@ -2,6 +2,7 @@
 module.exports = {
 	util: require("./util"),
 	core: require("./core"),
+	constant: require("./constant"),
 	scene: {
 		base: require("./scene/base"),
 	},

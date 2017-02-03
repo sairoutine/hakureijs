@@ -12,12 +12,16 @@ var Core = function(canvas) {
 	this.frame_count = 0;
 
 	this.request_id = null;
+
+	this.key_down_map = {};
 };
 Core.prototype.init = function () {
 	this.current_scene = null;
 	this.frame_count = 0;
 
 	this.request_id = null;
+
+	this.key_down_map = {};
 };
 Core.prototype.isRunning = function () {
 	return this.request_id ? true : false;
@@ -78,18 +82,24 @@ Core.prototype.changeScene = function(name) {
 Core.prototype.clearCanvas = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
 };
+Core.prototype.handleKeyDown = function(e) {
+	var keycode = e.keyCode;
+	if(!this.key_down_map[keycode]) {
+		this.key_down_map[keycode] = 0;
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
+	this.key_down_map[keycode]++;
+	e.preventDefault();
+};
+Core.prototype.handleKeyUp = function(e) {
+	this.key_down_map[e.keyCode] = 0;
+	e.preventDefault();
+};
+Core.prototype.isKeyDown = function(keycode) {
+	return this.key_down_map[keycode] > 0 ? true : false;
+};
+Core.prototype.isKeyPush = function(keycode) {
+	return this.key_down_map[keycode] === 1 ? true : false;
+};
 
 module.exports = Core;
