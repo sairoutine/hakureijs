@@ -1,4 +1,5 @@
 'use strict';
+var CONSTANT = require("./constant");
 
 var Core = function(canvas) {
 	this.ctx = canvas.getContext('2d');
@@ -32,7 +33,8 @@ Core.prototype.startRun = function () {
 	this.run();
 };
 Core.prototype.run = function(){
-	//this.handleGamePad();
+	// get gamepad input
+	this.handleGamePad();
 
 	var current_scene = this.currentScene();
 	if(current_scene) {
@@ -84,7 +86,9 @@ Core.prototype.clearCanvas = function() {
 };
 Core.prototype.handleKeyDown = function(e) {
 	var keycode = e.keyCode;
-	if(!this.key_down_map[keycode]) {
+
+	// initialize
+	if(!(keycode in this.key_down_map)) {
 		this.key_down_map[keycode] = 0;
 	}
 
@@ -95,6 +99,84 @@ Core.prototype.handleKeyUp = function(e) {
 	this.key_down_map[e.keyCode] = 0;
 	e.preventDefault();
 };
+Core.prototype.handleGamePad = function() {
+	//if(!this.is_connect_gamepad) return;
+
+	var pads = navigator.getGamepads();
+	var pad = pads[0]; // 1P gamepad
+
+	if(!pad) return;
+
+	var num_to_keycode = [
+		CONSTANT.BUTTON_Z,
+		CONSTANT.BUTTON_X,
+	];
+
+	for (var i = 0, len = num_to_keycode.length; i < len; i++) {
+		if (pad.buttons[i].pressed) {
+			// initialize
+			if(!(num_to_keycode[i] in this.key_down_map)) {
+				this.key_down_map[ num_to_keycode[i] ] = 0;
+			}
+
+			this.key_down_map[ num_to_keycode[i] ]++;
+		}
+		else {
+			this.key_down_map[ num_to_keycode[i] ] = 0;
+		}
+	}
+
+	// up
+	if(pad.axes[1] < -0.5) {
+		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
+			this.key_down_map[CONSTANT.BUTTON_UP] = 0;
+		}
+
+		this.key_down_map[CONSTANT.BUTTON_UP]++;
+	}
+	else {
+		this.key_down_map[CONSTANT.BUTTON_UP] = 0;
+	}
+
+	// down
+	if(pad.axes[1] >  0.5) { 
+		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
+			this.key_down_map[CONSTANT.BUTTON_DOWN] = 0;
+		}
+
+		this.key_down_map[CONSTANT.BUTTON_DOWN]++;
+	}
+	else {
+		this.key_down_map[CONSTANT.BUTTON_DOWN] = 0;
+	}
+
+	// left
+	if(pad.axes[0] < -0.5) { 
+		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
+			this.key_down_map[CONSTANT.BUTTON_LEFT] = 0;
+		}
+
+		this.key_down_map[CONSTANT.BUTTON_LEFT]++;
+	}
+	else {
+		this.key_down_map[CONSTANT.BUTTON_LEFT] = 0;
+	}
+
+	// right
+	if(pad.axes[0] >  0.5) {
+		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
+			this.key_down_map[CONSTANT.BUTTON_RIGHT] = 0;
+		}
+
+		this.key_down_map[CONSTANT.BUTTON_RIGHT]++;
+	}
+	else {
+		this.key_down_map[CONSTANT.BUTTON_RIGHT] = 0;
+	}
+};
+
+
+
 Core.prototype.isKeyDown = function(keycode) {
 	return this.key_down_map[keycode] > 0 ? true : false;
 };
