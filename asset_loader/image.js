@@ -37,4 +37,9 @@ ImageLoader.prototype.loadImage = function(name, path) {
 ImageLoader.prototype.isAllLoaded = function() {
 	return this.loaded_image_num > 0 && this.loaded_image_num === this.loading_image_num;
 };
+
+ImageLoader.prototype.getImage = function(name) {
+	return this.images[name];
+};
+
 module.exports = ImageLoader;
