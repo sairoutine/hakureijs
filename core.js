@@ -1,5 +1,6 @@
 'use strict';
 var CONSTANT = require("./constant");
+var ImageLoader = require("./asset_loader/image");
 
 var Core = function(canvas) {
 	this.ctx = canvas.getContext('2d');
@@ -15,6 +16,8 @@ var Core = function(canvas) {
 	this.request_id = null;
 
 	this.key_down_map = {};
+
+	this.image_loader = new ImageLoader();
 };
 Core.prototype.init = function () {
 	this.current_scene = null;
@@ -23,6 +26,8 @@ Core.prototype.init = function () {
 	this.request_id = null;
 
 	this.key_down_map = {};
+
+	this.image_loader.init();
 };
 Core.prototype.isRunning = function () {
 	return this.request_id ? true : false;

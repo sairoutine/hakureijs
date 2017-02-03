@@ -10,5 +10,8 @@ module.exports = {
 		base: require("./object/base"),
 		pool_manager: require("./object/pool_manager"),
 	},
-
+	asset_loader: {
+		image: require("./asset_loader/image"),
+		//sound: require("./asset_loader/sound"),
+	},
 };
