@@ -17,6 +17,12 @@ var Util = {
 	thetaToRadian: function(theta) {
 		return theta * Math.PI / 180;
 	},
+	calcMoveXByVelocity: function(velocity) {
+		return velocity.magnitude * Math.cos(Util.thetaToRadian(velocity.theta));
+	},
+	calcMoveYByVelocity: function(velocity) {
+		return velocity.magnitude * Math.sin(Util.thetaToRadian(velocity.theta));
+	},
 	hexToRGBString: function(h) {
 		var hex16 = (h.charAt(0) === "#") ? h.substring(1, 7) : h;
 		var r = parseInt(hex16.substring(0, 2), 16);
