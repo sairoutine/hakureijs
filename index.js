@@ -8,6 +8,7 @@ module.exports = {
 	},
 	object: {
 		base: require("./object/base"),
+		sprite: require("./object/sprite"),
 		pool_manager: require("./object/pool_manager"),
 	},
 	asset_loader: {

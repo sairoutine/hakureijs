@@ -28,5 +28,18 @@ ObjectBase.prototype.draw = function(){
 ObjectBase.prototype.afterDraw = function(){
 };
 
+ObjectBase.prototype.leftX = function() {
+	return this.x;
+};
+ObjectBase.prototype.rightX = function() {
+	return this.x + this.width;
+};
+ObjectBase.prototype.upY = function() {
+	return this.y;
+};
+ObjectBase.prototype.downY = function() {
+	return this.y + this.height;
+};
+
 module.exports = ObjectBase;
 
