@@ -39,27 +39,32 @@ Sprite.prototype.draw = function(){
 	ctx.translate(this.x, this.y);
 
 	// rotate
-	var rotate = util.thetaToRadian(this.velocity.theta);
+	var rotate = util.thetaToRadian(this.velocity.theta + this.rotateAdjust());
 	ctx.rotate(rotate);
 
-	var width  = this.spriteWidth()  * this.scale();
-	var height = this.spriteHeight() * this.scale();
+	var sprite_width  = this.spriteWidth();
+	var sprite_height = this.spriteHeight();
+	if(!sprite_width)  sprite_width = image.width;
+	if(!sprite_height) sprite_height = image.height;
+
+	var width  = sprite_width * this.scale();
+	var height = sprite_height * this.scale();
 
 	ctx.drawImage(image,
 		// sprite position
-		this.spriteWidth()  * this.spriteIndexX(), this.spriteHeight() * this.spriteIndexY(),
+		sprite_width * this.spriteIndexX(), sprite_height * this.spriteIndexY(),
 		// sprite size to get
-		this.spriteWidth(),                   this.spriteHeight(),
+		sprite_width,                       sprite_height,
 		// adjust left x, up y because of x and y indicate sprite center.
-		-width/2,                             -height/2,
+		-width/2,                           -height/2,
 		// sprite size to show
-		width,                                height
+		width,                              height
 	);
 	ctx.restore();
 };
 
 Sprite.prototype.spriteName = function(){
-	return;
+	throw new Error("spriteName method must be overridden.");
 };
 Sprite.prototype.spriteIndexX = function(){
 	return this.spriteIndices()[this.current_sprite_index].x;
@@ -77,6 +82,9 @@ Sprite.prototype.spriteWidth = function(){
 	return 0;
 };
 Sprite.prototype.spriteHeight = function(){
+	return 0;
+};
+Sprite.prototype.rotateAdjust = function(){
 	return 0;
 };
 Sprite.prototype.scale = function(){
