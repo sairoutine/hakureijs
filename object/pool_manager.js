@@ -5,46 +5,48 @@
 var base_object = require('./base');
 var util = require('../util');
 
-var PoolManager = function(scene) {
+var PoolManager = function(scene, Class) {
 	base_object.apply(this, arguments);
 
-	this.objects = [];
+	this.Class = Class;
+	this.objects = {};
 };
 util.inherit(PoolManager, base_object);
 
 PoolManager.prototype.init = function() {
 	base_object.prototype.init.apply(this, arguments);
 
-	this.objects = [];
+	this.objects = {};
 };
 
 PoolManager.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
-	for(var i = 0, len = this.objects.length; i < len; i++) {
-		this.objects[i].beforeDraw();
+	for(var id in this.objects) {
+		this.objects[id].beforeDraw();
 	}
 };
 
 PoolManager.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
-	for(var i = 0, len = this.objects.length; i < len; i++) {
-		this.objects[i].draw();
+	for(var id in this.objects) {
+		this.objects[id].draw();
 	}
 };
 
 PoolManager.prototype.afterDraw = function(){
 	base_object.prototype.afterDraw.apply(this, arguments);
-	for(var i = 0, len = this.objects.length; i < len; i++) {
-		this.objects[i].afterDraw();
+	for(var id in this.objects) {
+		this.objects[id].afterDraw();
 	}
 };
 
-PoolManager.prototype.addObject = function(object){
-	this.objects.push(object);
-};
+PoolManager.prototype.create = function() {
+	var object = new this.Class(this.scene);
+	object.init.apply(object, arguments);
 
-PoolManager.prototype.addObjects = function(objects) {
-	 this.objects = this.objects.concat(objects);
+	this.objects[object.id] = object;
+
+	return object;
 };
 module.exports = PoolManager;
