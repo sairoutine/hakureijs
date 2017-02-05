@@ -43,7 +43,8 @@ ObjectBase.prototype.move = function() {
 	this.x += x;
 	this.y += y;
 };
-
+ObjectBase.prototype.onCollision = function(){
+};
 
 ObjectBase.prototype.width = function() {
 	return 0;
@@ -69,6 +70,51 @@ ObjectBase.prototype.globalUpY = function() {
 ObjectBase.prototype.globalDownY = function() {
 	return this.scene.x + this.y + this.height()/2;
 };
+
+ObjectBase.prototype.collisionWidth = function() {
+	return 0;
+};
+ObjectBase.prototype.collisionHeight = function() {
+	return 0;
+};
+
+ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
+	var obj2 = this;
+	if(obj1.checkCollision(obj2)) {
+		obj1.onCollision(obj2);
+		obj2.onCollision(obj1);
+		return true;
+	}
+
+	return false;
+};
+ObjectBase.prototype.checkCollision = function(obj) {
+	if(Math.abs(this.x - obj.x) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
+		Math.abs(this.y - obj.y) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
+		return true;
+	}
+
+	return false;
+};
+
+ObjectBase.prototype.getCollisionLeftX = function() {
+	return this.x - this.collisionWidth() / 2;
+};
+
+ObjectBase.prototype.getCollisionUpY = function() {
+	return this.y - this.collisionHeight() / 2;
+};
+
+
+
+
+
+
+
+
+
+
+
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this.velocity = velocity;
 };

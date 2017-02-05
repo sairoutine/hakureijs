@@ -1,7 +1,7 @@
 'use strict';
 
 // TODO: add pooling logic
-
+// TODO: split manager class and pool manager class
 var base_object = require('./base');
 var util = require('../util');
 
@@ -49,4 +49,37 @@ PoolManager.prototype.create = function() {
 
 	return object;
 };
+PoolManager.prototype.remove = function(id) {
+	delete this.objects[id];
+};
+
+PoolManager.prototype.checkCollisionWithObject = function(obj1) {
+	for(var id in this.objects) {
+		var obj2 = this.objects[id];
+		if(obj1.checkCollision(obj2)) {
+			obj1.onCollision(obj2);
+			obj2.onCollision(obj1);
+		}
+	}
+};
+
+PoolManager.prototype.checkCollisionWithManager = function(manager) {
+	for(var obj1_id in this.objects) {
+		for(var obj2_id in manager.objects) {
+			if(this.objects[obj1_id].checkCollision(manager.objects[obj2_id])) {
+				var obj1 = this.objects[obj1_id];
+				var obj2 = manager.objects[obj2_id];
+
+				obj1.onCollision(obj2);
+				obj2.onCollision(obj1);
+
+				// do not check died object twice
+				if (!this.objects[obj1_id]) {
+					break;
+				}
+			}
+		}
+	}
+};
+
 module.exports = PoolManager;
