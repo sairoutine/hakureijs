@@ -36,7 +36,7 @@ Sprite.prototype.draw = function(){
 	ctx.save();
 
 	// set position
-	ctx.translate(this.x, this.y);
+	ctx.translate(this.globalCenterX(), this.globalCenterY());
 
 	// rotate
 	var rotate = util.thetaToRadian(this.velocity.theta + this.rotateAdjust());

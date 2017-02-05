@@ -2,6 +2,11 @@
 
 var SceneBase = function(core) {
 	this.core = core;
+	this.width = core.width;
+	this.height = core.height;
+
+	this.x = 0;
+	this.y = 0;
 
 	this.frame_count = 0;
 
@@ -9,6 +14,9 @@ var SceneBase = function(core) {
 };
 
 SceneBase.prototype.init = function(){
+	this.x = 0;
+	this.y = 0;
+
 	this.frame_count = 0;
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {

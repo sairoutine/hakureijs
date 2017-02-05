@@ -11,8 +11,8 @@ var ObjectBase = function(scene) {
 
 	this.frame_count = 0;
 
-	this.x = 0;
-	this.y = 0;
+	this.x = 0; // local center x
+	this.y = 0; // local center y
 
 	this.velocity = {magnitude:0, theta:0};
 };
@@ -45,18 +45,29 @@ ObjectBase.prototype.move = function() {
 };
 
 
-
-ObjectBase.prototype.leftX = function() {
-	return this.x;
+ObjectBase.prototype.width = function() {
+	return 0;
 };
-ObjectBase.prototype.rightX = function() {
-	return this.x + this.width;
+ObjectBase.prototype.height = function() {
+	return 0;
 };
-ObjectBase.prototype.upY = function() {
-	return this.y;
+ObjectBase.prototype.globalCenterX = function() {
+	return this.scene.x + this.x;
 };
-ObjectBase.prototype.downY = function() {
-	return this.y + this.height;
+ObjectBase.prototype.globalCenterY = function() {
+	return this.scene.y + this.y;
+};
+ObjectBase.prototype.globalLeftX = function() {
+	return this.scene.x + this.x - this.width()/2;
+};
+ObjectBase.prototype.globalRightX = function() {
+	return this.scene.x + this.x + this.width()/2;
+};
+ObjectBase.prototype.globalUpY = function() {
+	return this.scene.x + this.y - this.height()/2;
+};
+ObjectBase.prototype.globalDownY = function() {
+	return this.scene.x + this.y + this.height()/2;
 };
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this.velocity = velocity;
