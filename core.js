@@ -16,6 +16,7 @@ var Core = function(canvas) {
 	this.request_id = null;
 
 	this.key_down_map = {};
+	this.is_connect_gamepad = false;
 
 	this.image_loader = new ImageLoader();
 };
@@ -26,9 +27,14 @@ Core.prototype.init = function () {
 	this.request_id = null;
 
 	this.key_down_map = {};
+	this.is_connect_gamepad = false;
 
 	this.image_loader.init();
 };
+Core.prototype.enableGamePad = function () {
+	this.is_connect_gamepad = true;
+};
+
 Core.prototype.isRunning = function () {
 	return this.request_id ? true : false;
 };
@@ -105,7 +111,7 @@ Core.prototype.handleKeyUp = function(e) {
 	e.preventDefault();
 };
 Core.prototype.handleGamePad = function() {
-	//if(!this.is_connect_gamepad) return;
+	if(!this.is_connect_gamepad) return;
 
 	var pads = navigator.getGamepads();
 	var pad = pads[0]; // 1P gamepad
