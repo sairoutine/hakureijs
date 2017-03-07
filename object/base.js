@@ -4,9 +4,10 @@ var util = require('../util');
 
 var id = 0;
 
-var ObjectBase = function(scene) {
+var ObjectBase = function(scene, object) {
 	this.scene = scene;
 	this.core = scene.core;
+	this.parent = object; // parent object if this is sub object
 	this.id = ++id;
 
 	this.frame_count = 0;
