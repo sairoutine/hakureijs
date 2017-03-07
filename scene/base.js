@@ -1,9 +1,10 @@
 'use strict';
 
-var SceneBase = function(core) {
+var SceneBase = function(core, scene) {
 	this.core = core;
-	this.width = core.width;
-	this.height = core.height;
+	this.parent = scene; // parent scene if this is sub scene
+	this.width = this.core.width; // default
+	this.height = this.core.height; // default
 
 	this.x = 0;
 	this.y = 0;
