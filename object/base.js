@@ -15,6 +15,9 @@ var ObjectBase = function(scene) {
 	this.y = 0; // local center y
 
 	this.velocity = {magnitude:0, theta:0};
+
+	// sub object
+	this.objects = [];
 };
 
 ObjectBase.prototype.init = function(){
@@ -22,18 +25,37 @@ ObjectBase.prototype.init = function(){
 
 	this.x = 0;
 	this.y = 0;
+
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].init();
+	}
 };
 
 ObjectBase.prototype.beforeDraw = function(){
 	this.frame_count++;
 
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].beforeDraw();
+	}
+
 	this.move();
 };
 
-ObjectBase.prototype.draw = function(){
+ObjectBase.prototype.draw = function() {
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].draw();
+	}
 };
 
-ObjectBase.prototype.afterDraw = function(){
+ObjectBase.prototype.afterDraw = function() {
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].afterDraw();
+	}
+};
+
+// add sub object
+ObjectBase.prototype.addSubObject = function(object){
+	this.objects.push(object);
 };
 
 ObjectBase.prototype.move = function() {
