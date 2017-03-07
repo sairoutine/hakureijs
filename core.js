@@ -9,6 +9,7 @@ var Core = function(canvas) {
 	this.height = Number(canvas.getAttribute('height'));
 
 	this.current_scene = null;
+	this._reserved_next_scene = null; // next scene which changes next frame run
 	this.scenes = {};
 
 	this.frame_count = 0;
@@ -22,6 +23,8 @@ var Core = function(canvas) {
 };
 Core.prototype.init = function () {
 	this.current_scene = null;
+	this._reserved_next_scene = null; // next scene which changes next frame run
+
 	this.frame_count = 0;
 
 	this.request_id = null;
@@ -46,6 +49,9 @@ Core.prototype.startRun = function () {
 Core.prototype.run = function(){
 	// get gamepad input
 	this.handleGamePad();
+
+	// go to next scene if next scene is set
+	this.changeNextSceneIfReserved();
 
 	var current_scene = this.currentScene();
 	if(current_scene) {
@@ -89,8 +95,15 @@ Core.prototype.addScene = function(name, scene) {
 	this.scenes[name] = scene;
 };
 Core.prototype.changeScene = function(name) {
-	this.current_scene = name;
-	this.currentScene().init();
+	this._reserved_next_scene = name;
+};
+Core.prototype.changeNextSceneIfReserved = function() {
+	if(this._reserved_next_scene) {
+		this.current_scene = this._reserved_next_scene;
+		this.currentScene().init();
+
+		this._reserved_next_scene = null;
+	}
 };
 Core.prototype.clearCanvas = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
