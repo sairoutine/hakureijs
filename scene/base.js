@@ -23,7 +23,6 @@ SceneBase.prototype.init = function(){
 	// sub scenes
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
-	this.scenes = {};
 
 	this.x = 0;
 	this.y = 0;
@@ -38,21 +37,29 @@ SceneBase.prototype.init = function(){
 SceneBase.prototype.beforeDraw = function(){
 	this.frame_count++;
 
+	// go to next sub scene if next scene is set
+	this.changeNextSubSceneIfReserved();
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].beforeDraw();
 	}
+
+	if(this.currentSubScene()) this.currentSubScene().beforeDraw();
 };
 
 SceneBase.prototype.draw = function(){
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].draw();
 	}
+	if(this.currentSubScene()) this.currentSubScene().draw();
 };
 
 SceneBase.prototype.afterDraw = function(){
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].afterDraw();
 	}
+
+	if(this.currentSubScene()) this.currentSubScene().afterDraw();
 };
 
 SceneBase.prototype.addObject = function(object){
@@ -68,13 +75,13 @@ SceneBase.prototype.currentSubScene = function() {
 SceneBase.prototype.addSubScene = function(name, scene) {
 	this.scenes[name] = scene;
 };
-SceneBase.prototype.changeScene = function(name) {
+SceneBase.prototype.changeSubScene = function(name) {
 	this._reserved_next_scene = name;
 };
-SceneBase.prototype.changeNextSceneIfReserved = function() {
+SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
 		this.current_scene = this._reserved_next_scene;
-		this.currentScene().init();
+		this.currentSubScene().init();
 
 		this._reserved_next_scene = null;
 	}
