@@ -16,7 +16,9 @@ var Core = function(canvas) {
 
 	this.request_id = null;
 
-	this.key_down_map = {};
+	this.current_keyflag = 0x0;
+	this.before_keyflag = 0x0;
+
 	this.is_connect_gamepad = false;
 
 	this.image_loader = new ImageLoader();
@@ -29,7 +31,10 @@ Core.prototype.init = function () {
 
 	this.request_id = null;
 
-	this.key_down_map = {};
+	this.current_keyflag = 0x0;
+	this.before_keyflag = 0x0;
+
+
 	this.is_connect_gamepad = false;
 
 	this.image_loader.init();
@@ -72,10 +77,10 @@ Core.prototype.run = function(){
 
 	// SEを再生
 	this.runPlaySound();
+	*/
 
 	// 押下されたキーを保存しておく
-	this.before_keyflag = this.keyflag;
-	*/
+	this.before_keyflag = this.current_keyflag;
 
 	// 経過フレーム数更新
 	this.frame_count++;
@@ -109,103 +114,74 @@ Core.prototype.clearCanvas = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
 };
 Core.prototype.handleKeyDown = function(e) {
-	var keycode = e.keyCode;
-
-	// initialize
-	if(!(keycode in this.key_down_map)) {
-		this.key_down_map[keycode] = 0;
-	}
-
-	this.key_down_map[keycode]++;
+	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
 	e.preventDefault();
 };
 Core.prototype.handleKeyUp = function(e) {
-	this.key_down_map[e.keyCode] = 0;
+	this.current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
 	e.preventDefault();
+};
+Core.prototype.isKeyDown = function(flag) {
+	return((this.current_keyflag & flag) ? true : false);
+};
+Core.prototype.isKeyPush = function(flag) {
+	// not true if key is pressed in previous frame
+	return !(this.before_keyflag & flag) && this.current_keyflag & flag;
+};
+Core.prototype._keyCodeToBitCode = function(keyCode) {
+	var flag;
+	switch(keyCode) {
+		case 16: // shift
+			flag = CONSTANT.BUTTON_SHIFT;
+			break;
+		case 32: // space
+			flag = CONSTANT.BUTTON_SPACE;
+			break;
+		case 37: // left
+			flag = CONSTANT.BUTTON_LEFT;
+			break;
+		case 38: // up
+			flag = CONSTANT.BUTTON_UP;
+			break;
+		case 39: // right
+			flag = CONSTANT.BUTTON_RIGHT;
+			break;
+		case 40: // down
+			flag = CONSTANT.BUTTON_DOWN;
+			break;
+		case 88: // x
+			flag = CONSTANT.BUTTON_X;
+			break;
+		case 90: // z
+			flag = CONSTANT.BUTTON_Z;
+			break;
+	}
+	return flag;
 };
 Core.prototype.handleGamePad = function() {
 	if(!this.is_connect_gamepad) return;
-
 	var pads = navigator.getGamepads();
-	var pad = pads[0]; // 1P gamepad
+	var pad = pads[0]; // 1Pコン
 
 	if(!pad) return;
 
-	var num_to_keycode = [
-		CONSTANT.BUTTON_Z,
-		CONSTANT.BUTTON_X,
-	];
+	this.current_keyflag = 0x00;
+	this.current_keyflag |= pad.buttons[1].pressed ? CONSTANT.BUTTON_Z:      0x00;// A
+	this.current_keyflag |= pad.buttons[0].pressed ? CONSTANT.BUTTON_X:      0x00;// B
+	this.current_keyflag |= pad.buttons[2].pressed ? CONSTANT.BUTTON_SELECT: 0x00;// SELECT
+	this.current_keyflag |= pad.buttons[3].pressed ? CONSTANT.BUTTON_START:  0x00;// START
+	this.current_keyflag |= pad.buttons[4].pressed ? CONSTANT.BUTTON_SHIFT:  0x00;// SHIFT
+	this.current_keyflag |= pad.buttons[5].pressed ? CONSTANT.BUTTON_SHIFT:  0x00;// SHIFT
+	this.current_keyflag |= pad.buttons[6].pressed ? CONSTANT.BUTTON_SPACE:  0x00;// SPACE
+	//this.current_keyflag |= pad.buttons[8].pressed ? 0x04 : 0x00;// SELECT
+	//this.current_keyflag |= pad.buttons[9].pressed ? 0x08 : 0x00;// START
 
-	for (var i = 0, len = num_to_keycode.length; i < len; i++) {
-		if (pad.buttons[i].pressed) {
-			// initialize
-			if(!(num_to_keycode[i] in this.key_down_map)) {
-				this.key_down_map[ num_to_keycode[i] ] = 0;
-			}
-
-			this.key_down_map[ num_to_keycode[i] ]++;
-		}
-		else {
-			this.key_down_map[ num_to_keycode[i] ] = 0;
-		}
-	}
-
-	// up
-	if(pad.axes[1] < -0.5) {
-		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
-			this.key_down_map[CONSTANT.BUTTON_UP] = 0;
-		}
-
-		this.key_down_map[CONSTANT.BUTTON_UP]++;
-	}
-	else {
-		this.key_down_map[CONSTANT.BUTTON_UP] = 0;
-	}
-
-	// down
-	if(pad.axes[1] >  0.5) { 
-		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
-			this.key_down_map[CONSTANT.BUTTON_DOWN] = 0;
-		}
-
-		this.key_down_map[CONSTANT.BUTTON_DOWN]++;
-	}
-	else {
-		this.key_down_map[CONSTANT.BUTTON_DOWN] = 0;
-	}
-
-	// left
-	if(pad.axes[0] < -0.5) { 
-		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
-			this.key_down_map[CONSTANT.BUTTON_LEFT] = 0;
-		}
-
-		this.key_down_map[CONSTANT.BUTTON_LEFT]++;
-	}
-	else {
-		this.key_down_map[CONSTANT.BUTTON_LEFT] = 0;
-	}
-
-	// right
-	if(pad.axes[0] >  0.5) {
-		if(!(CONSTANT.BUTTON_UP in this.key_down_map)) {
-			this.key_down_map[CONSTANT.BUTTON_RIGHT] = 0;
-		}
-
-		this.key_down_map[CONSTANT.BUTTON_RIGHT]++;
-	}
-	else {
-		this.key_down_map[CONSTANT.BUTTON_RIGHT] = 0;
-	}
+	this.current_keyflag |= pad.axes[1] < -0.5 ? CONSTANT.BUTTON_UP:         0x00;// UP
+	this.current_keyflag |= pad.axes[1] >  0.5 ? CONSTANT.BUTTON_DOWN:       0x00;// DOWN
+	this.current_keyflag |= pad.axes[0] < -0.5 ? CONSTANT.BUTTON_LEFT:       0x00;// LEFT
+	this.current_keyflag |= pad.axes[0] >  0.5 ? CONSTANT.BUTTON_RIGHT:      0x00;// RIGHT
 };
 
 
-
-Core.prototype.isKeyDown = function(keycode) {
-	return this.key_down_map[keycode] > 0 ? true : false;
-};
-Core.prototype.isKeyPush = function(keycode) {
-	return this.key_down_map[keycode] === 1 ? true : false;
-};
 
 module.exports = Core;
