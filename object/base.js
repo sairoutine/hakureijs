@@ -106,11 +106,21 @@ ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
 	if(obj1.checkCollision(obj2)) {
 		obj1.onCollision(obj2);
 		obj2.onCollision(obj1);
-		return true;
 	}
-
-	return false;
 };
+ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
+	var obj1 = this;
+	for(var i = 0; i < objs.length; i++) {
+		var obj2 = objs[i];
+		if(obj1.checkCollision(obj2)) {
+			obj1.onCollision(obj2);
+			obj2.onCollision(obj1);
+		}
+	}
+};
+
+
+
 ObjectBase.prototype.checkCollision = function(obj) {
 	if(Math.abs(this.x - obj.x) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
 		Math.abs(this.y - obj.y) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
