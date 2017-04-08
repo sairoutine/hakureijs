@@ -49,8 +49,13 @@ Sprite.prototype.draw = function(){
 	if(!sprite_width)  sprite_width = image.width;
 	if(!sprite_height) sprite_height = image.height;
 
-	var width  = sprite_width * this.scale();
-	var height = sprite_height * this.scale();
+	var width  = sprite_width * this.scaleWidth();
+	var height = sprite_height * this.scaleHeight();
+
+	// reflect left or right
+	if(this.isReflect()) {
+		ctx.transform(-1, 0, 0, 1, 0, 0);
+	}
 
 	ctx.drawImage(image,
 		// sprite position
@@ -102,6 +107,11 @@ Sprite.prototype.scaleWidth = function(){
 Sprite.prototype.scaleHeight = function(){
 	return 1;
 };
+Sprite.prototype.isReflect = function(){
+	return false;
+};
+
+
 
 
 module.exports = Sprite;
