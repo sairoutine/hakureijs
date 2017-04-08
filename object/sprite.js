@@ -27,7 +27,6 @@ Sprite.prototype.beforeDraw = function(){
 	}
 };
 Sprite.prototype.draw = function(){
-	base_object.prototype.draw.apply(this, arguments);
 
 	var image = this.core.image_loader.getImage(this.spriteName());
 
@@ -68,6 +67,9 @@ Sprite.prototype.draw = function(){
 		width,                              height
 	);
 	ctx.restore();
+
+	// draw sub objects
+	base_object.prototype.draw.apply(this, arguments);
 };
 
 Sprite.prototype.spriteName = function(){
