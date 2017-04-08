@@ -15,10 +15,14 @@ var ObjectBase = function(scene, object) {
 	this.x = 0; // local center x
 	this.y = 0; // local center y
 
+	// manage flags that disappears in frame elapsed
+	this.auto_disable_times_map = {};
+
 	this.velocity = {magnitude:0, theta:0};
 
 	// sub object
 	this.objects = [];
+
 };
 
 ObjectBase.prototype.init = function(){
@@ -27,6 +31,8 @@ ObjectBase.prototype.init = function(){
 	this.x = 0;
 	this.y = 0;
 
+	this.auto_disable_times_map = {};
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
 	}
@@ -34,6 +40,8 @@ ObjectBase.prototype.init = function(){
 
 ObjectBase.prototype.beforeDraw = function(){
 	this.frame_count++;
+
+	this.checkAutoDisableFlags();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].beforeDraw();
@@ -58,6 +66,17 @@ ObjectBase.prototype.afterDraw = function() {
 ObjectBase.prototype.addSubObject = function(object){
 	this.objects.push(object);
 };
+ObjectBase.prototype.removeSubObject = function(object){
+	// TODO: O(n) -> O(1)
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		if(this.objects[i].id === object.id) {
+			this.objects.splice(i, 1);
+			break;
+		}
+	}
+};
+
+
 
 ObjectBase.prototype.move = function() {
 	var x = util.calcMoveXByVelocity(this.velocity);
@@ -144,6 +163,28 @@ ObjectBase.prototype.getCollisionUpY = function() {
 
 
 
+
+// set flags that disappears in frame elapsed
+// TODO: enable to set flag which becomes false -> true
+ObjectBase.prototype.setAutoDisableFlag = function(flag_name, count) {
+	var self = this;
+
+	self[flag_name] = true;
+
+	self.auto_disable_times_map[flag_name] = self.frame_count + count;
+
+};
+
+// check flags that disappears in frame elapsed
+ObjectBase.prototype.checkAutoDisableFlags = function() {
+	var self = this;
+	for (var flag_name in self.auto_disable_times_map) {
+		if(this.auto_disable_times_map[flag_name] < self.frame_count) {
+			self[flag_name] = false;
+			delete self.auto_disable_times_map[flag_name];
+		}
+	}
+};
 
 
 
