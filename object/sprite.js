@@ -31,6 +31,8 @@ Sprite.prototype.draw = function(){
 
 	var image = this.core.image_loader.getImage(this.spriteName());
 
+	if(this.scale()) console.error("scale method is deprecated. you should use scaleWidth and scaleHeight.");
+
 	var ctx = this.core.ctx;
 
 	ctx.save();
@@ -87,7 +89,17 @@ Sprite.prototype.spriteHeight = function(){
 Sprite.prototype.rotateAdjust = function(){
 	return 0;
 };
+
+// scale method is deprecated. you should use scaleWidth and scaleHeight
 Sprite.prototype.scale = function(){
+	return 0;
+};
+
+
+Sprite.prototype.scaleWidth = function(){
+	return 1;
+};
+Sprite.prototype.scaleHeight = function(){
 	return 1;
 };
 
