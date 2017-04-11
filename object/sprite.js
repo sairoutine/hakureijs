@@ -48,8 +48,8 @@ Sprite.prototype.draw = function(){
 	if(!sprite_width)  sprite_width = image.width;
 	if(!sprite_height) sprite_height = image.height;
 
-	var width  = sprite_width * this.scaleWidth();
-	var height = sprite_height * this.scaleHeight();
+	var width  = this.width();
+	var height = this.height();
 
 	// reflect left or right
 	if(this.isReflect()) {
@@ -81,6 +81,18 @@ Sprite.prototype.spriteIndexX = function(){
 Sprite.prototype.spriteIndexY = function(){
 	return this.spriteIndices()[this.current_sprite_index].y;
 };
+Sprite.prototype.width = function(){
+	return this.spriteWidth() * this.scaleWidth();
+};
+Sprite.prototype.height = function(){
+	return this.spriteHeight() * this.scaleHeight();
+};
+
+
+
+
+
+
 Sprite.prototype.spriteAnimationSpan = function(){
 	return 0;
 };
