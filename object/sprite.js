@@ -27,6 +27,7 @@ Sprite.prototype.beforeDraw = function(){
 	}
 };
 Sprite.prototype.draw = function(){
+	if(!this.isShow()) return;
 
 	var image = this.core.image_loader.getImage(this.spriteName());
 
@@ -91,6 +92,9 @@ Sprite.prototype.height = function(){
 
 
 
+Sprite.prototype.isShow = function(){
+	return 1;
+};
 
 
 Sprite.prototype.spriteAnimationSpan = function(){
