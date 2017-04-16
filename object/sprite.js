@@ -93,7 +93,7 @@ Sprite.prototype.height = function(){
 
 
 Sprite.prototype.isShow = function(){
-	return 1;
+	return true;
 };
 
 
