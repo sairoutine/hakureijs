@@ -3,6 +3,7 @@ module.exports = {
 	util: require("./util"),
 	core: require("./core"),
 	constant: require("./constant"),
+	serif_manager: require("./serif_manager"),
 	scene: {
 		base: require("./scene/base"),
 	},
