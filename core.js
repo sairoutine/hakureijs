@@ -3,7 +3,8 @@ var CONSTANT = require("./constant");
 var ImageLoader = require("./asset_loader/image");
 
 var Core = function(canvas) {
-	this.ctx = canvas.getContext('2d');
+	this.canvas_dom = canvas;
+	this.ctx = this.canvas_dom.getContext('2d');
 
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
@@ -181,6 +182,20 @@ Core.prototype.handleGamePad = function() {
 	this.current_keyflag |= pad.axes[0] >  0.5 ? CONSTANT.BUTTON_RIGHT:      0x00;// RIGHT
 };
 
-
+Core.prototype.fullscreen = function() {
+	var mainCanvas = this.canvas_dom;
+	if (mainCanvas.requestFullscreen) {
+		mainCanvas.requestFullscreen();
+	}
+	else if (mainCanvas.msRequestuestFullscreen) {
+		mainCanvas.msRequestuestFullscreen();
+	}
+	else if (mainCanvas.mozRequestFullScreen) {
+		mainCanvas.mozRequestFullScreen();
+	}
+	else if (mainCanvas.webkitRequestFullscreen) {
+		mainCanvas.webkitRequestFullscreen();
+	}
+};
 
 module.exports = Core;
