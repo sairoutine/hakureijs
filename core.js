@@ -75,17 +75,16 @@ Core.prototype.run = function(){
 		this._renderFPS();
 	}
 
-	// SEを再生
+	// play sound effects
 	this.runPlaySound();
 	*/
 
-	// 押下されたキーを保存しておく
+	// save key current pressed keys
 	this.before_keyflag = this.current_keyflag;
 
-	// 経過フレーム数更新
 	this.frame_count++;
 
-	// 次の描画タイミングで再呼び出ししてループ
+	// tick
 	this.request_id = requestAnimationFrame(this.run.bind(this));
 };
 Core.prototype.currentScene = function() {
