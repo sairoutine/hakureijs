@@ -1,6 +1,6 @@
 'use strict';
 
-var ImageLoader = function(game) {
+var ImageLoader = function() {
 	this.images = {};
 
 	this.loading_image_num = 0;
