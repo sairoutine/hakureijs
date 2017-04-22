@@ -83,7 +83,6 @@ SceneBase.prototype.changeSubScene = function() {
 SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
 		this.current_scene = this._reserved_next_scene.shift();
-		this.currentSubScene().init();
 
 		var current_sub_scene = this.currentSubScene();
 		current_sub_scene.init.apply(current_sub_scene, this._reserved_next_scene);
