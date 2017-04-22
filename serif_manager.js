@@ -1,10 +1,10 @@
 'use strict';
 
-var SerifManager = function (script) {
+var SerifManager = function () {
 	this.timeoutID = null;
 
 	// serif scenario
-	this.script = script;
+	this.script = null;
 
 	// where serif has progressed
 	this.progress = null;
@@ -22,7 +22,12 @@ var SerifManager = function (script) {
 	this.printing_lines = [];
 };
 
-SerifManager.prototype.init = function () {
+SerifManager.prototype.init = function (script) {
+	if(!script) console.error("set script arguments to use serif_manager class");
+
+	// serif scenario
+	this.script = script;
+
 	this.progress = -1;
 	this.timeoutID = null;
 	this.left_chara_id = null;
