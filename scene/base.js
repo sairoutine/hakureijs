@@ -75,16 +75,22 @@ SceneBase.prototype.currentSubScene = function() {
 SceneBase.prototype.addSubScene = function(name, scene) {
 	this.scenes[name] = scene;
 };
-SceneBase.prototype.changeSubScene = function(name) {
-	this._reserved_next_scene = name;
+SceneBase.prototype.changeSubScene = function() {
+	var args = Array.prototype.slice.call(arguments); // to convert array object
+	this._reserved_next_scene = args;
+
 };
 SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
-		this.current_scene = this._reserved_next_scene;
+		this.current_scene = this._reserved_next_scene.shift();
 		this.currentSubScene().init();
+
+		var current_sub_scene = this.currentSubScene();
+		current_sub_scene.init.apply(current_sub_scene, this._reserved_next_scene);
 
 		this._reserved_next_scene = null;
 	}
+
 };
 
 

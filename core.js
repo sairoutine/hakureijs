@@ -99,13 +99,16 @@ Core.prototype.currentScene = function() {
 Core.prototype.addScene = function(name, scene) {
 	this.scenes[name] = scene;
 };
-Core.prototype.changeScene = function(name) {
-	this._reserved_next_scene = name;
+Core.prototype.changeScene = function() {
+	var args = Array.prototype.slice.call(arguments); // to convert array object
+	this._reserved_next_scene = args;
 };
 Core.prototype.changeNextSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
-		this.current_scene = this._reserved_next_scene;
-		this.currentScene().init();
+		this.current_scene = this._reserved_next_scene.shift();
+
+		var current_scene = this.currentScene();
+		current_scene.init.apply(current_scene, this._reserved_next_scene);
 
 		this._reserved_next_scene = null;
 	}
