@@ -4,6 +4,9 @@ var util = require('../util');
 
 var id = 0;
 
+// is draw collision size
+var IS_SHOW_COLLISION = false;
+
 var ObjectBase = function(scene, object) {
 	this.scene = scene;
 	this.core = scene.core;
@@ -51,6 +54,17 @@ ObjectBase.prototype.beforeDraw = function(){
 };
 
 ObjectBase.prototype.draw = function() {
+	var ctx = this.core.ctx;
+	// TODO: DEBUG
+	if(IS_SHOW_COLLISION) {
+		ctx.save();
+		ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
+		ctx.globalAlpha = 0.4;
+		ctx.fillRect(this.getCollisionLeftX(), this.getCollisionUpY(), this.collisionWidth(), this.collisionHeight());
+		ctx.restore();
+	}
+
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].draw();
 	}
