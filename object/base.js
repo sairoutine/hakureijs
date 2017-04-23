@@ -166,10 +166,16 @@ ObjectBase.prototype.checkCollision = function(obj) {
 ObjectBase.prototype.getCollisionLeftX = function() {
 	return this.x - this.collisionWidth() / 2;
 };
-
+ObjectBase.prototype.getCollisionRightX = function() {
+	return this.x + this.collisionWidth() / 2;
+};
 ObjectBase.prototype.getCollisionUpY = function() {
 	return this.y - this.collisionHeight() / 2;
 };
+ObjectBase.prototype.getCollisionDownY = function() {
+	return this.y + this.collisionHeight() / 2;
+};
+
 
 
 
