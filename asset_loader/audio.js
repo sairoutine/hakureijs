@@ -2,7 +2,7 @@
 
 var AudioLoader = function() {
 	// TODO: split bgm and sound
-	this.audios = {};
+	this.sounds = {};
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
@@ -13,9 +13,9 @@ var AudioLoader = function() {
 	this.soundflag = 0x00;
 };
 AudioLoader.prototype.init = function() {
-	// TODO: cancel already loading audios
+	// TODO: cancel already loading bgms and sounds
 
-	this.audios = {};
+	this.sounds = {};
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
@@ -41,7 +41,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 	audio.volume = volume;
 	audio.addEventListener('canplay', onload_function);
 	audio.load();
-	self.audios[name] = {
+	self.sounds[name] = {
 		id: 1 << self.id++,
 		audio: audio,
 	};
@@ -52,20 +52,20 @@ AudioLoader.prototype.isAllLoaded = function() {
 };
 
 AudioLoader.prototype.playSound = function(name) {
-	this.soundflag |= this.audios[name].id;
+	this.soundflag |= this.sounds[name].id;
 };
 
 AudioLoader.prototype.executePlaySound = function() {
 
-	for(var name in this.audios) {
-		if(this.soundflag & this.audios[name].id) {
+	for(var name in this.sounds) {
+		if(this.soundflag & this.sounds[name].id) {
 			// play
-			this.audios[name].audio.pause();
-			this.audios[name].audio.currentTime = 0;
-			this.audios[name].audio.play();
+			this.sounds[name].audio.pause();
+			this.sounds[name].audio.currentTime = 0;
+			this.sounds[name].audio.play();
 
 			// delete flag
-			this.soundflag &= ~this.audios[name].id;
+			this.soundflag &= ~this.sounds[name].id;
 
 		}
 	}
