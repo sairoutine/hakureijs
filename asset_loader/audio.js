@@ -1,8 +1,8 @@
 'use strict';
 
 var AudioLoader = function() {
-	// TODO: split bgm and sound
 	this.sounds = {};
+	this.bgms = {};
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
@@ -11,11 +11,21 @@ var AudioLoader = function() {
 
 	// flag which determine what sound.
 	this.soundflag = 0x00;
+
+	this.audio_context = new window.AudioContext();
+
+	// for legacy browser
+	this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
+	// playing AudioBufferSourceNode instance
+	this.audio_source = null;
+
+
 };
 AudioLoader.prototype.init = function() {
 	// TODO: cancel already loading bgms and sounds
 
 	this.sounds = {};
+	this.bgms = {};
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
@@ -32,7 +42,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 
 	self.loading_audio_num++;
 
-	// it's done to load audio
+	// it's done to load sound
 	var onload_function = function() {
 		self.loaded_audio_num++;
 	};
@@ -45,6 +55,45 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 		id: 1 << self.id++,
 		audio: audio,
 	};
+};
+
+AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd) {
+	var self = this;
+
+	// it's done to load audio
+	var successCallback = function(audioBuffer) {
+		self.loaded_audio_num++;
+		self.bgms[name] = {
+			audio:     audioBuffer,
+			volume:    volume,
+			loopStart: loopStart,
+			loopEnd:   loopEnd,
+		};
+	};
+
+	var errorCallback = function(error) {
+		if (error instanceof Error) {
+			throw new Error(error.message);
+		} else {
+			throw error;
+		}
+	};
+
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function() {
+		if(xhr.status !== 200) {
+			return;
+		}
+
+		var arrayBuffer = xhr.response;
+
+		// decode
+		self.audio_context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
+	};
+
+	xhr.open('GET', path, true);
+	xhr.responseType = 'arraybuffer';
+	xhr.send(null);
 };
 
 AudioLoader.prototype.isAllLoaded = function() {
@@ -70,8 +119,49 @@ AudioLoader.prototype.executePlaySound = function() {
 		}
 	}
 };
+AudioLoader.prototype.playBGM = function(name) {
+	var self = this;
 
+	// stop playing bgm
+	self.stopBGM();
 
+	self.audio_source = self._createSourceNode(name);
+	self.audio_source.start(0);
+};
+AudioLoader.prototype.stopBGM = function() {
+	var self = this;
+	if(self.isPlayingBGM()) {
+		self.audio_source.stop(0);
+		self.audio_source = null;
+	}
+};
+AudioLoader.prototype.isPlayingBGM = function() {
+	return this.audio_source ? true : false;
+};
+
+// create AudioBufferSourceNode instance
+AudioLoader.prototype._createSourceNode = function(name) {
+	var self = this;
+	var data = self.bgms[name];
+
+	var source = self.audio_context.createBufferSource();
+	source.buffer = data.audio;
+
+	if(data.loopStart || data.loopEnd) { source.loop = true; }
+	if(data.loopStart) { source.loopStart = data.loopStart; }
+	if(data.loopEnd)   { source.loopEnd = data.loopEnd; }
+
+	var audio_gain = this.audio_context.createGain();
+	audio_gain.gain.value = data.volume || 1.0;
+
+	source.connect(audio_gain);
+
+	audio_gain.connect(self.audio_context.destination);
+	source.start = source.start || source.noteOn;
+	source.stop  = source.stop  || source.noteOff;
+
+	return source;
+};
 
 
 module.exports = AudioLoader;
