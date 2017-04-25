@@ -1,6 +1,7 @@
 'use strict';
 var CONSTANT = require("./constant");
 var ImageLoader = require("./asset_loader/image");
+var AudioLoader = require("./asset_loader/audio");
 
 var Core = function(canvas) {
 	this.canvas_dom = canvas;
@@ -23,6 +24,7 @@ var Core = function(canvas) {
 	this.is_connect_gamepad = false;
 
 	this.image_loader = new ImageLoader();
+	this.audio_loader = new AudioLoader();
 };
 Core.prototype.init = function () {
 	this.current_scene = null;
@@ -58,6 +60,9 @@ Core.prototype.run = function(){
 
 	// go to next scene if next scene is set
 	this.changeNextSceneIfReserved();
+
+	// play sound which already set to play
+	this.audio_loader.executePlaySound();
 
 	var current_scene = this.currentScene();
 	if(current_scene) {
