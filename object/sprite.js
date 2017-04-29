@@ -27,49 +27,50 @@ Sprite.prototype.beforeDraw = function(){
 	}
 };
 Sprite.prototype.draw = function(){
-	if(!this.isShow()) return;
+	if(this.isShow()) {
 
-	var image = this.core.image_loader.getImage(this.spriteName());
+		var image = this.core.image_loader.getImage(this.spriteName());
 
-	if(this.scale()) console.error("scale method is deprecated. you should use scaleWidth and scaleHeight.");
+		if(this.scale()) console.error("scale method is deprecated. you should use scaleWidth and scaleHeight.");
 
-	var ctx = this.core.ctx;
+		var ctx = this.core.ctx;
 
-	ctx.save();
+		ctx.save();
 
-	// set position
-	ctx.translate(this.globalCenterX(), this.globalCenterY());
+		// set position
+		ctx.translate(this.globalCenterX(), this.globalCenterY());
 
-	// rotate
-	var rotate = util.thetaToRadian(this.velocity.theta + this.rotateAdjust());
-	ctx.rotate(rotate);
+		// rotate
+		var rotate = util.thetaToRadian(this.velocity.theta + this.rotateAdjust());
+		ctx.rotate(rotate);
 
-	var sprite_width  = this.spriteWidth();
-	var sprite_height = this.spriteHeight();
-	if(!sprite_width)  sprite_width = image.width;
-	if(!sprite_height) sprite_height = image.height;
+		var sprite_width  = this.spriteWidth();
+		var sprite_height = this.spriteHeight();
+		if(!sprite_width)  sprite_width = image.width;
+		if(!sprite_height) sprite_height = image.height;
 
-	var width  = this.width();
-	var height = this.height();
+		var width  = this.width();
+		var height = this.height();
 
-	// reflect left or right
-	if(this.isReflect()) {
-		ctx.transform(-1, 0, 0, 1, 0, 0);
+		// reflect left or right
+		if(this.isReflect()) {
+			ctx.transform(-1, 0, 0, 1, 0, 0);
+		}
+
+		ctx.drawImage(image,
+			// sprite position
+			sprite_width * this.spriteIndexX(), sprite_height * this.spriteIndexY(),
+			// sprite size to get
+			sprite_width,                       sprite_height,
+			// adjust left x, up y because of x and y indicate sprite center.
+			-width/2,                           -height/2,
+			// sprite size to show
+			width,                              height
+		);
+		ctx.restore();
 	}
 
-	ctx.drawImage(image,
-		// sprite position
-		sprite_width * this.spriteIndexX(), sprite_height * this.spriteIndexY(),
-		// sprite size to get
-		sprite_width,                       sprite_height,
-		// adjust left x, up y because of x and y indicate sprite center.
-		-width/2,                           -height/2,
-		// sprite size to show
-		width,                              height
-	);
-	ctx.restore();
-
-	// draw sub objects
+	// draw sub objects(even if this object is not show)
 	base_object.prototype.draw.apply(this, arguments);
 };
 
