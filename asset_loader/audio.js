@@ -37,10 +37,10 @@ AudioLoader.prototype.init = function() {
 
 AudioLoader.prototype.loadSound = function(name, path, volume) {
 	var self = this;
+	self.loading_audio_num++;
 
 	if(!volume) volume = 1.0;
 
-	self.loading_audio_num++;
 
 	// it's done to load sound
 	var onload_function = function() {
@@ -59,6 +59,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 
 AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd) {
 	var self = this;
+	self.loading_audio_num++;
 
 	// it's done to load audio
 	var successCallback = function(audioBuffer) {
