@@ -165,7 +165,7 @@ AudioLoader.prototype._createSourceNode = function(name) {
 };
 
 AudioLoader.prototype.progress = function() {
-	return this.loading_audio_num / this.loaded_audio_num;
+	return this.loaded_audio_num / this.loading_audio_num;
 };
 
 

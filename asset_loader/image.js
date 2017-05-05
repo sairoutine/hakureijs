@@ -43,7 +43,7 @@ ImageLoader.prototype.getImage = function(name) {
 };
 
 ImageLoader.prototype.progress = function() {
-	return this.loading_image_num / this.loaded_image_num;
+	return this.loaded_image_num / this.loading_image_num;
 };
 
 
