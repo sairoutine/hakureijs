@@ -164,5 +164,9 @@ AudioLoader.prototype._createSourceNode = function(name) {
 	return source;
 };
 
+AudioLoader.prototype.progress = function() {
+	return this.loading_audio_num / this.loaded_audio_num;
+};
+
 
 module.exports = AudioLoader;

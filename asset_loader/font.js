@@ -14,4 +14,11 @@ FontLoader.prototype.notifyLoadingDone = function() {
 	this.is_done = true;
 };
 
+FontLoader.prototype.progress = function() {
+	return this.is_done ? 1 : 0;
+};
+
+
+
+
 module.exports = FontLoader;

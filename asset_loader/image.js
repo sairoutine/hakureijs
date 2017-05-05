@@ -42,4 +42,11 @@ ImageLoader.prototype.getImage = function(name) {
 	return this.images[name];
 };
 
+ImageLoader.prototype.progress = function() {
+	return this.loading_image_num / this.loaded_image_num;
+};
+
+
+
+
 module.exports = ImageLoader;
