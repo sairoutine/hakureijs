@@ -2,6 +2,7 @@
 var CONSTANT = require("./constant");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
+var FontLoader = require("./asset_loader/font");
 
 var Core = function(canvas) {
 	this.canvas_dom = canvas;
@@ -25,6 +26,7 @@ var Core = function(canvas) {
 
 	this.image_loader = new ImageLoader();
 	this.audio_loader = new AudioLoader();
+	this.font_loader = new FontLoader();
 };
 Core.prototype.init = function () {
 	this.current_scene = null;
@@ -206,4 +208,8 @@ Core.prototype.fullscreen = function() {
 	}
 };
 
+// it is done to load fonts
+Core.prototype.fontLoadingDone = function() {
+	this.font_loader.notifyLoadingDone();
+};
 module.exports = Core;
