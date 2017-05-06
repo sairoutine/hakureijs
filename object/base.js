@@ -15,8 +15,8 @@ var ObjectBase = function(scene, object) {
 
 	this.frame_count = 0;
 
-	this.x = 0; // local center x
-	this.y = 0; // local center y
+	this._x = 0; // local center x
+	this._y = 0; // local center y
 
 	// manage flags that disappears in frame elapsed
 	this.auto_disable_times_map = {};
@@ -31,8 +31,8 @@ var ObjectBase = function(scene, object) {
 ObjectBase.prototype.init = function(){
 	this.frame_count = 0;
 
-	this.x = 0;
-	this.y = 0;
+	this._x = 0;
+	this._y = 0;
 
 	this.auto_disable_times_map = {};
 
@@ -96,8 +96,8 @@ ObjectBase.prototype.move = function() {
 	var x = util.calcMoveXByVelocity(this.velocity);
 	var y = util.calcMoveYByVelocity(this.velocity);
 
-	this.x += x;
-	this.y += y;
+	this._x += x;
+	this._y += y;
 };
 ObjectBase.prototype.onCollision = function(){
 };
@@ -109,22 +109,22 @@ ObjectBase.prototype.height = function() {
 	return 0;
 };
 ObjectBase.prototype.globalCenterX = function() {
-	return this.scene.x + this.x;
+	return this.scene.x() + this.x();
 };
 ObjectBase.prototype.globalCenterY = function() {
-	return this.scene.y + this.y;
+	return this.scene.y() + this.y();
 };
 ObjectBase.prototype.globalLeftX = function() {
-	return this.scene.x + this.x - this.width()/2;
+	return this.scene.x() + this.x() - this.width()/2;
 };
 ObjectBase.prototype.globalRightX = function() {
-	return this.scene.x + this.x + this.width()/2;
+	return this.scene.x() + this.x() + this.width()/2;
 };
 ObjectBase.prototype.globalUpY = function() {
-	return this.scene.x + this.y - this.height()/2;
+	return this.scene.x() + this.y() - this.height()/2;
 };
 ObjectBase.prototype.globalDownY = function() {
-	return this.scene.x + this.y + this.height()/2;
+	return this.scene.x() + this.y() + this.height()/2;
 };
 
 ObjectBase.prototype.collisionWidth = function() {
@@ -155,8 +155,8 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 
 
 ObjectBase.prototype.checkCollision = function(obj) {
-	if(Math.abs(this.x - obj.x) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
-		Math.abs(this.y - obj.y) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
+	if(Math.abs(this.x() - obj.x()) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
+		Math.abs(this.y() - obj.y()) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
 		return true;
 	}
 
@@ -164,16 +164,16 @@ ObjectBase.prototype.checkCollision = function(obj) {
 };
 
 ObjectBase.prototype.getCollisionLeftX = function() {
-	return this.x - this.collisionWidth() / 2;
+	return this.x() - this.collisionWidth() / 2;
 };
 ObjectBase.prototype.getCollisionRightX = function() {
-	return this.x + this.collisionWidth() / 2;
+	return this.x() + this.collisionWidth() / 2;
 };
 ObjectBase.prototype.getCollisionUpY = function() {
-	return this.y - this.collisionHeight() / 2;
+	return this.y() - this.collisionHeight() / 2;
 };
 ObjectBase.prototype.getCollisionDownY = function() {
-	return this.y + this.collisionHeight() / 2;
+	return this.y() + this.collisionHeight() / 2;
 };
 
 
@@ -206,8 +206,14 @@ ObjectBase.prototype.checkAutoDisableFlags = function() {
 	}
 };
 
-
-
+ObjectBase.prototype.x = function(val) {
+	if (typeof val !== 'undefined') { this._x = val; }
+	return this._x;
+};
+ObjectBase.prototype.y = function(val) {
+	if (typeof val !== 'undefined') { this._y = val; }
+	return this._y;
+};
 
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this.velocity = velocity;

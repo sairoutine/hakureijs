@@ -6,8 +6,8 @@ var SceneBase = function(core, scene) {
 	this.width = this.core.width; // default
 	this.height = this.core.height; // default
 
-	this.x = 0;
-	this.y = 0;
+	this._x = 0;
+	this._y = 0;
 
 	this.frame_count = 0;
 
@@ -24,8 +24,8 @@ SceneBase.prototype.init = function(){
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
 
-	this.x = 0;
-	this.y = 0;
+	this._x = 0;
+	this._y = 0;
 
 	this.frame_count = 0;
 
@@ -92,7 +92,14 @@ SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 
 };
 
-
+SceneBase.prototype.x = function(val) {
+	if (typeof val !== 'undefined') { this._x = val; }
+	return this._x;
+};
+SceneBase.prototype.y = function(val) {
+	if (typeof val !== 'undefined') { this._y = val; }
+	return this._y;
+};
 
 module.exports = SceneBase;
 
