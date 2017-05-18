@@ -212,4 +212,43 @@ Core.prototype.fullscreen = function() {
 Core.prototype.fontLoadingDone = function() {
 	this.font_loader.notifyLoadingDone();
 };
+
+Core.prototype.setupEvents = function() {
+	if(!window) return;
+
+	var self = this;
+
+	// setup WebAudio
+	window.AudioContext = (function(){
+		return window.AudioContext || window.webkitAudioContext;
+	})();
+
+	// setup requestAnimationFrame
+	window.requestAnimationFrame = (function(){
+		return window.requestAnimationFrame	||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame	||
+			function(callback) { window.setTimeout(callback, 1000 / 60); };
+	})();
+
+
+	// If the browser has `document.fonts`, wait font loading.
+	if(window.document && window.document.fonts) {
+		window.document.fonts.addEventListener('loadingdone', function() { self.fontLoadingDone(); });
+	}
+	else {
+		self.fontLoadingDone();
+	}
+
+	// bind keyboard
+	window.onkeydown = function(e) { self.handleKeyDown(e); };
+	window.onkeyup   = function(e) { self.handleKeyUp(e); };
+
+	// bind gamepad
+	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
+		self.enableGamePad();
+	}
+};
+
+
 module.exports = Core;
