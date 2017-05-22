@@ -8,26 +8,27 @@
 
 
 
-var DEFAULT_KEY = "hakurei_engine_game";
+var DEFAULT_KEY = "hakurei_engine_game:default";
 
-var StorageData = function (data) {
+var StorageBase = function (data) {
 	this._data = data;
 };
 
 // save file unique key
 // this constant must be overridden!
-StorageData.KEY = function() {
+StorageBase.KEY = function() {
 	return DEFAULT_KEY;
 };
 
 
 // is Electron or NW.js ?
-StorageData.isLocalMode = function() {
+StorageBase.isLocalMode = function() {
 	return typeof require === 'function' && typeof process === 'object' && process.title !== 'browser';
 };
 
-StorageData.prototype.save = function() {
-	if (StorageData.isLocalMode()) {
+StorageBase.prototype.save = function() {
+	var Klass = this.constructor;
+	if (Klass.isLocalMode()) {
 		this._saveToLocalFile();
 	}
 	else {
@@ -36,14 +37,15 @@ StorageData.prototype.save = function() {
 	}
 };
 
-StorageData.prototype._saveToLocalFile = function() {
+StorageBase.prototype._saveToLocalFile = function() {
+	var Klass = this.constructor;
 	var fs = require('fs');
 
 	var data = JSON.stringify(this._data);
 
-	var dir_path = StorageData._localFileDirectoryPath();
+	var dir_path = Klass._localFileDirectoryPath();
 
-	var file_path = dir_path + StorageData._localFileName(StorageData.KEY());
+	var file_path = dir_path + Klass._localFileName(Klass.KEY());
 
 	if (!fs.existsSync(dir_path)) {
 		fs.mkdirSync(dir_path);
@@ -52,23 +54,25 @@ StorageData.prototype._saveToLocalFile = function() {
 };
 
 // save file directory
-StorageData._localFileDirectoryPath = function() {
+StorageBase._localFileDirectoryPath = function() {
 	var path = require('path');
 
 	var base = path.dirname(process.mainModule.filename);
 	return path.join(base, 'save/');
 };
 
-StorageData._localFileName = function(key) {
+StorageBase._localFileName = function(key) {
 	return key + ".json";
 };
 
-StorageData._localFilePath = function(key) {
-	return StorageData._localFileDirectoryPath() + StorageData._localFileName(key);
+StorageBase._localFilePath = function(key) {
+	return this._localFileDirectoryPath() + this._localFileName(key);
 };
 
-StorageData.prototype._saveToWebStorage = function() {
-	var key = StorageData.KEY();
+StorageBase.prototype._saveToWebStorage = function() {
+	var Klass = this.constructor;
+
+	var key = Klass.KEY();
 	var data = JSON.stringify(this._data);
 	try {
 		window.localStorage.setItem(key, data);
@@ -77,33 +81,34 @@ StorageData.prototype._saveToWebStorage = function() {
 	}
 };
 
-StorageData.load = function() {
-	if (StorageData.isLocalMode()) {
-		return StorageData._loadFromLocalFile();
+StorageBase.load = function() {
+	if (this.isLocalMode()) {
+		return this._loadFromLocalFile();
 	}
 	else {
-		return StorageData._loadFromWebStorage();
+		return this._loadFromWebStorage();
 	}
 };
 
-StorageData._loadFromLocalFile = function() {
+StorageBase._loadFromLocalFile = function() {
 	var fs = require('fs');
 
-	var file_path = this.localFilePath(StorageData.KEY());
+	var file_path = this.localFilePath(this.KEY());
 	if (!fs.existsSync()) return null;
 
 	var data = fs.readFileSync(file_path, { encoding: 'utf8' });
 
+	var Klass = this;
 	if (data) {
-		return new StorageData(JSON.parse(data));
+		return new Klass(JSON.parse(data));
 	}
 	else {
 		return null;
 	}
 };
 
-StorageData._loadFromWebStorage = function() {
-	var key = StorageData.KEY();
+StorageBase._loadFromWebStorage = function() {
+	var key = this.KEY();
 	var data;
 	try {
 		data = window.localStorage.getItem(key);
@@ -111,8 +116,9 @@ StorageData._loadFromWebStorage = function() {
 	catch (e) {
 	}
 
+	var Klass = this;
 	if (data) {
-		return new StorageData(JSON.parse(data));
+		return new Klass(JSON.parse(data));
 	}
 	else {
 		return null;
@@ -120,8 +126,9 @@ StorageData._loadFromWebStorage = function() {
 
 };
 
-StorageData.prototype.del = function() {
-	if (StorageData.isLocalMode()) {
+StorageBase.prototype.del = function() {
+	var Klass = this.constructor;
+	if (Klass.isLocalMode()) {
 		this._removeLocalFile();
 	}
 	else {
@@ -129,16 +136,19 @@ StorageData.prototype.del = function() {
 	}
 };
 
-StorageData.prototype._removeLocalFile = function() {
+StorageBase.prototype._removeLocalFile = function() {
+	var Klass = this.constructor;
 	var fs = require('fs');
-	var file_path = this.localFilePath(StorageData.KEY());
+	var file_path = this.localFilePath(Klass.KEY());
+
 	if (fs.existsSync(file_path)) {
 		fs.unlinkSync(file_path);
 	}
 };
 
-StorageData.prototype._removeWebStorage = function() {
-	var key = StorageData.KEY();
+StorageBase.prototype._removeWebStorage = function() {
+	var Klass = this.constructor;
+	var key = Klass.KEY();
 	try {
 		window.localStorage.removeItem(key);
 	}
@@ -146,4 +156,4 @@ StorageData.prototype._removeWebStorage = function() {
 	}
 };
 
-module.exports = StorageData;
+module.exports = StorageBase;
