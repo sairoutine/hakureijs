@@ -14,6 +14,12 @@ module.exports = {
 	},
 	asset_loader: {
 		image: require("./asset_loader/image"),
-		//sound: require("./asset_loader/sound"),
+		audio: require("./asset_loader/audio"),
+		font:  require("./asset_loader/font"),
 	},
+	storage: {
+		base: require("./storage/base"),
+		save: require("./storage/save"),
+	},
+
 };
