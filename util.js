@@ -1,6 +1,7 @@
 'use strict';
 var Util = {
 	inherit: function( child, parent ) {
+		// inherit instance methods
 		var getPrototype = function(p) {
 			if(Object.create) return Object.create(p);
 
@@ -10,6 +11,11 @@ var Util = {
 		};
 		child.prototype = getPrototype(parent.prototype);
 		child.prototype.constructor = child;
+
+		// inherit static methods
+		for (var func_name in parent) {
+			child[func_name] = parent[func_name];
+		}
 	},
 	radianToTheta: function(radian) {
 		return (radian * 180 / Math.PI) | 0;
