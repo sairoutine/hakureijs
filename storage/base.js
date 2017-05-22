@@ -11,6 +11,7 @@
 var DEFAULT_KEY = "hakurei_engine_game:default";
 
 var StorageBase = function (data) {
+	if(!data) data = {};
 	this._data = data;
 };
 
