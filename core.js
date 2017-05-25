@@ -39,9 +39,6 @@ Core.prototype.init = function () {
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
 
-
-	this.is_connect_gamepad = false;
-
 	this.image_loader.init();
 };
 Core.prototype.enableGamePad = function () {
