@@ -4,9 +4,21 @@ var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
 
-var Core = function(canvas) {
+var Core = function(canvas, options) {
+	if(!options) {
+		options = {};
+	}
+
 	this.canvas_dom = canvas;
-	this.ctx = this.canvas_dom.getContext('2d');
+	this.ctx = null; // 2D context
+	this.gl  = null; // 3D context
+
+	if(options.webgl) {
+		this.gl = null;
+	}
+	else {
+		this.ctx = this.canvas_dom.getContext('2d');
+	}
 
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
@@ -118,7 +130,14 @@ Core.prototype.changeNextSceneIfReserved = function() {
 	}
 };
 Core.prototype.clearCanvas = function() {
-	this.ctx.clearRect(0, 0, this.width, this.height);
+	if (this.ctx) {
+		// 2D
+		this.ctx.clearRect(0, 0, this.width, this.height);
+	}
+	else if (this.gl) {
+		// 3D
+		// TODO:
+	}
 };
 Core.prototype.handleKeyDown = function(e) {
 	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
