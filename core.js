@@ -130,14 +130,20 @@ Core.prototype.changeNextSceneIfReserved = function() {
 	}
 };
 Core.prototype.clearCanvas = function() {
-	if (this.ctx) {
+	if (this.is2D()) {
 		// 2D
 		this.ctx.clearRect(0, 0, this.width, this.height);
 	}
-	else if (this.gl) {
+	else if (this.is3D()) {
 		// 3D
 		// TODO:
 	}
+};
+Core.prototype.is2D = function() {
+	return this.ctx ? true : false;
+};
+Core.prototype.is3D = function() {
+	return this.gl ? true : false;
 };
 Core.prototype.handleKeyDown = function(e) {
 	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
