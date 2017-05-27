@@ -1,4 +1,5 @@
 'use strict';
+var WebGLDebugUtils = require("webgl-debug");
 var CONSTANT = require("./constant");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
@@ -14,7 +15,7 @@ var Core = function(canvas, options) {
 	this.gl  = null; // 3D context
 
 	if(options.webgl) {
-		this.gl = null;
+		this.gl = this.createWebGLContext(this.canvas_dom);
 	}
 	else {
 		this.ctx = this.canvas_dom.getContext('2d');
@@ -271,6 +272,25 @@ Core.prototype.setupEvents = function() {
 		self.enableGamePad();
 	}
 };
+
+Core.prototype.createWebGLContext = function(canvas) {
+	var gl;
+	try {
+		gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+		gl = WebGLDebugUtils.makeDebugContext(gl);
+	} catch (e) {
+		throw e;
+	}
+	if (!gl) {
+		throw new Error ("Could not initialize WebGL");
+	}
+
+	return gl;
+};
+
+
+
+
 
 
 module.exports = Core;
