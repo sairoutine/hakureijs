@@ -35,6 +35,12 @@ var Core = function(canvas, options) {
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
 
+	this.is_left_clicked  = false;
+	this.is_right_clicked = false;
+	this.before_is_left_clicked  = false;
+	this.before_is_right_clicked = false;
+
+
 	this.is_connect_gamepad = false;
 
 	this.image_loader = new ImageLoader();
@@ -51,6 +57,12 @@ Core.prototype.init = function () {
 
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
+
+	this.is_left_clicked  = false;
+	this.is_right_clicked = false;
+	this.before_is_left_clicked  = false;
+	this.before_is_right_clicked = false;
+
 
 	this.image_loader.init();
 };
@@ -99,6 +111,9 @@ Core.prototype.run = function(){
 
 	// save key current pressed keys
 	this.before_keyflag = this.current_keyflag;
+	this.before_is_left_clicked = this.is_left_clicked;
+	this.before_is_right_clicked = this.is_right_clicked;
+
 
 	this.frame_count++;
 
@@ -161,6 +176,43 @@ Core.prototype.isKeyPush = function(flag) {
 	// not true if key is pressed in previous frame
 	return !(this.before_keyflag & flag) && this.current_keyflag & flag;
 };
+Core.prototype.handleMouseDown = function(event) {
+	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+		this.is_left_clicked  = event.which === 1;
+		this.is_right_clicked = event.which === 3;
+	}
+	else if ("button" in event) {  // IE, Opera
+		this.is_left_clicked  = event.button === 1;
+		this.is_right_clicked = event.button === 2;
+	}
+	event.preventDefault();
+};
+Core.prototype.handleMouseUp = function(event) {
+	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+		this.is_left_clicked  = event.which === 1 ? false : this.is_left_clicked;
+		this.is_right_clicked = event.which === 3 ? false : this.is_right_clicked;
+	}
+	else if ("button" in event) {  // IE, Opera
+		this.is_left_clicked  = event.button === 1 ? false : this.is_left_clicked;
+		this.is_right_clicked = event.button === 2 ? false : this.is_right_clicked;
+	}
+	event.preventDefault();
+};
+Core.prototype.isLeftClickDown = function() {
+	return this.is_left_clicked;
+};
+Core.prototype.isLeftClickPush = function() {
+	// not true if is pressed in previous frame
+	return this.is_left_clicked && !this.before_is_left_clicked;
+};
+Core.prototype.isRightClickDown = function() {
+	return this.is_right_clicked;
+};
+Core.prototype.isRightClickPush = function() {
+	// not true if is pressed in previous frame
+	return this.is_right_clicked && !this.before_is_right_clicked;
+};
+
 Core.prototype._keyCodeToBitCode = function(keyCode) {
 	var flag;
 	switch(keyCode) {
@@ -266,6 +318,13 @@ Core.prototype.setupEvents = function() {
 	// bind keyboard
 	window.onkeydown = function(e) { self.handleKeyDown(e); };
 	window.onkeyup   = function(e) { self.handleKeyUp(e); };
+
+	// bind mouse
+	this.canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
+	this.canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
+
+	// unable to use right click menu.
+	this.canvas_dom.oncontextmenu = function() { return false; };
 
 	// bind gamepad
 	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
