@@ -1,4 +1,7 @@
 'use strict';
+
+/* TODO: create input_manager class */
+
 var WebGLDebugUtils = require("webgl-debug");
 var CONSTANT = require("./constant");
 var ImageLoader = require("./asset_loader/image");
@@ -39,6 +42,10 @@ var Core = function(canvas, options) {
 	this.is_right_clicked = false;
 	this.before_is_left_clicked  = false;
 	this.before_is_right_clicked = false;
+	this.mouse_change_x = 0;
+	this.mouse_change_y = 0;
+	this.mouse_x = 0;
+	this.mouse_y = 0;
 
 
 	this.is_connect_gamepad = false;
@@ -62,6 +69,11 @@ Core.prototype.init = function () {
 	this.is_right_clicked = false;
 	this.before_is_left_clicked  = false;
 	this.before_is_right_clicked = false;
+	this.mouse_change_x = 0;
+	this.mouse_change_y = 0;
+	this.mouse_x = 0;
+	this.mouse_y = 0;
+
 
 
 	this.image_loader.init();
@@ -212,6 +224,26 @@ Core.prototype.isRightClickPush = function() {
 	// not true if is pressed in previous frame
 	return this.is_right_clicked && !this.before_is_right_clicked;
 };
+Core.prototype.handleMouseMove = function (d) {
+	d = d ? d : window.event;
+	d.preventDefault();
+	this.mouse_change_x = this.mouse_x - d.clientX;
+	this.mouse_change_y = this.mouse_y - d.clientY;
+	this.mouse_x = d.clientX;
+	this.mouse_y = d.clientY;
+};
+Core.prototype.mousePositionX = function () {
+	return this.mouse_x;
+};
+Core.prototype.mousePositionY = function () {
+	return this.mouse_y;
+};
+Core.prototype.mouseMoveX = function () {
+	return this.mouse_change_x;
+};
+Core.prototype.mouseMoveY = function () {
+	return this.mouse_change_y;
+};
 
 Core.prototype._keyCodeToBitCode = function(keyCode) {
 	var flag;
@@ -319,9 +351,12 @@ Core.prototype.setupEvents = function() {
 	window.onkeydown = function(e) { self.handleKeyDown(e); };
 	window.onkeyup   = function(e) { self.handleKeyUp(e); };
 
-	// bind mouse
+	// bind mouse click
 	this.canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
 	this.canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
+
+	// bind mouse move
+	this.canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
 
 	// unable to use right click menu.
 	this.canvas_dom.oncontextmenu = function() { return false; };
