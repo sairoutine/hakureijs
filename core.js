@@ -373,19 +373,12 @@ Core.prototype.setupEvents = function() {
 	this.canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
 
 	// bind mouse wheel
-	if (window.navigator && window.document) {
-		var mousewheel = function(e) {
+	var mousewheelevent=(window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+	if (this.canvas_dom.addEventListener) { //WC3 browsers
+		this.canvas_dom.addEventListener(mousewheelevent, function(e) {
 			var event = window.event || e;
 			self.handleMouseWheel(event);
-		};
-
-		var mousewheelevent=(/Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
-		if (window.document.attachEvent) { //if IE (and Opera depending on user setting)
-			window.document.attachEvent("on"+mousewheelevent, mousewheel);
-		}
-		else if (window.document.addEventListener) { //WC3 browsers
-			window.document.addEventListener(mousewheelevent, mousewheel, false);
-		}
+		}, false);
 	}
 
 	// unable to use right click menu.
