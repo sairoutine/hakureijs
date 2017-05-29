@@ -127,6 +127,11 @@ Core.prototype.run = function(){
 	this.before_is_left_clicked = this.is_left_clicked;
 	this.before_is_right_clicked = this.is_right_clicked;
 
+	// reset mouse wheel and mouse move
+	this.mouse_scroll = 0;
+	this.mouse_change_x = 0;
+	this.mouse_change_y = 0;
+
 
 	this.frame_count++;
 
@@ -225,6 +230,8 @@ Core.prototype.isRightClickPush = function() {
 	// not true if is pressed in previous frame
 	return this.is_right_clicked && !this.before_is_right_clicked;
 };
+
+
 Core.prototype.handleMouseMove = function (d) {
 	d = d ? d : window.event;
 	d.preventDefault();
