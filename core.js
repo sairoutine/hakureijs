@@ -46,7 +46,7 @@ var Core = function(canvas, options) {
 	this.mouse_change_y = 0;
 	this.mouse_x = 0;
 	this.mouse_y = 0;
-
+	this.mouse_scroll = 0;
 
 	this.is_connect_gamepad = false;
 
@@ -73,6 +73,7 @@ Core.prototype.init = function () {
 	this.mouse_change_y = 0;
 	this.mouse_x = 0;
 	this.mouse_y = 0;
+	this.mouse_scroll = 0;
 
 
 
@@ -244,6 +245,12 @@ Core.prototype.mouseMoveX = function () {
 Core.prototype.mouseMoveY = function () {
 	return this.mouse_change_y;
 };
+Core.prototype.handleMouseWheel = function (event) {
+	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
+};
+Core.prototype.mouseScroll = function () {
+	return this.mouse_scroll;
+};
 
 Core.prototype._keyCodeToBitCode = function(keyCode) {
 	var flag;
@@ -357,6 +364,22 @@ Core.prototype.setupEvents = function() {
 
 	// bind mouse move
 	this.canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
+
+	// bind mouse wheel
+	if (window.navigator && window.document) {
+		var mousewheel = function(e) {
+			var event = window.event || e;
+			self.handleMouseWheel(event);
+		};
+
+		var mousewheelevent=(/Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+		if (window.document.attachEvent) { //if IE (and Opera depending on user setting)
+			window.document.attachEvent("on"+mousewheelevent, mousewheel);
+		}
+		else if (window.document.addEventListener) { //WC3 browsers
+			window.document.addEventListener(mousewheelevent, mousewheel, false);
+		}
+	}
 
 	// unable to use right click menu.
 	this.canvas_dom.oncontextmenu = function() { return false; };
