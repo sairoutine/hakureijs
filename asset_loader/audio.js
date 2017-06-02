@@ -98,7 +98,7 @@ AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd)
 };
 
 AudioLoader.prototype.isAllLoaded = function() {
-	return this.loaded_audio_num > 0 && this.loaded_audio_num === this.loading_audio_num;
+	return this.loaded_audio_num === this.loading_audio_num;
 };
 
 AudioLoader.prototype.playSound = function(name) {
