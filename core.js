@@ -7,6 +7,7 @@ var CONSTANT = require("./constant");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
+var SceneLoading = require('./scene/loading');
 
 var Core = function(canvas, options) {
 	if(!options) {
@@ -75,9 +76,11 @@ Core.prototype.init = function () {
 	this.mouse_y = 0;
 	this.mouse_scroll = 0;
 
-
-
 	this.image_loader.init();
+	this.audio_loader.init();
+	this.font_loader.init();
+
+	this.addScene("loading", new SceneLoading(this));
 };
 Core.prototype.enableGamePad = function () {
 	this.is_connect_gamepad = true;
@@ -163,6 +166,11 @@ Core.prototype.changeNextSceneIfReserved = function() {
 		this._reserved_next_scene = null;
 	}
 };
+Core.prototype.changeSceneWithLoading = function(scene, assets) {
+	if(!assets) assets = {};
+	this.changeScene("loading", assets, scene);
+};
+
 Core.prototype.clearCanvas = function() {
 	if (this.is2D()) {
 		// 2D
@@ -404,8 +412,6 @@ Core.prototype.createWebGLContext = function(canvas) {
 
 	return gl;
 };
-
-
 
 
 

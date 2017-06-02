@@ -6,6 +6,7 @@ module.exports = {
 	serif_manager: require("./serif_manager"),
 	scene: {
 		base: require("./scene/base"),
+		loading: require("./scene/loading"),
 	},
 	object: {
 		base: require("./object/base"),
