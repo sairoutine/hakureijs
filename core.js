@@ -178,7 +178,9 @@ Core.prototype.clearCanvas = function() {
 	}
 	else if (this.is3D()) {
 		// 3D
-		// TODO:
+		this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
+		this.gl.clearDepth(1.0);
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT);
 	}
 };
 Core.prototype.is2D = function() {
