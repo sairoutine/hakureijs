@@ -12,10 +12,14 @@ var AudioLoader = function() {
 	// flag which determine what sound.
 	this.soundflag = 0x00;
 
-	this.audio_context = new window.AudioContext();
+	this.audio_context = null;
+	if (window && window.AudioContext) {
+		this.audio_context = new window.AudioContext();
 
-	// for legacy browser
-	this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
+		// for legacy browser
+		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
+	}
+
 	// playing AudioBufferSourceNode instance
 	this.audio_source = null;
 
