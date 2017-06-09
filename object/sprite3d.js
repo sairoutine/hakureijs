@@ -239,6 +239,8 @@ Sprite3d.prototype.draw = function(){
 	if(this.isShow()) {
 		var gl = this.core.gl;
 
+		gl.useProgram(this.shader.shader_program);
+
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
 

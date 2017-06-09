@@ -63,8 +63,6 @@ ShaderProgram.prototype.createShaderProgram = function(gl, vertex_shader, fragme
 		throw new Error("Could not initialize shaders:\n\n" + gl.getProgramInfoLog(shaderProgram));
 	}
 
-	gl.useProgram(shaderProgram);
-
 	return shaderProgram;
 };
 
