@@ -1,6 +1,10 @@
 'use strict';
 var base_object = require('./base');
 var util = require('../util');
+var ShaderProgram = require('../shader_program');
+var VS = require("../shader/main.vs");
+var FS = require("../shader/main.fs");
+
 var glmat = require('gl-matrix');
 
 var V_ITEM_SIZE = 3;
@@ -33,8 +37,46 @@ var Sprite3d = function(scene) {
 	this.indices.length     = I_SIZE;
 	this.colors.length      = A_SIZE;
 
+	var gl = this.core.gl;
+	this.vBuffer = gl.createBuffer();
+	this.cBuffer = gl.createBuffer();
+	this.iBuffer = gl.createBuffer();
+	this.aBuffer = gl.createBuffer();
 
+	this.texture = null;
 
+	this.shader = new ShaderProgram(
+		gl,
+		// verticle shader, fragment shader
+		VS, FS,
+		// attributes
+		[
+			"aTextureCoordinates",
+			"aVertexPosition",
+			"aColor"
+		],
+		// uniforms
+		[
+			"uMVMatrix",
+			"uPMatrix",
+			"uSampler", // texture data
+		]
+	);
+
+	this.mvMatrix = glmat.mat4.create();
+	glmat.mat4.identity(this.mvMatrix);
+
+	this.pMatrix = glmat.mat4.create();
+	glmat.mat4.identity(this.pMatrix);
+
+	var near = 0.1;
+	var far  = 10.0;
+	glmat.mat4.ortho(this.pMatrix,
+		-this.core.width/2,
+		this.core.width/2,
+		-this.core.height/2,
+		this.core.height/2,
+		near, far);
 };
 util.inherit(Sprite3d, base_object);
 
@@ -47,6 +89,8 @@ Sprite3d.prototype.init = function(){
 	this._initCoordinates();
 	this._initIndices();
 	this._initColors();
+
+	this._initTexture();
 };
 
 Sprite3d.prototype._initVertices = function() {
@@ -127,8 +171,31 @@ Sprite3d.prototype._initColors = function() {
 	this.colors[15] = 1.0;
 };
 
+Sprite3d.prototype._initTexture = function() {
+	var gl = this.core.gl;
+	var image = this.core.image_loader.getImage(this.spriteName());
+
+	var texture = gl.createTexture();
+
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+
+	this.texture = texture;
+};
+
+
+
+
 Sprite3d.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
+
+
+
 
 	// animation sprite
 	if(this.frame_count % this.spriteAnimationSpan() === 0) {
@@ -137,50 +204,89 @@ Sprite3d.prototype.beforeDraw = function(){
 			this.current_sprite_index = 0;
 		}
 	}
+
+	// update vertices property
+	this._initVertices();
+	/*
+	this._translate();
+	this._rotate();
+	*/
 };
+
+
+Sprite3d.prototype._translate = function() {
+	for(var i = 0; i < V_ITEM_NUM; i++) {
+		this.vertices[i * V_ITEM_SIZE + 0] += this.x();
+		this.vertices[i * V_ITEM_SIZE + 1] -= this.y();
+		this.vertices[i * V_ITEM_SIZE + 2] += this.z();
+	}
+};
+
+Sprite3d.prototype._rotate = function() {
+	var radian = this._getARadian();
+	for(var i = 0; i < V_ITEM_NUM; i++) {
+		var x = this.vertices[i * V_ITEM_SIZE + 0];
+		var y = this.vertices[i * V_ITEM_SIZE + 1];
+
+		this.vertices[i * V_ITEM_SIZE + 0] = x * Math.cos(radian) - y * Math.sin(radian);
+		this.vertices[i * V_ITEM_SIZE + 1] = x * Math.sin(radian) + y * Math.cos(radian);
+	}
+};
+
+Sprite3d.prototype._getARadian = function() {
+	var a_theta = 270-this.velocity.theta;
+	return util.thetaToRadian(a_theta);
+};
+
 Sprite3d.prototype.draw = function(){
 	if(this.isShow()) {
+		var gl = this.core.gl;
 
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.coordinates), gl.STATIC_DRAW);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+		gl.enableVertexAttribArray(this.shader.attribute_locations.aVertexPosition);
+		gl.vertexAttribPointer(this.shader.attribute_locations.aVertexPosition,
+							 V_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
+		gl.enableVertexAttribArray(this.shader.attribute_locations.aColor);
+		gl.vertexAttribPointer(this.shader.attribute_locations.aColor,
+							 A_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
+		gl.enableVertexAttribArray(this.shader.attribute_locations.aTextureCoordinates);
+		gl.vertexAttribPointer(this.shader.attribute_locations.aTextureCoordinates,
+							 C_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this.texture);
+		gl.uniform1i(this.shader.uniform_locations.uSampler, 0);
+
+		gl.uniformMatrix4fv(this.shader.uniform_locations.uPMatrix,  false, this.pMatrix);
+		gl.uniformMatrix4fv(this.shader.uniform_locations.uMVMatrix, false, this.mvMatrix);
+
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.enable(gl.BLEND);
+		gl.disable(gl.DEPTH_TEST);
+
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+
+		gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+
+		gl.flush();
 		/*
-		var image = this.core.image_loader.getImage(this.spriteName());
-
-		if(this.scale()) console.error("scale method is deprecated. you should use scaleWidth and scaleHeight.");
-
-		var ctx = this.core.ctx;
-
-		ctx.save();
-
-		// set position
-		ctx.translate(this.globalCenterX(), this.globalCenterY());
-
-		// rotate
-		var rotate = util.thetaToRadian(this.velocity.theta + this.rotateAdjust());
-		ctx.rotate(rotate);
-
-		var sprite_width  = this.spriteWidth();
-		var sprite_height = this.spriteHeight();
-		if(!sprite_width)  sprite_width = image.width;
-		if(!sprite_height) sprite_height = image.height;
-
-		var width  = this.width();
-		var height = this.height();
-
-		// reflect left or right
-		if(this.isReflect()) {
-			ctx.transform(-1, 0, 0, 1, 0, 0);
-		}
-
-		ctx.drawImage(image,
-			// sprite position
-			sprite_width * this.spriteIndexX(), sprite_height * this.spriteIndexY(),
-			// sprite size to get
-			sprite_width,                       sprite_height,
-			// adjust left x, up y because of x and y indicate sprite center.
-			-width/2,                           -height/2,
-			// sprite size to show
-			width,                              height
-		);
-		ctx.restore();
+		 * TODO:
+		 * reflect
+		 * scaling
 		*/
 	}
 
