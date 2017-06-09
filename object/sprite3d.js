@@ -97,20 +97,22 @@ Sprite3d.prototype._initVertices = function() {
 	var w = this.spriteWidth()/2;
 	var h = this.spriteHeight()/2;
 
-	this.vertices[0]  = -w;
-	this.vertices[1]  = -h;
+	// The upper left corner is the origin
+	// so reduce canvas width and add canvas height
+	this.vertices[0]  = -w - this.core.width/2;
+	this.vertices[1]  = -h + this.core.height/2;
 	this.vertices[2]  = -1.0;
 
-	this.vertices[3]  =  w;
-	this.vertices[4]  = -h;
+	this.vertices[3]  =  w - this.core.width/2;
+	this.vertices[4]  = -h + this.core.height/2;
 	this.vertices[5]  = -1.0;
 
-	this.vertices[6]  =  w;
-	this.vertices[7]  =  h;
+	this.vertices[6]  =  w - this.core.width/2;
+	this.vertices[7]  =  h + this.core.height/2;
 	this.vertices[8]  = -1.0;
 
-	this.vertices[9]  = -w;
-	this.vertices[10] =  h;
+	this.vertices[9]  = -w - this.core.width/2;
+	this.vertices[10] =  h + this.core.height/2;
 	this.vertices[11] = -1.0;
 };
 
@@ -207,10 +209,8 @@ Sprite3d.prototype.beforeDraw = function(){
 
 	// update vertices property
 	this._initVertices();
-	/*
 	this._translate();
 	this._rotate();
-	*/
 };
 
 
@@ -223,7 +223,7 @@ Sprite3d.prototype._translate = function() {
 };
 
 Sprite3d.prototype._rotate = function() {
-	var radian = this._getARadian();
+	var radian = this._getRadian();
 	for(var i = 0; i < V_ITEM_NUM; i++) {
 		var x = this.vertices[i * V_ITEM_SIZE + 0];
 		var y = this.vertices[i * V_ITEM_SIZE + 1];
@@ -233,9 +233,9 @@ Sprite3d.prototype._rotate = function() {
 	}
 };
 
-Sprite3d.prototype._getARadian = function() {
-	var a_theta = 270-this.velocity.theta;
-	return util.thetaToRadian(a_theta);
+Sprite3d.prototype._getRadian = function() {
+	var theta = this.velocity.theta;
+	return util.thetaToRadian(theta);
 };
 
 Sprite3d.prototype.draw = function(){
