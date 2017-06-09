@@ -195,10 +195,6 @@ Sprite3d.prototype._initTexture = function() {
 
 Sprite3d.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
-
-
-
-
 	// animation sprite
 	if(this.frame_count % this.spriteAnimationSpan() === 0) {
 		this.current_sprite_index++;
@@ -209,6 +205,7 @@ Sprite3d.prototype.beforeDraw = function(){
 
 	// update vertices property
 	this._initVertices();
+	this._initCoordinates();
 	this._translate();
 	this._rotate();
 };
