@@ -30,19 +30,7 @@ var Sprite3d = function(scene) {
 	this.texture = null;
 
 	this.mvMatrix = glmat.mat4.create();
-	glmat.mat4.identity(this.mvMatrix);
-
 	this.pMatrix = glmat.mat4.create();
-	glmat.mat4.identity(this.pMatrix);
-
-	var near = 0.1;
-	var far  = 10.0;
-	glmat.mat4.ortho(this.pMatrix,
-		-this.core.width/2,
-		this.core.width/2,
-		-this.core.height/2,
-		this.core.height/2,
-		near, far);
 };
 util.inherit(Sprite3d, base_object);
 
@@ -51,14 +39,21 @@ Sprite3d.prototype.init = function(){
 
 	this.current_sprite_index = 0;
 
+	this._initmvpMatrix();
 	this._initVertices();
 	this._initCoordinates();
 	this._initIndices();
 	this._initColors();
 
 	this._initTexture();
+
+	this._setOrthographicProjection();
 };
 
+Sprite3d.prototype._initmvpMatrix = function() {
+	glmat.mat4.identity(this.mvMatrix);
+	glmat.mat4.identity(this.pMatrix);
+};
 Sprite3d.prototype._initVertices = function() {
 	var w = this.spriteWidth()/2;
 	var h = this.spriteHeight()/2;
@@ -154,6 +149,16 @@ Sprite3d.prototype._initTexture = function() {
 	gl.bindTexture(gl.TEXTURE_2D, null);
 
 	this.texture = texture;
+};
+Sprite3d.prototype._setOrthographicProjection = function() {
+	var near = 0.1;
+	var far  = 10.0;
+	glmat.mat4.ortho(this.pMatrix,
+		-this.core.width/2,
+		this.core.width/2,
+		-this.core.height/2,
+		this.core.height/2,
+		near, far);
 };
 
 
