@@ -36,14 +36,18 @@ PoolManager3D.prototype.init = function() {
 	this.objects = {};
 
 	this._initmvpMatrix();
-	this._setOrthographicProjection();
 
 };
 PoolManager3D.prototype._initmvpMatrix = function() {
+	// The upper left corner is the canvas origin
+	// so reduce canvas width and add canvas height
 	glmat.mat4.identity(this.mvMatrix);
-	glmat.mat4.identity(this.pMatrix);
+	glmat.mat4.translate(this.mvMatrix, this.mvMatrix, [-this.core.width/2, this.core.height/2, 0]);
+
+	this._setOrthographicProjection();
 };
 PoolManager3D.prototype._setOrthographicProjection = function() {
+	glmat.mat4.identity(this.pMatrix);
 	var near = 0.1;
 	var far  = 10.0;
 	glmat.mat4.ortho(this.pMatrix,

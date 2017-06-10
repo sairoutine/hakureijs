@@ -47,33 +47,34 @@ Sprite3d.prototype.init = function(){
 
 	this._initTexture();
 
-	this._setOrthographicProjection();
 };
 
 Sprite3d.prototype._initmvpMatrix = function() {
+	// The upper left corner is the canvas origin
+	// so reduce canvas width and add canvas height
 	glmat.mat4.identity(this.mvMatrix);
-	glmat.mat4.identity(this.pMatrix);
+	glmat.mat4.translate(this.mvMatrix, this.mvMatrix, [-this.core.width/2, this.core.height/2, 0]);
+
+	this._setOrthographicProjection();
 };
 Sprite3d.prototype._initVertices = function() {
 	var w = this.spriteWidth()/2;
 	var h = this.spriteHeight()/2;
 
-	// The upper left corner is the origin
-	// so reduce canvas width and add canvas height
-	this.vertices[0]  = -w - this.core.width/2;
-	this.vertices[1]  = -h + this.core.height/2;
+	this.vertices[0]  = -w;
+	this.vertices[1]  = -h;
 	this.vertices[2]  = -1.0;
 
-	this.vertices[3]  =  w - this.core.width/2;
-	this.vertices[4]  = -h + this.core.height/2;
+	this.vertices[3]  =  w;
+	this.vertices[4]  = -h;
 	this.vertices[5]  = -1.0;
 
-	this.vertices[6]  =  w - this.core.width/2;
-	this.vertices[7]  =  h + this.core.height/2;
+	this.vertices[6]  =  w;
+	this.vertices[7]  =  h;
 	this.vertices[8]  = -1.0;
 
-	this.vertices[9]  = -w - this.core.width/2;
-	this.vertices[10] =  h + this.core.height/2;
+	this.vertices[9]  = -w;
+	this.vertices[10] =  h;
 	this.vertices[11] = -1.0;
 };
 
@@ -151,6 +152,7 @@ Sprite3d.prototype._initTexture = function() {
 	this.texture = texture;
 };
 Sprite3d.prototype._setOrthographicProjection = function() {
+	glmat.mat4.identity(this.pMatrix);
 	var near = 0.1;
 	var far  = 10.0;
 	glmat.mat4.ortho(this.pMatrix,
