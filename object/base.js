@@ -218,5 +218,23 @@ ObjectBase.prototype.y = function(val) {
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this.velocity = velocity;
 };
+
+var EXTRA_OUT_OF_SIZE = 100;
+ObjectBase.prototype.isOutOfStage = function( ) {
+	if(this.x() + EXTRA_OUT_OF_SIZE < 0 ||
+	   this.y() + EXTRA_OUT_OF_SIZE < 0 ||
+	   this.x() > this.core.width  + EXTRA_OUT_OF_SIZE ||
+	   this.y() > this.core.height + EXTRA_OUT_OF_SIZE
+	  ) {
+		return true;
+	}
+
+	return false;
+};
+
+
+
+
+
 module.exports = ObjectBase;
 

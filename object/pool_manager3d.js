@@ -216,4 +216,15 @@ PoolManager3D.prototype.checkCollisionWithManager = function(manager) {
 	}
 };
 
+PoolManager3D.prototype.removeOutOfStageObjects = function() {
+	for(var id in this.objects) {
+		if(this.objects[id].isOutOfStage()) {
+			this.remove(id);
+		}
+	}
+};
+
+
+
+
 module.exports = PoolManager3D;

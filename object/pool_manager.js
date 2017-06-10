@@ -82,4 +82,15 @@ PoolManager.prototype.checkCollisionWithManager = function(manager) {
 	}
 };
 
+PoolManager.prototype.removeOutOfStageObjects = function() {
+	for(var id in this.objects) {
+		if(this.objects[id].isOutOfStage()) {
+			this.remove(id);
+		}
+	}
+};
+
+
+
+
 module.exports = PoolManager;
