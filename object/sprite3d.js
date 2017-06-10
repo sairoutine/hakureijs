@@ -253,7 +253,6 @@ Sprite3d.prototype.draw = function(){
 
 		gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
 
-		gl.flush();
 		/*
 		 * TODO:
 		 * reflect
