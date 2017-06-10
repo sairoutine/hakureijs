@@ -13,6 +13,7 @@ module.exports = {
 		sprite: require("./object/sprite"),
 		sprite3d: require("./object/sprite3d"),
 		pool_manager: require("./object/pool_manager"),
+		pool_manager3d: require("./object/pool_manager3d"),
 	},
 	asset_loader: {
 		image: require("./asset_loader/image"),
