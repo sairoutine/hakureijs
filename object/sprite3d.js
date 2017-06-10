@@ -1,24 +1,12 @@
 'use strict';
 var base_object = require('./base');
 var util = require('../util');
+var CONSTANT_3D = require('../constant_3d').SPRITE3D;
 var ShaderProgram = require('../shader_program');
 var VS = require("../shader/main.vs");
 var FS = require("../shader/main.fs");
 
 var glmat = require('gl-matrix');
-
-var V_ITEM_SIZE = 3;
-var V_ITEM_NUM = 4;
-var V_SIZE = V_ITEM_SIZE * V_ITEM_NUM;
-var C_ITEM_SIZE = 2;
-var C_ITEM_NUM = 4;
-var C_SIZE = C_ITEM_SIZE * C_ITEM_NUM;
-var I_ITEM_SIZE = 1;
-var I_ITEM_NUM = 6;
-var I_SIZE = I_ITEM_SIZE * I_ITEM_NUM;
-var A_ITEM_SIZE = 4;
-var A_ITEM_NUM = 4;
-var A_SIZE = A_ITEM_SIZE * A_ITEM_NUM;
 
 var Sprite3d = function(scene) {
 	base_object.apply(this, arguments);
@@ -32,10 +20,10 @@ var Sprite3d = function(scene) {
 	this.indices = [];
 	this.colors = [];
 
-	this.vertices.length    = V_SIZE;
-	this.coordinates.length = C_SIZE;
-	this.indices.length     = I_SIZE;
-	this.colors.length      = A_SIZE;
+	this.vertices.length    = CONSTANT_3D.V_SIZE;
+	this.coordinates.length = CONSTANT_3D.C_SIZE;
+	this.indices.length     = CONSTANT_3D.I_SIZE;
+	this.colors.length      = CONSTANT_3D.A_SIZE;
 
 	var gl = this.core.gl;
 	this.vBuffer = gl.createBuffer();
@@ -212,21 +200,21 @@ Sprite3d.prototype.beforeDraw = function(){
 
 
 Sprite3d.prototype._translate = function() {
-	for(var i = 0; i < V_ITEM_NUM; i++) {
-		this.vertices[i * V_ITEM_SIZE + 0] += this.x();
-		this.vertices[i * V_ITEM_SIZE + 1] -= this.y();
-		this.vertices[i * V_ITEM_SIZE + 2] += this.z();
+	for(var i = 0; i < CONSTANT_3D.V_ITEM_NUM; i++) {
+		this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 0] += this.x();
+		this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 1] -= this.y();
+		this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 2] += this.z();
 	}
 };
 
 Sprite3d.prototype._rotate = function() {
 	var radian = this._getRadian();
-	for(var i = 0; i < V_ITEM_NUM; i++) {
-		var x = this.vertices[i * V_ITEM_SIZE + 0];
-		var y = this.vertices[i * V_ITEM_SIZE + 1];
+	for(var i = 0; i < CONSTANT_3D.V_ITEM_NUM; i++) {
+		var x = this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 0];
+		var y = this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 1];
 
-		this.vertices[i * V_ITEM_SIZE + 0] = x * Math.cos(radian) - y * Math.sin(radian);
-		this.vertices[i * V_ITEM_SIZE + 1] = x * Math.sin(radian) + y * Math.cos(radian);
+		this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 0] = x * Math.cos(radian) - y * Math.sin(radian);
+		this.vertices[i * CONSTANT_3D.V_ITEM_SIZE + 1] = x * Math.sin(radian) + y * Math.cos(radian);
 	}
 };
 
@@ -253,17 +241,17 @@ Sprite3d.prototype.draw = function(){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.enableVertexAttribArray(this.shader.attribute_locations.aVertexPosition);
 		gl.vertexAttribPointer(this.shader.attribute_locations.aVertexPosition,
-							 V_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+							 CONSTANT_3D.V_ITEM_SIZE, gl.FLOAT, false, 0, 0);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
 		gl.enableVertexAttribArray(this.shader.attribute_locations.aColor);
 		gl.vertexAttribPointer(this.shader.attribute_locations.aColor,
-							 A_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+							 CONSTANT_3D.A_ITEM_SIZE, gl.FLOAT, false, 0, 0);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
 		gl.enableVertexAttribArray(this.shader.attribute_locations.aTextureCoordinates);
 		gl.vertexAttribPointer(this.shader.attribute_locations.aTextureCoordinates,
-							 C_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+							 CONSTANT_3D.C_ITEM_SIZE, gl.FLOAT, false, 0, 0);
 
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, this.texture);
