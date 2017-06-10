@@ -2,10 +2,6 @@
 var base_object = require('./base');
 var util = require('../util');
 var CONSTANT_3D = require('../constant_3d').SPRITE3D;
-var ShaderProgram = require('../shader_program');
-var VS = require("../shader/main.vs");
-var FS = require("../shader/main.fs");
-
 var glmat = require('gl-matrix');
 
 var Sprite3d = function(scene) {
@@ -32,24 +28,6 @@ var Sprite3d = function(scene) {
 	this.aBuffer = gl.createBuffer();
 
 	this.texture = null;
-
-	this.shader = new ShaderProgram(
-		gl,
-		// verticle shader, fragment shader
-		VS, FS,
-		// attributes
-		[
-			"aTextureCoordinates",
-			"aVertexPosition",
-			"aColor"
-		],
-		// uniforms
-		[
-			"uMVMatrix",
-			"uPMatrix",
-			"uSampler", // texture data
-		]
-	);
 
 	this.mvMatrix = glmat.mat4.create();
 	glmat.mat4.identity(this.mvMatrix);
@@ -226,8 +204,9 @@ Sprite3d.prototype._getRadian = function() {
 Sprite3d.prototype.draw = function(){
 	if(this.isShow()) {
 		var gl = this.core.gl;
+		var shader = this.core.sprite_3d_shader;
 
-		gl.useProgram(this.shader.shader_program);
+		gl.useProgram(shader.shader_program);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
@@ -239,26 +218,26 @@ Sprite3d.prototype.draw = function(){
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.enableVertexAttribArray(this.shader.attribute_locations.aVertexPosition);
-		gl.vertexAttribPointer(this.shader.attribute_locations.aVertexPosition,
+		gl.enableVertexAttribArray(shader.attribute_locations.aVertexPosition);
+		gl.vertexAttribPointer(shader.attribute_locations.aVertexPosition,
 							 CONSTANT_3D.V_ITEM_SIZE, gl.FLOAT, false, 0, 0);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
-		gl.enableVertexAttribArray(this.shader.attribute_locations.aColor);
-		gl.vertexAttribPointer(this.shader.attribute_locations.aColor,
+		gl.enableVertexAttribArray(shader.attribute_locations.aColor);
+		gl.vertexAttribPointer(shader.attribute_locations.aColor,
 							 CONSTANT_3D.A_ITEM_SIZE, gl.FLOAT, false, 0, 0);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.enableVertexAttribArray(this.shader.attribute_locations.aTextureCoordinates);
-		gl.vertexAttribPointer(this.shader.attribute_locations.aTextureCoordinates,
+		gl.enableVertexAttribArray(shader.attribute_locations.aTextureCoordinates);
+		gl.vertexAttribPointer(shader.attribute_locations.aTextureCoordinates,
 							 CONSTANT_3D.C_ITEM_SIZE, gl.FLOAT, false, 0, 0);
 
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, this.texture);
-		gl.uniform1i(this.shader.uniform_locations.uSampler, 0);
+		gl.uniform1i(shader.uniform_locations.uSampler, 0);
 
-		gl.uniformMatrix4fv(this.shader.uniform_locations.uPMatrix,  false, this.pMatrix);
-		gl.uniformMatrix4fv(this.shader.uniform_locations.uMVMatrix, false, this.mvMatrix);
+		gl.uniformMatrix4fv(shader.uniform_locations.uPMatrix,  false, this.pMatrix);
+		gl.uniformMatrix4fv(shader.uniform_locations.uMVMatrix, false, this.mvMatrix);
 
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		gl.enable(gl.BLEND);

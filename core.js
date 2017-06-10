@@ -9,6 +9,10 @@ var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
 var SceneLoading = require('./scene/loading');
 
+var ShaderProgram = require('./shader_program');
+var VS = require("./shader/main.vs");
+var FS = require("./shader/main.fs");
+
 var Core = function(canvas, options) {
 	if(!options) {
 		options = {};
@@ -19,9 +23,32 @@ var Core = function(canvas, options) {
 	this.gl  = null; // 3D context
 
 	if(options.webgl) {
+		// WebGL 3D mode
 		this.gl = this.createWebGLContext(this.canvas_dom);
+
+		// shader program
+		this.sprite_3d_shader = new ShaderProgram(
+			this.gl,
+			// verticle shader, fragment shader
+			VS, FS,
+			// attributes
+			[
+				"aTextureCoordinates",
+				"aVertexPosition",
+				"aColor"
+			],
+			// uniforms
+			[
+				"uMVMatrix",
+				"uPMatrix",
+				"uSampler", // texture data
+			]
+		);
+
+
 	}
 	else {
+		// Canvas 2D mode
 		this.ctx = this.canvas_dom.getContext('2d');
 	}
 
