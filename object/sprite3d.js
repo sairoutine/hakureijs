@@ -178,7 +178,8 @@ Sprite3d.prototype.beforeDraw = function(){
 	this._initVertices();
 	this._initCoordinates();
 	this._translate();
-	this._rotate();
+	// TODO: rotate
+	//this._rotate();
 };
 
 

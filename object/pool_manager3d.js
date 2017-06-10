@@ -111,6 +111,9 @@ PoolManager3D.prototype._resetAttributes = function() {
 PoolManager3D.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
 
+	// There is no objects.
+	if (this.vertices.length === 0) return;
+
 	var gl = this.core.gl;
 	var shader = this.core.sprite_3d_shader;
 
