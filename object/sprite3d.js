@@ -212,47 +212,29 @@ Sprite3d.prototype._getRadian = function() {
 Sprite3d.prototype.draw = function(){
 	if(this.isShow()) {
 		var gl = this.core.gl;
-		var shader = this.core.sprite_3d_shader;
+
+		var shader = this.shader();
 
 		gl.useProgram(shader.shader_program);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.coordinates), gl.STATIC_DRAW);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.enableVertexAttribArray(shader.attribute_locations.aVertexPosition);
-		gl.vertexAttribPointer(shader.attribute_locations.aVertexPosition,
-							 CONSTANT_3D.V_ITEM_SIZE, gl.FLOAT, false, 0, 0);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
-		gl.enableVertexAttribArray(shader.attribute_locations.aColor);
-		gl.vertexAttribPointer(shader.attribute_locations.aColor,
-							 CONSTANT_3D.A_ITEM_SIZE, gl.FLOAT, false, 0, 0);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.enableVertexAttribArray(shader.attribute_locations.aTextureCoordinates);
-		gl.vertexAttribPointer(shader.attribute_locations.aTextureCoordinates,
-							 CONSTANT_3D.C_ITEM_SIZE, gl.FLOAT, false, 0, 0);
-
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, this.texture);
-		gl.uniform1i(shader.uniform_locations.uSampler, 0);
-
-		gl.uniformMatrix4fv(shader.uniform_locations.uPMatrix,  false, this.pMatrix);
-		gl.uniformMatrix4fv(shader.uniform_locations.uMVMatrix, false, this.mvMatrix);
 
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		gl.enable(gl.BLEND);
 		gl.disable(gl.DEPTH_TEST);
 
+		this._setupAttribute("aVertexPosition", this.vBuffer, new Float32Array(this.vertices), CONSTANT_3D.V_ITEM_SIZE);
+		this._setupAttribute("aTextureCoordinates", this.cBuffer, new Float32Array(this.coordinates), CONSTANT_3D.C_ITEM_SIZE);
+		this._setupAttribute("aColor", this.aBuffer, new Float32Array(this.colors), CONSTANT_3D.A_ITEM_SIZE);
+
+		this._setupTexture("uSampler", 0, this.texture);
+
+		gl.uniformMatrix4fv(shader.uniform_locations.uPMatrix,  false, this.pMatrix);
+		gl.uniformMatrix4fv(shader.uniform_locations.uMVMatrix, false, this.mvMatrix);
+
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+
+		// inherit class may implement this.
+		this.setupAdditionalVariables();
 
 		gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
 
@@ -267,10 +249,41 @@ Sprite3d.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
 };
 
+Sprite3d.prototype._setupAttribute = function(attr_name, buffer, data, size){
+	var gl = this.core.gl;
+	var shader = this.shader();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+	gl.enableVertexAttribArray(shader.attribute_locations[attr_name]);
+	gl.vertexAttribPointer(shader.attribute_locations[attr_name], size, gl.FLOAT, false, 0, 0);
+};
+Sprite3d.prototype._setupTexture = function(uniform_name, unit_no, texture){
+	var gl = this.core.gl;
+	var shader = this.shader();
+	gl.activeTexture(gl["TEXTURE" + unit_no]);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.uniform1i(shader.uniform_locations[uniform_name], unit_no);
+};
+
+
+
+
 Sprite3d.prototype.z = function(val) {
 	if (typeof val !== 'undefined') { this._z = val; }
 	return this._z;
 };
+
+Sprite3d.prototype.shader = function(){
+	return this.core.sprite_3d_shader;
+};
+
+// setup additional variables for shader(attributes, uniforms)
+Sprite3d.prototype.setupAdditionalVariables = function(){
+
+
+};
+
+
 
 
 
@@ -324,5 +337,7 @@ Sprite3d.prototype.scaleHeight = function(){
 Sprite3d.prototype.isReflect = function(){
 	return false;
 };
+
+
 
 module.exports = Sprite3d;
