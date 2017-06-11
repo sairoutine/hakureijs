@@ -119,52 +119,32 @@ PoolManager3D.prototype.draw = function(){
 	if (this.vertices.length === 0) return;
 
 	var gl = this.core.gl;
-	var shader = this.core.sprite_3d_shader;
+	var shader = this.shader();
 
 	gl.useProgram(shader.shader_program);
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+	gl.enable(gl.BLEND);
+	gl.disable(gl.DEPTH_TEST);
 
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.coordinates), gl.STATIC_DRAW);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-	gl.enableVertexAttribArray(shader.attribute_locations.aVertexPosition);
-	gl.vertexAttribPointer(shader.attribute_locations.aVertexPosition,
-						 CONSTANT_3D.V_ITEM_SIZE, gl.FLOAT, false, 0, 0);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.aBuffer);
-	gl.enableVertexAttribArray(shader.attribute_locations.aColor);
-	gl.vertexAttribPointer(shader.attribute_locations.aColor,
-						 CONSTANT_3D.A_ITEM_SIZE, gl.FLOAT, false, 0, 0);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-	gl.enableVertexAttribArray(shader.attribute_locations.aTextureCoordinates);
-	gl.vertexAttribPointer(shader.attribute_locations.aTextureCoordinates,
-						 CONSTANT_3D.C_ITEM_SIZE, gl.FLOAT, false, 0, 0);
+	this._setupAttribute("aVertexPosition", this.vBuffer, new Float32Array(this.vertices), CONSTANT_3D.V_ITEM_SIZE);
+	this._setupAttribute("aTextureCoordinates", this.cBuffer, new Float32Array(this.coordinates), CONSTANT_3D.C_ITEM_SIZE);
+	this._setupAttribute("aColor", this.aBuffer, new Float32Array(this.colors), CONSTANT_3D.A_ITEM_SIZE);
 
 	// TODO: use some types of texture
 	for(var id in this.objects) {
 		var texture = this.objects[id].texture;
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.uniform1i(shader.uniform_locations.uSampler, 0);
+		this._setupTexture("uSampler", 0, texture);
 		break;
 	}
 
 	gl.uniformMatrix4fv(shader.uniform_locations.uPMatrix,  false, this.pMatrix);
 	gl.uniformMatrix4fv(shader.uniform_locations.uMVMatrix, false, this.mvMatrix);
 
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-	gl.enable(gl.BLEND);
-	gl.disable(gl.DEPTH_TEST);
-
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+
+	// TODO: how to implement?
+	//this.setupAdditionalVariables();
 
 	gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
 
@@ -174,6 +154,24 @@ PoolManager3D.prototype.draw = function(){
 	 * scaling
 	*/
 };
+
+PoolManager3D.prototype._setupAttribute = function(attr_name, buffer, data, size){
+	var gl = this.core.gl;
+	var shader = this.shader();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+	gl.enableVertexAttribArray(shader.attribute_locations[attr_name]);
+	gl.vertexAttribPointer(shader.attribute_locations[attr_name], size, gl.FLOAT, false, 0, 0);
+};
+PoolManager3D.prototype._setupTexture = function(uniform_name, unit_no, texture){
+	var gl = this.core.gl;
+	var shader = this.shader();
+	gl.activeTexture(gl["TEXTURE" + unit_no]);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.uniform1i(shader.uniform_locations[uniform_name], unit_no);
+};
+
+
 
 PoolManager3D.prototype.afterDraw = function(){
 	base_object.prototype.afterDraw.apply(this, arguments);
@@ -229,6 +227,10 @@ PoolManager3D.prototype.removeOutOfStageObjects = function() {
 			this.remove(id);
 		}
 	}
+};
+
+PoolManager3D.prototype.shader = function(){
+	return this.core.sprite_3d_shader;
 };
 
 
