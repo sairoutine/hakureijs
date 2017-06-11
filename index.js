@@ -4,6 +4,7 @@ module.exports = {
 	core: require("./core"),
 	constant: require("./constant"),
 	serif_manager: require("./serif_manager"),
+	shader_program: require("./shader_program"),
 	scene: {
 		base: require("./scene/base"),
 		loading: require("./scene/loading"),
