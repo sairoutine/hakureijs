@@ -23,6 +23,8 @@ var SerifManager = function () {
 	this.char_list = "";
 	this.char_idx = 0;
 
+	this.is_enable_printing_message = true;
+
 	// now printing message
 	this.line_num = 0;
 	this.printing_lines = [];
@@ -47,6 +49,8 @@ SerifManager.prototype.init = function (script) {
 
 	this.char_list = "";
 	this.char_idx = 0;
+
+	this.is_enable_printing_message = true;
 
 	this.line_num = 0;
 	this.printing_lines = [];
@@ -109,7 +113,7 @@ SerifManager.prototype._printMessage = function (message) {
 	var self = this;
 
 	// cancel already started message
-	self.cancelPrintMessage();
+	self._cancelPrintMessage();
 
 	// setup to show message
 	self.char_list = message.split("");
@@ -119,10 +123,10 @@ SerifManager.prototype._printMessage = function (message) {
 	self.line_num = 0;
 	self.printing_lines = [];
 
-	this.startPrintMessage();
+	this._startPrintMessage();
 };
 
-SerifManager.prototype.startPrintMessage = function () {
+SerifManager.prototype._startPrintMessage = function () {
 	var self = this;
 	var char_length = self.char_list.length;
 	if (self.char_idx >= char_length) return;
@@ -130,32 +134,44 @@ SerifManager.prototype.startPrintMessage = function () {
 	// typography speed
 	var speed = 10;
 
-	var ch = self.char_list[self.char_idx];
-	self.char_idx++;
+	if(this.is_enable_printing_message) {
+		var ch = self.char_list[self.char_idx];
+		self.char_idx++;
 
-	if (ch === "\n") {
-		self.line_num++;
-	}
-	else {
-		// initialize
-		if(!self.printing_lines[self.line_num]) {
-			self.printing_lines[self.line_num] = "";
+		if (ch === "\n") {
+			self.line_num++;
 		}
+		else {
+			// initialize
+			if(!self.printing_lines[self.line_num]) {
+				self.printing_lines[self.line_num] = "";
+			}
 
-		// show A word
-		self.printing_lines[self.line_num] = self.printing_lines[self.line_num] + ch;
+			// show A word
+			self.printing_lines[self.line_num] = self.printing_lines[self.line_num] + ch;
+		}
 	}
 
-	self.timeoutID = setTimeout(self.startPrintMessage.bind(self), speed);
+	self.timeoutID = setTimeout(self._startPrintMessage.bind(self), speed);
 };
 
-SerifManager.prototype.cancelPrintMessage = function () {
+SerifManager.prototype._cancelPrintMessage = function () {
 	var self = this;
 	if(self.timeoutID !== null) {
 		clearTimeout(self.timeoutID);
 		self.timeoutID = null;
 	}
 };
+
+SerifManager.prototype.startPrintMessage = function () {
+	this.is_enable_printing_message = true;
+};
+SerifManager.prototype.cancelPrintMessage = function () {
+	this.is_enable_printing_message = false;
+};
+
+
+
 
 SerifManager.prototype.right_image = function () {
 	return(this.right_chara_id ? this.right_chara_id + "_" + this.right_exp : null);
