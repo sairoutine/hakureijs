@@ -17,6 +17,9 @@ var SerifManager = function () {
 	// which chara is talking, left or right
 	this.pos = null;
 
+	this._is_background_changed = false;
+	this.background = null;
+
 	// now printing message
 	this.line_num = 0;
 	this.printing_lines = [];
@@ -35,6 +38,9 @@ SerifManager.prototype.init = function (script) {
 	this.right_chara_id = null;
 	this.right_exp = null;
 	this.pos  = null;
+
+	this._is_background_changed = false;
+	this.background = null;
 
 	this.line_num = 0;
 	this.printing_lines = [];
@@ -56,6 +62,8 @@ SerifManager.prototype.next = function () {
 
 	this._showChara(script);
 
+	this._showBackground(script);
+
 	if(script.serif) {
 		this._printMessage(script.serif);
 	}
@@ -64,6 +72,21 @@ SerifManager.prototype.next = function () {
 		this.next();
 	}
 };
+
+SerifManager.prototype._showBackground = function(script) {
+	this._is_background_changed = false;
+	if(script.background) {
+		if (this.background !== script.background) {
+			this._is_background_changed = true;
+		}
+
+		this.background  = script.background;
+	}
+};
+
+
+
+
 
 SerifManager.prototype._showChara = function(script) {
 	if(script.pos) {
@@ -144,6 +167,16 @@ SerifManager.prototype.is_left_talking = function () {
 SerifManager.prototype.is_right_talking = function () {
 	return this.pos === "right" ? true : false;
 };
+SerifManager.prototype.background_image = function () {
+	return this.background;
+};
+SerifManager.prototype.is_background_changed = function () {
+	return this._is_background_changed;
+};
+
+
+
+
 
 SerifManager.prototype.lines = function () {
 	return this.printing_lines;
