@@ -6,9 +6,9 @@
  * TODO: implement: defineColumnProperty method
  */
 
+var Util = require("../util");
 
-
-var DEFAULT_KEY = "hakurei_engine_game:default";
+var DEFAULT_KEY = "hakurei_engine:default";
 
 var StorageBase = function (data) {
 	if(!data) data = {};
@@ -25,7 +25,7 @@ StorageBase.KEY = function() {
 // is Electron or NW.js ?
 StorageBase.isLocalMode = function() {
 	// this is Electron
-	if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+	if (Util.isElectron()) {
 		return true;
 	}
 

@@ -8,12 +8,12 @@ var StorageSave = function(scene) {
 util.inherit(StorageSave, base_class);
 
 StorageSave.KEY = function(){
-	var key = "hakurei_engine_game:save";
-	if (window && window.location) {
+	var key = "hakurei_engine:save";
+	if (!this.isLocalMode() && window && window.location) {
 		return(key + ":" + window.location.pathname);
 	}
 	else {
-		return key;
+		return "save";
 	}
 };
 
