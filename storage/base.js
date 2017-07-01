@@ -21,6 +21,12 @@ StorageBase.KEY = function() {
 	return DEFAULT_KEY;
 };
 
+StorageBase.prototype.set = function(key, value) {
+	this._data[key] = value;
+};
+StorageBase.prototype.get = function(key) {
+	return this._data[key];
+};
 
 // is Electron or NW.js ?
 StorageBase.isLocalMode = function() {
@@ -89,12 +95,24 @@ StorageBase.prototype._saveToWebStorage = function() {
 };
 
 StorageBase.load = function() {
+	var data;
 	if (this.isLocalMode()) {
-		return this._loadFromLocalFile();
+		data = this._loadFromLocalFile();
 	}
 	else {
-		return this._loadFromWebStorage();
+		data = this._loadFromWebStorage();
 	}
+
+	var Klass = this;
+	if (data) {
+		// there is a storage data
+		return new Klass(data);
+	}
+	else {
+		// there is NOT a storage data
+		return new Klass();
+	}
+
 };
 
 StorageBase._loadFromLocalFile = function() {
@@ -107,7 +125,7 @@ StorageBase._loadFromLocalFile = function() {
 
 	var Klass = this;
 	if (data) {
-		return new Klass(JSON.parse(data));
+		return JSON.parse(data);
 	}
 	else {
 		return null;
@@ -125,7 +143,7 @@ StorageBase._loadFromWebStorage = function() {
 
 	var Klass = this;
 	if (data) {
-		return new Klass(JSON.parse(data));
+		return JSON.parse(data);
 	}
 	else {
 		return null;
