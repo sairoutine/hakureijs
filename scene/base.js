@@ -72,6 +72,10 @@ SceneBase.prototype.currentSubScene = function() {
 
 	return this.scenes[this.current_scene];
 };
+SceneBase.prototype.getSubScene = function(name) {
+	return this.scenes[name];
+};
+
 SceneBase.prototype.addSubScene = function(name, scene) {
 	this.scenes[name] = scene;
 };
