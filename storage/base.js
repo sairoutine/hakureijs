@@ -46,7 +46,7 @@ StorageBase.prototype.save = function() {
 
 StorageBase.prototype._saveToLocalFile = function() {
 	var Klass = this.constructor;
-	var fs = require('fs');
+	var fs = window.require('fs');
 
 	var data = JSON.stringify(this._data);
 
@@ -62,9 +62,9 @@ StorageBase.prototype._saveToLocalFile = function() {
 
 // save file directory
 StorageBase._localFileDirectoryPath = function() {
-	var path = require('path');
+	var path = window.require('path');
 
-	var base = path.dirname(process.mainModule.filename);
+	var base = path.dirname(window.process.mainModule.filename);
 	return path.join(base, 'save/');
 };
 
@@ -98,10 +98,10 @@ StorageBase.load = function() {
 };
 
 StorageBase._loadFromLocalFile = function() {
-	var fs = require('fs');
+	var fs = window.require('fs');
 
-	var file_path = this.localFilePath(this.KEY());
-	if (!fs.existsSync()) return null;
+	var file_path = this._localFilePath(this.KEY());
+	if (!fs.existsSync(file_path)) return null;
 
 	var data = fs.readFileSync(file_path, { encoding: 'utf8' });
 
@@ -145,8 +145,8 @@ StorageBase.prototype.del = function() {
 
 StorageBase.prototype._removeLocalFile = function() {
 	var Klass = this.constructor;
-	var fs = require('fs');
-	var file_path = this.localFilePath(Klass.KEY());
+	var fs = window.require('fs');
+	var file_path = this._localFilePath(Klass.KEY());
 
 	if (fs.existsSync(file_path)) {
 		fs.unlinkSync(file_path);
