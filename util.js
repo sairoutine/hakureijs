@@ -40,6 +40,12 @@ var Util = {
 	clamp: function(num, min, max) {
 		return (num < min ? min : (num > max ? max : num));
 	},
+	isElectron: function() {
+		if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+			return true;
+		}
+		return false;
+	},
 };
 
 module.exports = Util;
