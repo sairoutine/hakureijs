@@ -24,7 +24,13 @@ StorageBase.KEY = function() {
 
 // is Electron or NW.js ?
 StorageBase.isLocalMode = function() {
-	return typeof require === 'function' && typeof process === 'object' && process.title !== 'browser';
+	// this is Electron
+	if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+		return true;
+	}
+
+	// TODO: NW.js
+	return false;
 };
 
 StorageBase.prototype.save = function() {
