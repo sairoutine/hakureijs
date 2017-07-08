@@ -65,6 +65,10 @@ SceneBase.prototype.afterDraw = function(){
 SceneBase.prototype.addObject = function(object){
 	this.objects.push(object);
 };
+SceneBase.prototype.addObjects = function(object_list){
+	this.objects = this.objects.concat(object_list);
+};
+
 SceneBase.prototype.currentSubScene = function() {
 	if(this.current_scene === null) {
 		return;
