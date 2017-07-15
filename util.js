@@ -46,6 +46,14 @@ var Util = {
 		}
 		return false;
 	},
+	canPlayOgg: function () {
+		var audio = document.createElement('audio');
+		if (audio.canPlayType) {
+			return audio.canPlayType('audio/ogg');
+		}
+
+		return false;
+	},
 };
 
 module.exports = Util;
