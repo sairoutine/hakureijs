@@ -27,7 +27,9 @@ StorageBase.prototype.set = function(key, value) {
 StorageBase.prototype.get = function(key) {
 	return this._data[key];
 };
-
+StorageBase.prototype.del = function(key) {
+	return delete this._data[key];
+};
 // is Electron or NW.js ?
 StorageBase.isLocalMode = function() {
 	// this is Electron
