@@ -16,6 +16,7 @@ DebugManager.prototype.setOff = function () {
 	this.dom = null;
 };
 
+// add text menu
 DebugManager.prototype.addMenuText = function (text) {
 	if(!this.is_debug_mode) return;
 
@@ -25,6 +26,26 @@ DebugManager.prototype.addMenuText = function (text) {
 
 	// add element
 	this.dom.appendChild(dom);
+};
+
+// add button menu
+DebugManager.prototype.addMenuButton = function (button_value, func) {
+	if(!this.is_debug_mode) return;
+
+	var core = this.core;
+
+	// create element
+	var input = window.document.createElement('input');
+
+	// set attributes
+	input.setAttribute('type', 'button');
+	input.setAttribute('value', button_value);
+	input.onclick = function () {
+		func(core);
+	};
+
+	// add element
+	this.dom.appendChild(input);
 };
 
 module.exports = DebugManager;
