@@ -4,6 +4,7 @@
 
 var WebGLDebugUtils = require("webgl-debug");
 var CONSTANT = require("./constant");
+var DebugManager = require("./debug_manager");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
@@ -49,6 +50,8 @@ var Core = function(canvas, options) {
 	else {
 		this.ctx = this.canvas_dom.getContext('2d');
 	}
+
+	this.debug_manager = new DebugManager(this);
 
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
