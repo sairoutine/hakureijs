@@ -391,7 +391,8 @@ Core.prototype.setupEvents = function() {
 
 
 	// If the browser has `document.fonts`, wait font loading.
-	if(window.document && window.document.fonts) {
+	// Note: safari 10.0 has document.fonts but not occur loadingdone event
+	if(window.document && window.document.fonts && !navigator.userAgent.toLowerCase().indexOf("safari")) {
 		window.document.fonts.addEventListener('loadingdone', function() { self.fontLoadingDone(); });
 	}
 	else {
