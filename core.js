@@ -122,6 +122,13 @@ Core.prototype.startRun = function () {
 
 	this.run();
 };
+Core.prototype.stopRun = function () {
+	if(!this.isRunning()) return;
+
+	cancelAnimationFrame(this.request_id);
+
+	this.request_id = null;
+};
 Core.prototype.run = function(){
 	// get gamepad input
 	this.handleGamePad();
