@@ -420,7 +420,8 @@ Core.prototype.setupEvents = function() {
 	}
 
 	// unable to use right click menu.
-	this.canvas_dom.oncontextmenu = function() { return false; };
+	// not used
+	// this.canvas_dom.oncontextmenu = function() { return false; };
 
 	// bind gamepad
 	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
