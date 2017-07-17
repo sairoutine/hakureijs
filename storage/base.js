@@ -161,6 +161,9 @@ StorageBase.prototype.del = function() {
 	else {
 		this._removeWebStorage();
 	}
+
+	// reset this object properties
+	this._data = {};
 };
 
 StorageBase.prototype._removeLocalFile = function() {
