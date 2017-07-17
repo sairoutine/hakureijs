@@ -22,8 +22,8 @@ var Core = function(canvas, options) {
 	this.ctx = null; // 2D context
 	this.gl  = null; // 3D context
 
+	// WebGL 3D mode
 	if(options.webgl) {
-		// WebGL 3D mode
 		this.gl = this.createWebGLContext(this.canvas_dom);
 
 		// shader program
@@ -44,11 +44,9 @@ var Core = function(canvas, options) {
 				"uSampler", // texture data
 			]
 		);
-
-
 	}
+	// Canvas 2D mode
 	else {
-		// Canvas 2D mode
 		this.ctx = this.canvas_dom.getContext('2d');
 	}
 
