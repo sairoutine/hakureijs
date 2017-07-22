@@ -20,10 +20,11 @@ var AudioLoader = function() {
 		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
 	}
 
+	// playing bgm name
+	this._playing_bgm_name = null;
+
 	// playing AudioBufferSourceNode instance
 	this.audio_source = null;
-
-
 };
 AudioLoader.prototype.init = function() {
 	// TODO: cancel already loading bgms and sounds
@@ -37,6 +38,10 @@ AudioLoader.prototype.init = function() {
 	this.id = 0;
 
 	this.soundflag = 0x00;
+
+	this._playing_bgm_name = null;
+
+	this.audio_source = null;
 };
 
 AudioLoader.prototype.loadSound = function(name, path, volume) {
@@ -130,19 +135,32 @@ AudioLoader.prototype.playBGM = function(name) {
 	// stop playing bgm
 	self.stopBGM();
 
+	self._playing_bgm_name = name;
 	self.audio_source = self._createSourceNode(name);
 	self.audio_source.start(0);
+};
+
+// play if the bgm is not playing now
+AudioLoader.prototype.changeBGM = function(name) {
+	if (this._playing_bgm_name !== name) {
+		this.playBGM(name);
+	}
 };
 AudioLoader.prototype.stopBGM = function() {
 	var self = this;
 	if(self.isPlayingBGM()) {
 		self.audio_source.stop(0);
 		self.audio_source = null;
+		self._playing_bgm_name = null;
 	}
 };
 AudioLoader.prototype.isPlayingBGM = function() {
 	return this.audio_source ? true : false;
 };
+AudioLoader.prototype.currentPlayingBGM = function() {
+	return this._playing_bgm_name;
+};
+
 
 // create AudioBufferSourceNode instance
 AudioLoader.prototype._createSourceNode = function(name) {
