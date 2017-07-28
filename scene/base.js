@@ -55,6 +55,31 @@ SceneBase.prototype.draw = function(){
 };
 
 SceneBase.prototype.afterDraw = function(){
+	var ctx = this.core.ctx;
+
+	// fade in
+	if (this.isInFadeIn()) {
+		ctx.save();
+
+		// tranparent settings
+		var alpha;
+		if(this.frame_count - this._fade_start_frame_count < this._fade_duration) {
+			alpha = 1.0 - (this.frame_count - this._fade_start_frame_count) / this._fade_duration;
+		}
+		else {
+			alpha = 0.0;
+			this._quitFadeIn();
+		}
+
+		ctx.globalAlpha = alpha;
+
+		// transition color
+		ctx.fillStyle = this._fade_color;
+		ctx.fillRect(0, 0, this.width, this.height);
+
+		ctx.restore();
+	}
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].afterDraw();
 	}
@@ -98,6 +123,28 @@ SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 		this._reserved_next_scene = null;
 	}
 
+};
+
+SceneBase.prototype.setFadeIn = function(duration, color) {
+	// start fade in immediately
+	this._startFadeIn(duration, color);
+};
+SceneBase.prototype._startFadeIn = function(duration, color) {
+	this._is_in_fade_out = false; // quit fade out
+	this._is_in_fade_in = true;
+	this._fade_duration = duration || 30;
+	this._fade_color = color || 'white';
+	this._fade_start_frame_count = this.frame_count;
+};
+
+SceneBase.prototype._quitFadeIn = function() {
+	this._is_in_fade_in = false;
+	this._fade_duration = null;
+	this._fade_color = null;
+	this._fade_start_frame_count = null;
+};
+SceneBase.prototype.isInFadeIn = function() {
+	return this._is_in_fade_in;
 };
 
 SceneBase.prototype.x = function(val) {
