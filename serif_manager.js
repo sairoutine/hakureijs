@@ -20,6 +20,8 @@ var SerifManager = function () {
 	this._is_background_changed = false;
 	this.background = null;
 
+	this._font_color = null;
+
 	this.char_list = "";
 	this.char_idx = 0;
 
@@ -47,6 +49,8 @@ SerifManager.prototype.init = function (script) {
 	this._is_background_changed = false;
 	this.background = null;
 
+	this._font_color = null;
+
 	this.char_list = "";
 	this.char_idx = 0;
 
@@ -73,6 +77,8 @@ SerifManager.prototype.next = function () {
 	this._showChara(script);
 
 	this._showBackground(script);
+
+	this._setFont(script);
 
 	if(script.serif) {
 		this._printMessage(script.serif);
@@ -107,6 +113,10 @@ SerifManager.prototype._showChara = function(script) {
 			this.right_exp = script.exp;
 		}
 	}
+};
+
+SerifManager.prototype._setFont = function(script) {
+	this._font_color  = script.font_color;
 };
 
 SerifManager.prototype._printMessage = function (message) {
@@ -194,6 +204,9 @@ SerifManager.prototype.is_right_talking = function () {
 };
 SerifManager.prototype.background_image = function () {
 	return this.background;
+};
+SerifManager.prototype.font_color = function () {
+	return this._font_color;
 };
 SerifManager.prototype.is_background_changed = function () {
 	return this._is_background_changed;
