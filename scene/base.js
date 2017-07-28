@@ -17,6 +17,16 @@ var SceneBase = function(core, scene) {
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
 	this.scenes = {};
+
+	// property for fade in
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+
+	// property for fade out
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
 };
 
 SceneBase.prototype.init = function(){
@@ -28,6 +38,16 @@ SceneBase.prototype.init = function(){
 	this._y = 0;
 
 	this.frame_count = 0;
+
+	// property for fade in
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+
+	// property for fade out
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
