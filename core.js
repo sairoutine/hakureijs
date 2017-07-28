@@ -193,12 +193,20 @@ Core.prototype.changeScene = function() {
 };
 Core.prototype.changeNextSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
-		this.current_scene = this._reserved_next_scene.shift();
+		if (this.currentScene() && this.currentScene().isSetFadeOut() && !this.currentScene().isInFadeOut()) {
+			this.currentScene().startFadeOut();
+		}
+		else if (this.currentScene() && this.currentScene().isSetFadeOut() && this.currentScene().isInFadeOut()) {
+			// waiting for quiting fade out
+		}
+		else {
+			// change next scene
+			this.current_scene = this._reserved_next_scene.shift();
+			var current_scene = this.currentScene();
+			current_scene.init.apply(current_scene, this._reserved_next_scene);
 
-		var current_scene = this.currentScene();
-		current_scene.init.apply(current_scene, this._reserved_next_scene);
-
-		this._reserved_next_scene = null;
+			this._reserved_next_scene = null;
+		}
 	}
 };
 Core.prototype.changeSceneWithLoading = function(scene, assets) {

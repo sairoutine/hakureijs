@@ -57,12 +57,12 @@ SceneBase.prototype.draw = function(){
 SceneBase.prototype.afterDraw = function(){
 	var ctx = this.core.ctx;
 
+	var alpha;
 	// fade in
 	if (this.isInFadeIn()) {
 		ctx.save();
 
 		// tranparent settings
-		var alpha;
 		if(this.frame_count - this._fade_in_start_frame_count < this._fade_in_duration) {
 			alpha = 1.0 - (this.frame_count - this._fade_in_start_frame_count) / this._fade_in_duration;
 		}
@@ -75,6 +75,27 @@ SceneBase.prototype.afterDraw = function(){
 
 		// transition color
 		ctx.fillStyle = this._fade_in_color;
+		ctx.fillRect(0, 0, this.width, this.height);
+
+		ctx.restore();
+	}
+	// fade out
+	else if (this.isInFadeOut()) {
+		ctx.save();
+
+		// tranparent settings
+		if(this.frame_count - this._fade_out_start_frame_count < this._fade_out_duration) {
+			alpha = (this.frame_count - this._fade_out_start_frame_count) / this._fade_out_duration;
+		}
+		else {
+			alpha = 1.0;
+			this._quitFadeOut();
+		}
+
+		ctx.globalAlpha = alpha;
+
+		// transition color
+		ctx.fillStyle = this._fade_out_color;
 		ctx.fillRect(0, 0, this.width, this.height);
 
 		ctx.restore();
@@ -133,7 +154,7 @@ SceneBase.prototype.setFadeIn = function(duration, color) {
 	this._startFadeIn();
 };
 SceneBase.prototype._startFadeIn = function() {
-	//this._quitFadeOut();
+	this._quitFadeOut();
 	this._fade_in_start_frame_count = this.frame_count;
 };
 
@@ -146,6 +167,29 @@ SceneBase.prototype.isInFadeIn = function() {
 	return this._fade_in_start_frame_count !== null ? true : false;
 };
 
+
+SceneBase.prototype.setFadeOut = function(duration, color) {
+	this._fade_out_duration = duration || 30;
+	this._fade_out_color = color || 'black';
+};
+SceneBase.prototype.startFadeOut = function() {
+	if(!this.isSetFadeOut()) return;
+
+	this._quitFadeIn();
+	this._fade_out_start_frame_count = this.frame_count;
+};
+
+SceneBase.prototype._quitFadeOut = function() {
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
+};
+SceneBase.prototype.isInFadeOut = function() {
+	return this._fade_out_start_frame_count !== null ? true : false;
+};
+SceneBase.prototype.isSetFadeOut = function() {
+	return this._fade_out_duration && this._fade_out_color ? true : false;
+};
 
 SceneBase.prototype.x = function(val) {
 	if (typeof val !== 'undefined') { this._x = val; }
