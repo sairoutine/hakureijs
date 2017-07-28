@@ -133,19 +133,17 @@ SceneBase.prototype.setFadeIn = function(duration, color) {
 	this._startFadeIn();
 };
 SceneBase.prototype._startFadeIn = function() {
-	this._is_in_fade_out = false; // quit fade out
-	this._is_in_fade_in = true;
+	//this._quitFadeOut();
 	this._fade_in_start_frame_count = this.frame_count;
 };
 
 SceneBase.prototype._quitFadeIn = function() {
-	this._is_in_fade_in = false;
 	this._fade_in_duration = null;
 	this._fade_in_color = null;
 	this._fade_in_start_frame_count = null;
 };
 SceneBase.prototype.isInFadeIn = function() {
-	return this._is_in_fade_in;
+	return this._fade_in_start_frame_count !== null ? true : false;
 };
 
 
