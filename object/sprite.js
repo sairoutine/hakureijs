@@ -57,6 +57,7 @@ Sprite.prototype.draw = function(){
 			ctx.transform(-1, 0, 0, 1, 0, 0);
 		}
 
+		ctx.globalAlpha = this.alpha();
 		ctx.drawImage(image,
 			// sprite position
 			sprite_width * this.spriteIndexX(), sprite_height * this.spriteIndexY(),
@@ -129,6 +130,10 @@ Sprite.prototype.scaleHeight = function(){
 Sprite.prototype.isReflect = function(){
 	return false;
 };
+Sprite.prototype.alpha = function() {
+	return 1.0;
+};
+
 
 
 
