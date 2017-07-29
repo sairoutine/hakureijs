@@ -14,6 +14,18 @@ var ShaderProgram = require('./shader_program');
 var VS = require("./shader/main.vs");
 var FS = require("./shader/main.fs");
 
+
+// const
+var BUTTON_ID_TO_BIT_CODE = {
+	0: CONSTANT.BUTTON_Z,
+	1: CONSTANT.BUTTON_X,
+	2: CONSTANT.BUTTON_SELECT,
+	3: CONSTANT.BUTTON_START,
+	4: CONSTANT.BUTTON_SHIFT,
+	5: CONSTANT.BUTTON_SHIFT,
+	6: CONSTANT.BUTTON_SPACE,
+};
+
 var Core = function(canvas, options) {
 	if(!options) {
 		options = {};
@@ -348,16 +360,6 @@ Core.prototype.handleGamePad = function() {
 	var pad = pads[0]; // 1Pコン
 
 	if(!pad) return;
-
-	var BUTTON_ID_TO_BIT_CODE = {
-		0: CONSTANT.BUTTON_Z,
-		1: CONSTANT.BUTTON_X,
-		2: CONSTANT.BUTTON_SELECT,
-		3: CONSTANT.BUTTON_START,
-		4: CONSTANT.BUTTON_SHIFT,
-		5: CONSTANT.BUTTON_SHIFT,
-		6: CONSTANT.BUTTON_SPACE,
-	};
 
 	// button
 	for (var i = 0, len = pad.buttons.length; i < len; i++) {
