@@ -349,21 +349,53 @@ Core.prototype.handleGamePad = function() {
 
 	if(!pad) return;
 
-	this.current_keyflag = 0x00;
-	this.current_keyflag |= pad.buttons[1].pressed ? CONSTANT.BUTTON_Z:      0x00;// A
-	this.current_keyflag |= pad.buttons[0].pressed ? CONSTANT.BUTTON_X:      0x00;// B
-	this.current_keyflag |= pad.buttons[2].pressed ? CONSTANT.BUTTON_SELECT: 0x00;// SELECT
-	this.current_keyflag |= pad.buttons[3].pressed ? CONSTANT.BUTTON_START:  0x00;// START
-	this.current_keyflag |= pad.buttons[4].pressed ? CONSTANT.BUTTON_SHIFT:  0x00;// SHIFT
-	this.current_keyflag |= pad.buttons[5].pressed ? CONSTANT.BUTTON_SHIFT:  0x00;// SHIFT
-	this.current_keyflag |= pad.buttons[6].pressed ? CONSTANT.BUTTON_SPACE:  0x00;// SPACE
-	//this.current_keyflag |= pad.buttons[8].pressed ? 0x04 : 0x00;// SELECT
-	//this.current_keyflag |= pad.buttons[9].pressed ? 0x08 : 0x00;// START
+	var BUTTON_ID_TO_BIT_CODE = {
+		0: CONSTANT.BUTTON_Z,
+		1: CONSTANT.BUTTON_X,
+		2: CONSTANT.BUTTON_SELECT,
+		3: CONSTANT.BUTTON_START,
+		4: CONSTANT.BUTTON_SHIFT,
+		5: CONSTANT.BUTTON_SHIFT,
+		6: CONSTANT.BUTTON_SPACE,
+	};
 
-	this.current_keyflag |= pad.axes[1] < -0.5 ? CONSTANT.BUTTON_UP:         0x00;// UP
-	this.current_keyflag |= pad.axes[1] >  0.5 ? CONSTANT.BUTTON_DOWN:       0x00;// DOWN
-	this.current_keyflag |= pad.axes[0] < -0.5 ? CONSTANT.BUTTON_LEFT:       0x00;// LEFT
-	this.current_keyflag |= pad.axes[0] >  0.5 ? CONSTANT.BUTTON_RIGHT:      0x00;// RIGHT
+	// button
+	for (var i = 0, len = pad.buttons.length; i < len; i++) {
+		if(!(i in BUTTON_ID_TO_BIT_CODE)) continue; // ignore if I don't know its button
+
+		if(pad.buttons[i].pressed) { // pressed
+			this.current_keyflag |= BUTTON_ID_TO_BIT_CODE[i];
+		}
+		else { // not pressed
+			this.current_keyflag &= ~BUTTON_ID_TO_BIT_CODE[i];
+		}
+	}
+
+	// arrow keys
+	if (pad.axes[1] < -0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_UP;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_UP;
+	}
+	if (pad.axes[1] > 0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_DOWN;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_DOWN;
+	}
+	if (pad.axes[0] < -0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_LEFT;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_LEFT;
+	}
+	if (pad.axes[0] > 0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_RIGHT;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
+	}
 };
 
 Core.prototype.fullscreen = function() {
