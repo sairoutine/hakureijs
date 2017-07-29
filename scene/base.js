@@ -88,7 +88,6 @@ SceneBase.prototype.afterDraw = function(){
 		}
 		else {
 			alpha = 0.0;
-			this._quitFadeIn();
 		}
 
 		ctx.globalAlpha = alpha;
@@ -98,6 +97,11 @@ SceneBase.prototype.afterDraw = function(){
 		ctx.fillRect(0, 0, this.width, this.height);
 
 		ctx.restore();
+
+		// alpha === 0.0 by transparent settings so quit fade in
+		// why there? because alpha === 0, _fade_in_color === null by quitFadeIn method
+		if(alpha === 1) this._quitFadeIn();
+
 	}
 	// fade out
 	else if (this.isInFadeOut()) {
@@ -109,7 +113,6 @@ SceneBase.prototype.afterDraw = function(){
 		}
 		else {
 			alpha = 1.0;
-			this._quitFadeOut();
 		}
 
 		ctx.globalAlpha = alpha;
@@ -119,6 +122,10 @@ SceneBase.prototype.afterDraw = function(){
 		ctx.fillRect(0, 0, this.width, this.height);
 
 		ctx.restore();
+
+		// alpha === 1.0 by transparent settings so quit fade out
+		// why there? because alpha === 1, _fade_out_color === null by quitFadeOut method
+		if(alpha === 1) this._quitFadeOut();
 	}
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
