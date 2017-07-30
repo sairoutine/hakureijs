@@ -1,5 +1,6 @@
 'use strict';
 
+// only keyboard (because core class uses key board map)
 var Constant = {
 	BUTTON_LEFT:  0x01,
 	BUTTON_UP:    0x02,

@@ -19,8 +19,8 @@ var FS = require("./shader/main.fs");
 var BUTTON_ID_TO_BIT_CODE = {
 	0: CONSTANT.BUTTON_Z,
 	1: CONSTANT.BUTTON_X,
-	2: CONSTANT.BUTTON_SELECT,
-	3: CONSTANT.BUTTON_START,
+	//2: CONSTANT.BUTTON_SELECT,
+	//3: CONSTANT.BUTTON_START,
 	4: CONSTANT.BUTTON_SHIFT,
 	5: CONSTANT.BUTTON_SHIFT,
 	6: CONSTANT.BUTTON_SPACE,
@@ -78,6 +78,7 @@ var Core = function(canvas, options) {
 
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
+	this._key_bit_code_to_down_time = {};
 
 	this.is_left_clicked  = false;
 	this.is_right_clicked = false;
@@ -105,6 +106,7 @@ Core.prototype.init = function () {
 
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
+	this.initPressedKeyTime();
 
 	this.is_left_clicked  = false;
 	this.is_right_clicked = false;
@@ -144,6 +146,9 @@ Core.prototype.stopRun = function () {
 Core.prototype.run = function(){
 	// get gamepad input
 	this.handleGamePad();
+
+	// get pressed key time
+	this.handlePressedKeyTime();
 
 	// go to next scene if next scene is set
 	this.changeNextSceneIfReserved();
@@ -398,6 +403,29 @@ Core.prototype.handleGamePad = function() {
 	else {
 			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
 	}
+};
+Core.prototype.initPressedKeyTime = function() {
+	this._key_bit_code_to_down_time = {};
+
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		this._key_bit_code_to_down_time[bit_code] = 0;
+	}
+};
+
+Core.prototype.handlePressedKeyTime = function() {
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		if (this.isKeyDown(bit_code)) {
+			this._key_bit_code_to_down_time[bit_code]++;
+		}
+		else {
+			this._key_bit_code_to_down_time[bit_code] = 0;
+		}
+	}
+};
+Core.prototype.getKeyDownTime = function(bit_code) {
+	return this._key_bit_code_to_down_time[bit_code];
 };
 
 Core.prototype.fullscreen = function() {
