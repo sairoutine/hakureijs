@@ -5,6 +5,7 @@
 var WebGLDebugUtils = require("webgl-debug");
 var CONSTANT = require("./constant");
 var DebugManager = require("./debug_manager");
+var InputManager = require("./input_manager");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
@@ -14,17 +15,6 @@ var ShaderProgram = require('./shader_program');
 var VS = require("./shader/main.vs");
 var FS = require("./shader/main.fs");
 
-
-// const
-var BUTTON_ID_TO_BIT_CODE = {
-	0: CONSTANT.BUTTON_Z,
-	1: CONSTANT.BUTTON_X,
-	//2: CONSTANT.BUTTON_SELECT,
-	//3: CONSTANT.BUTTON_START,
-	4: CONSTANT.BUTTON_SHIFT,
-	5: CONSTANT.BUTTON_SHIFT,
-	6: CONSTANT.BUTTON_SPACE,
-};
 
 var Core = function(canvas, options) {
 	if(!options) {
@@ -65,6 +55,8 @@ var Core = function(canvas, options) {
 
 	this.debug_manager = new DebugManager(this);
 
+	this.input_manager = new InputManager();
+
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
 
@@ -75,22 +67,6 @@ var Core = function(canvas, options) {
 	this.frame_count = 0;
 
 	this.request_id = null;
-
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
-	this._key_bit_code_to_down_time = {};
-
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
-
-	this.is_connect_gamepad = false;
 
 	this.image_loader = new ImageLoader();
 	this.audio_loader = new AudioLoader();
@@ -104,19 +80,9 @@ Core.prototype.init = function () {
 
 	this.request_id = null;
 
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
-	this.initPressedKeyTime();
-
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
+	// TODO:
+	//this.debug_manager.init();
+	this.input_manager.init();
 
 	this.image_loader.init();
 	this.audio_loader.init();
@@ -124,10 +90,6 @@ Core.prototype.init = function () {
 
 	this.addScene("loading", new SceneLoading(this));
 };
-Core.prototype.enableGamePad = function () {
-	this.is_connect_gamepad = true;
-};
-
 Core.prototype.isRunning = function () {
 	return this.request_id ? true : false;
 };
@@ -145,10 +107,8 @@ Core.prototype.stopRun = function () {
 };
 Core.prototype.run = function(){
 	// get gamepad input
-	this.handleGamePad();
-
 	// get pressed key time
-	this.handlePressedKeyTime();
+	this.input_manager.beforeRun();
 
 	// go to next scene if next scene is set
 	this.changeNextSceneIfReserved();
@@ -177,18 +137,9 @@ Core.prototype.run = function(){
 	this.runPlaySound();
 	*/
 
-	// save key current pressed keys
-	this.before_keyflag = this.current_keyflag;
-	this.before_is_left_clicked = this.is_left_clicked;
-	this.before_is_right_clicked = this.is_right_clicked;
-
-	// reset mouse wheel and mouse move
-	this.mouse_scroll = 0;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-
-
 	this.frame_count++;
+
+	this.input_manager.afterRun();
 
 	// tick
 	this.request_id = requestAnimationFrame(this.run.bind(this));
@@ -249,183 +200,56 @@ Core.prototype.is2D = function() {
 Core.prototype.is3D = function() {
 	return this.gl ? true : false;
 };
-Core.prototype.handleKeyDown = function(e) {
-	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
-	e.preventDefault();
-};
-Core.prototype.handleKeyUp = function(e) {
-	this.current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
-	e.preventDefault();
-};
+// this method is depricated.
 Core.prototype.isKeyDown = function(flag) {
-	return((this.current_keyflag & flag) ? true : false);
+	return this.input_manager.isKeyDown(flag);
 };
+// this method is depricated.
 Core.prototype.isKeyPush = function(flag) {
-	// not true if key is pressed in previous frame
-	return !(this.before_keyflag & flag) && this.current_keyflag & flag;
+	var f = this.input_manager.isKeyPush(flag);
+	console.log(f);
+	return f;
 };
-Core.prototype.handleMouseDown = function(event) {
-	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this.is_left_clicked  = event.which === 1;
-		this.is_right_clicked = event.which === 3;
-	}
-	else if ("button" in event) {  // IE, Opera
-		this.is_left_clicked  = event.button === 1;
-		this.is_right_clicked = event.button === 2;
-	}
-	event.preventDefault();
-};
-Core.prototype.handleMouseUp = function(event) {
-	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this.is_left_clicked  = event.which === 1 ? false : this.is_left_clicked;
-		this.is_right_clicked = event.which === 3 ? false : this.is_right_clicked;
-	}
-	else if ("button" in event) {  // IE, Opera
-		this.is_left_clicked  = event.button === 1 ? false : this.is_left_clicked;
-		this.is_right_clicked = event.button === 2 ? false : this.is_right_clicked;
-	}
-	event.preventDefault();
-};
-Core.prototype.isLeftClickDown = function() {
-	return this.is_left_clicked;
-};
-Core.prototype.isLeftClickPush = function() {
-	// not true if is pressed in previous frame
-	return this.is_left_clicked && !this.before_is_left_clicked;
-};
-Core.prototype.isRightClickDown = function() {
-	return this.is_right_clicked;
-};
-Core.prototype.isRightClickPush = function() {
-	// not true if is pressed in previous frame
-	return this.is_right_clicked && !this.before_is_right_clicked;
-};
-
-
-Core.prototype.handleMouseMove = function (d) {
-	d = d ? d : window.event;
-	d.preventDefault();
-	this.mouse_change_x = this.mouse_x - d.clientX;
-	this.mouse_change_y = this.mouse_y - d.clientY;
-	this.mouse_x = d.clientX;
-	this.mouse_y = d.clientY;
-};
-Core.prototype.mousePositionX = function () {
-	return this.mouse_x;
-};
-Core.prototype.mousePositionY = function () {
-	return this.mouse_y;
-};
-Core.prototype.mouseMoveX = function () {
-	return this.mouse_change_x;
-};
-Core.prototype.mouseMoveY = function () {
-	return this.mouse_change_y;
-};
-Core.prototype.handleMouseWheel = function (event) {
-	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
-};
-Core.prototype.mouseScroll = function () {
-	return this.mouse_scroll;
-};
-
-Core.prototype._keyCodeToBitCode = function(keyCode) {
-	var flag;
-	switch(keyCode) {
-		case 16: // shift
-			flag = CONSTANT.BUTTON_SHIFT;
-			break;
-		case 32: // space
-			flag = CONSTANT.BUTTON_SPACE;
-			break;
-		case 37: // left
-			flag = CONSTANT.BUTTON_LEFT;
-			break;
-		case 38: // up
-			flag = CONSTANT.BUTTON_UP;
-			break;
-		case 39: // right
-			flag = CONSTANT.BUTTON_RIGHT;
-			break;
-		case 40: // down
-			flag = CONSTANT.BUTTON_DOWN;
-			break;
-		case 88: // x
-			flag = CONSTANT.BUTTON_X;
-			break;
-		case 90: // z
-			flag = CONSTANT.BUTTON_Z;
-			break;
-	}
-	return flag;
-};
-Core.prototype.handleGamePad = function() {
-	if(!this.is_connect_gamepad) return;
-	var pads = navigator.getGamepads();
-	var pad = pads[0]; // 1Pコン
-
-	if(!pad) return;
-
-	// button
-	for (var i = 0, len = pad.buttons.length; i < len; i++) {
-		if(!(i in BUTTON_ID_TO_BIT_CODE)) continue; // ignore if I don't know its button
-
-		if(pad.buttons[i].pressed) { // pressed
-			this.current_keyflag |= BUTTON_ID_TO_BIT_CODE[i];
-		}
-		else { // not pressed
-			this.current_keyflag &= ~BUTTON_ID_TO_BIT_CODE[i];
-		}
-	}
-
-	// arrow keys
-	if (pad.axes[1] < -0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_UP;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_UP;
-	}
-	if (pad.axes[1] > 0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_DOWN;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_DOWN;
-	}
-	if (pad.axes[0] < -0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_LEFT;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_LEFT;
-	}
-	if (pad.axes[0] > 0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_RIGHT;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
-	}
-};
-Core.prototype.initPressedKeyTime = function() {
-	this._key_bit_code_to_down_time = {};
-
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		this._key_bit_code_to_down_time[bit_code] = 0;
-	}
-};
-
-Core.prototype.handlePressedKeyTime = function() {
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		if (this.isKeyDown(bit_code)) {
-			this._key_bit_code_to_down_time[bit_code]++;
-		}
-		else {
-			this._key_bit_code_to_down_time[bit_code] = 0;
-		}
-	}
-};
+// this method is depricated.
 Core.prototype.getKeyDownTime = function(bit_code) {
-	return this._key_bit_code_to_down_time[bit_code];
+	return this.input_manager.getKeyDownTime(bit_code);
+};
+// this method is depricated.
+Core.prototype.isLeftClickDown = function() {
+	return this.input_manager.isLeftClickDown();
+};
+// this method is depricated.
+Core.prototype.isLeftClickPush = function() {
+	return this.input_manager.isLeftClickPush();
+};
+// this method is depricated.
+Core.prototype.isRightClickDown = function() {
+	return this.input_manager.isRightClickDown();
+};
+// this method is depricated.
+Core.prototype.isRightClickPush = function() {
+	return this.input_manager.isRightClickPush();
+};
+
+// this method is depricated.
+Core.prototype.mousePositionX = function () {
+	return this.input_manager.mousePositionX();
+};
+// this method is depricated.
+Core.prototype.mousePositionY = function () {
+	return this.input_manager.mousePositionX();
+};
+// this method is depricated.
+Core.prototype.mouseMoveX = function () {
+	return this.input_manager.mouseMoveX();
+};
+// this method is depricated.
+Core.prototype.mouseMoveY = function () {
+	return this.input_manager.mouseMoveY();
+};
+// this method is depricated.
+Core.prototype.mouseScroll = function () {
+	return this.input_manager.mouseScroll();
 };
 
 Core.prototype.fullscreen = function() {
@@ -477,34 +301,7 @@ Core.prototype.setupEvents = function() {
 		self.fontLoadingDone();
 	}
 
-	// bind keyboard
-	window.onkeydown = function(e) { self.handleKeyDown(e); };
-	window.onkeyup   = function(e) { self.handleKeyUp(e); };
-
-	// bind mouse click
-	this.canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
-	this.canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
-
-	// bind mouse move
-	this.canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
-
-	// bind mouse wheel
-	var mousewheelevent=(window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
-	if (this.canvas_dom.addEventListener) { //WC3 browsers
-		this.canvas_dom.addEventListener(mousewheelevent, function(e) {
-			var event = window.event || e;
-			self.handleMouseWheel(event);
-		}, false);
-	}
-
-	// unable to use right click menu.
-	// not used
-	// this.canvas_dom.oncontextmenu = function() { return false; };
-
-	// bind gamepad
-	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
-		self.enableGamePad();
-	}
+	this.input_manager.setupEvents(this.canvas_dom);
 };
 
 Core.prototype.createWebGLContext = function(canvas) {
