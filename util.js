@@ -54,6 +54,13 @@ var Util = {
 
 		return false;
 	},
+	shallow_copy_hash: function (src_hash) {
+		var dst_hash = {};
+		for(var k in src_hash){
+			dst_hash[k] = src_hash[k];
+		}
+		return dst_hash;
+	}
 };
 
 module.exports = Util;
