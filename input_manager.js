@@ -1,21 +1,23 @@
 'use strict';
 
 var CONSTANT = require("./constant");
+var Util = require("./util");
+
 // const
-var BUTTON_ID_TO_BIT_CODE = {
+var DEFAULT_BUTTON_ID_TO_BIT_CODE = {
 	0: CONSTANT.BUTTON_Z,
 	1: CONSTANT.BUTTON_X,
-	//2: CONSTANT.BUTTON_SELECT,
-	//3: CONSTANT.BUTTON_START,
-	4: CONSTANT.BUTTON_SHIFT,
-	5: CONSTANT.BUTTON_SHIFT,
-	6: CONSTANT.BUTTON_SPACE,
+	2: CONSTANT.BUTTON_SPACE,
+	3: CONSTANT.BUTTON_SHIFT,
 };
 
 var InputManager = function () {
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
 	this._key_bit_code_to_down_time = {};
+
+	// gamepad button_id to bit code of key input
+	this._button_id_to_key_bit_code = Util.shallow_copy_hash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
 
 	this.is_left_clicked  = false;
 	this.is_right_clicked = false;
@@ -34,6 +36,9 @@ InputManager.prototype.init = function () {
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
 	this.initPressedKeyTime();
+
+	// gamepad button_id to bit code of key input
+	this._button_id_to_key_bit_code = Util.shallow_copy_hash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
 
 	this.is_left_clicked  = false;
 	this.is_right_clicked = false;
@@ -185,20 +190,19 @@ InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 };
 InputManager.prototype.handleGamePad = function() {
 	if(!this.is_connect_gamepad) return;
-	var pads = navigator.getGamepads();
+	var pads = window.navigator.getGamepads();
 	var pad = pads[0]; // 1Pコン
 
 	if(!pad) return;
 
 	// button
 	for (var i = 0, len = pad.buttons.length; i < len; i++) {
-		if(!(i in BUTTON_ID_TO_BIT_CODE)) continue; // ignore if I don't know its button
-
+		if(!(i in this._button_id_to_key_bit_code)) continue; // ignore if I don't know its button
 		if(pad.buttons[i].pressed) { // pressed
-			this.current_keyflag |= BUTTON_ID_TO_BIT_CODE[i];
+			this.current_keyflag |= this.getKeyByButtonId(i);
 		}
 		else { // not pressed
-			this.current_keyflag &= ~BUTTON_ID_TO_BIT_CODE[i];
+			this.current_keyflag &= ~this.getKeyByButtonId(i);
 		}
 	}
 
