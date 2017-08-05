@@ -54,6 +54,7 @@ var Util = {
 
 		return false;
 	},
+	// TODO: camelize
 	shallow_copy_hash: function (src_hash) {
 		var dst_hash = {};
 		for(var k in src_hash){
