@@ -206,9 +206,7 @@ Core.prototype.isKeyDown = function(flag) {
 };
 // this method is depricated.
 Core.prototype.isKeyPush = function(flag) {
-	var f = this.input_manager.isKeyPush(flag);
-	console.log(f);
-	return f;
+	return this.input_manager.isKeyPush(flag);
 };
 // this method is depricated.
 Core.prototype.getKeyDownTime = function(bit_code) {
