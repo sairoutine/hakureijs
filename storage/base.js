@@ -30,6 +30,14 @@ StorageBase.prototype.get = function(key) {
 StorageBase.prototype.remove = function(key) {
 	return delete this._data[key];
 };
+StorageBase.prototype.isEmpty = function(key) {
+	return Object.keys(this._data).length === 0;
+};
+StorageBase.prototype.toHash = function() {
+	return Util.shallowCopyHash(this._data);
+};
+
+
 // is Electron or NW.js ?
 StorageBase.isLocalMode = function() {
 	// this is Electron
