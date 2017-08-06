@@ -127,10 +127,10 @@ ObjectBase.prototype.globalDownY = function() {
 	return this.scene.x() + this.y() + this.height()/2;
 };
 
-ObjectBase.prototype.collisionWidth = function() {
+ObjectBase.prototype.collisionWidth = function(obj) {
 	return 0;
 };
-ObjectBase.prototype.collisionHeight = function() {
+ObjectBase.prototype.collisionHeight = function(obj) {
 	return 0;
 };
 
@@ -155,25 +155,25 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 
 
 ObjectBase.prototype.checkCollision = function(obj) {
-	if(Math.abs(this.x() - obj.x()) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
-		Math.abs(this.y() - obj.y()) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
+	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
+		Math.abs(this.y() - obj.y()) < this.collisionHeight(obj)/2 + obj.collisionHeight(this)/2) {
 		return true;
 	}
 
 	return false;
 };
 
-ObjectBase.prototype.getCollisionLeftX = function() {
-	return this.x() - this.collisionWidth() / 2;
+ObjectBase.prototype.getCollisionLeftX = function(obj) {
+	return this.x() - this.collisionWidth(obj) / 2;
 };
-ObjectBase.prototype.getCollisionRightX = function() {
-	return this.x() + this.collisionWidth() / 2;
+ObjectBase.prototype.getCollisionRightX = function(obj) {
+	return this.x() + this.collisionWidth(obj) / 2;
 };
-ObjectBase.prototype.getCollisionUpY = function() {
-	return this.y() - this.collisionHeight() / 2;
+ObjectBase.prototype.getCollisionUpY = function(obj) {
+	return this.y() - this.collisionHeight(obj) / 2;
 };
-ObjectBase.prototype.getCollisionDownY = function() {
-	return this.y() + this.collisionHeight() / 2;
+ObjectBase.prototype.getCollisionDownY = function(obj) {
+	return this.y() + this.collisionHeight(obj) / 2;
 };
 
 
