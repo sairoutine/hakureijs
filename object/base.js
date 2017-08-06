@@ -99,7 +99,7 @@ ObjectBase.prototype.move = function() {
 	this._x += x;
 	this._y += y;
 };
-ObjectBase.prototype.onCollision = function(){
+ObjectBase.prototype.onCollision = function(obj){
 };
 
 ObjectBase.prototype.width = function() {
@@ -133,6 +133,9 @@ ObjectBase.prototype.collisionWidth = function(obj) {
 ObjectBase.prototype.collisionHeight = function(obj) {
 	return 0;
 };
+ObjectBase.prototype.isCollision = function(obj) {
+	return true;
+};
 
 ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
 	var obj2 = this;
@@ -155,6 +158,8 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 
 
 ObjectBase.prototype.checkCollision = function(obj) {
+	if (!this.isCollision(obj) || !obj.isCollision(this)) return false;
+
 	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
 		Math.abs(this.y() - obj.y()) < this.collisionHeight(obj)/2 + obj.collisionHeight(this)/2) {
 		return true;
