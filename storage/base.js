@@ -79,9 +79,10 @@ StorageBase.prototype._saveToLocalFile = function() {
 // save file directory
 StorageBase._localFileDirectoryPath = function() {
 	var path = window.require('path');
-
-	var base = path.dirname(window.process.mainModule.filename);
-	return path.join(base, 'save/');
+	var app  = window.require('electron').remote.app;
+	var base = app.getPath("appData");
+	var app_name = app.getName();
+	return path.join(base, app_name, 'save/');
 };
 
 StorageBase._localFileName = function(key) {
