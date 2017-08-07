@@ -90,7 +90,9 @@ ObjectBase.prototype.removeSubObject = function(object){
 	}
 };
 
-
+ObjectBase.prototype.removeAllSubObject = function() {
+	this.objects = [];
+};
 
 ObjectBase.prototype.move = function() {
 	var x = util.calcMoveXByVelocity(this.velocity);

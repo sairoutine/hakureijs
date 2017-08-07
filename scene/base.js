@@ -141,6 +141,13 @@ SceneBase.prototype.addObject = function(object){
 SceneBase.prototype.addObjects = function(object_list){
 	this.objects = this.objects.concat(object_list);
 };
+SceneBase.prototype.removeAllObject = function() {
+	this.objects = [];
+};
+
+
+
+
 
 SceneBase.prototype.currentSubScene = function() {
 	if(this.current_scene === null) {
