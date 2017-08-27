@@ -66,7 +66,7 @@ SerifManager.prototype.init = function (script) {
 
 
 SerifManager.prototype.is_end = function () {
-	return this.progress + 1 === this.script.length;
+	return this.progress === this.script.length - 1;
 };
 
 SerifManager.prototype.next = function () {
