@@ -8,65 +8,64 @@ var TYPOGRAPHY_SPEED = 10;
 
 
 /* TODO:
-rename private method
 convert method name to camel case
 */
 var SerifManager = function () {
-	this.timeoutID = null;
+	this._timeoutID = null;
 
 	// serif scenario
-	this.script = null;
+	this._script = null;
 
 	// where serif has progressed
-	this.progress = null;
+	this._progress = null;
 
-	this.chara_id_list  = [];
-	this.exp_id_list    = [];
-	this.option = {};
+	this._chara_id_list  = [];
+	this._exp_id_list    = [];
+	this._option = {};
 
 	// which chara is talking, left or right
-	this.pos = null;
+	this._pos = null;
 
 	this._is_background_changed = false;
-	this.background = null;
+	this._background_image_name = null;
 
-	this.char_list = "";
-	this.char_idx = 0;
+	this._char_list = "";
+	this._char_idx = 0;
 
-	this.is_enable_printing_message = true;
+	this._is_enable_printing_message = true;
 
 	// now printing message
-	this.line_num = 0;
-	this.printing_lines = [];
+	this._line_num = 0;
+	this._printing_lines = [];
 };
 
 SerifManager.prototype.init = function (script) {
 	if(!script) console.error("set script arguments to use serif_manager class");
 
 	// serif scenario
-	this.script = script;
+	this._script = script;
 
-	this.chara_id_list  = [];
-	this.exp_id_list    = [];
-	this.option = {};
+	this._chara_id_list  = [];
+	this._exp_id_list    = [];
+	this._option = {};
 
 
 
-	this.progress = -1;
-	this.timeoutID = null;
-	this.pos  = null;
+	this._progress = -1;
+	this._timeoutID = null;
+	this._pos  = null;
 
 	this._is_background_changed = false;
-	this.background = null;
+	this._background_image_name = null;
 
 
-	this.char_list = "";
-	this.char_idx = 0;
+	this._char_list = "";
+	this._char_idx = 0;
 
-	this.is_enable_printing_message = true;
+	this._is_enable_printing_message = true;
 
-	this.line_num = 0;
-	this.printing_lines = [];
+	this._line_num = 0;
+	this._printing_lines = [];
 
 	if(!this.is_end()) {
 		this.next(); // start
@@ -75,13 +74,13 @@ SerifManager.prototype.init = function (script) {
 
 
 SerifManager.prototype.is_end = function () {
-	return this.progress === this.script.length - 1;
+	return this._progress === this._script.length - 1;
 };
 
 SerifManager.prototype.next = function () {
-	this.progress++;
+	this._progress++;
 
-	var script = this.script[this.progress];
+	var script = this._script[this._progress];
 
 	this._showChara(script);
 
@@ -100,9 +99,9 @@ SerifManager.prototype.next = function () {
 
 SerifManager.prototype._showBackground = function(script) {
 	this._is_background_changed = false;
-	if(script.background && this.background !== script.background) {
+	if(script.background && this._background_image_name !== script.background) {
 		this._is_background_changed = true;
-		this.background  = script.background;
+		this._background_image_name  = script.background;
 	}
 };
 
@@ -114,100 +113,96 @@ SerifManager.prototype._showChara = function(script) {
 		if (pos === "left")  pos = 0;
 		if (pos === "right") pos = 1;
 
-		this.pos  = pos;
+		this._pos  = pos;
 
-		this.chara_id_list[pos] = script.chara;
-		this.exp_id_list[pos]   = script.exp;
+		this._chara_id_list[pos] = script.chara;
+		this._exp_id_list[pos]   = script.exp;
 	}
 };
 
 SerifManager.prototype._setOption = function(script) {
-	this.option = script.option || {};
+	this._option = script.option || {};
 
 	// for depricated script "font_color"
 	if (script.font_color) {
-		this.option = Util.shallowCopyHash(this.option);
-		this.option.font_color = script.font_color;
+		this._option = Util.shallowCopyHash(this.option);
+		this._option.font_color = script.font_color;
 	}
 };
 
 SerifManager.prototype._printMessage = function (message) {
-	var self = this;
-
 	// cancel already started message
-	self._cancelPrintMessage();
+	this._cancelPrintMessage();
 
 	// setup to show message
-	self.char_list = message.split("");
-	self.char_idx = 0;
+	this._char_list = message.split("");
+	this._char_idx = 0;
 
 	// clear showing message
-	self.line_num = 0;
-	self.printing_lines = [];
+	this._line_num = 0;
+	this._printing_lines = [];
 
 	this._startPrintMessage();
 };
 
 SerifManager.prototype._startPrintMessage = function () {
-	var self = this;
-	var char_length = self.char_list.length;
-	if (self.char_idx >= char_length) return;
+	var char_length = this._char_list.length;
+	if (this._char_idx >= char_length) return;
 
-	if(this.is_enable_printing_message) {
-		var ch = self.char_list[self.char_idx];
-		self.char_idx++;
+	if(this._is_enable_printing_message) {
+		var ch = this._char_list[this._char_idx];
+		this._char_idx++;
 
 		if (ch === "\n") {
-			self.line_num++;
+			this._line_num++;
 		}
 		else {
 			// initialize
-			if(!self.printing_lines[self.line_num]) {
-				self.printing_lines[self.line_num] = "";
+			if(!this._printing_lines[this._line_num]) {
+				this._printing_lines[this._line_num] = "";
 			}
 
 			// show A word
-			self.printing_lines[self.line_num] = self.printing_lines[self.line_num] + ch;
+			this._printing_lines[this._line_num] = this._printing_lines[this._line_num] + ch;
 		}
 	}
 
-	self.timeoutID = setTimeout(self._startPrintMessage.bind(self), TYPOGRAPHY_SPEED);
+	this._timeoutID = setTimeout(this._startPrintMessage.bind(this), TYPOGRAPHY_SPEED);
 };
 
 SerifManager.prototype._cancelPrintMessage = function () {
-	var self = this;
-	if(self.timeoutID !== null) {
-		clearTimeout(self.timeoutID);
-		self.timeoutID = null;
+	if(this._timeoutID !== null) {
+		clearTimeout(this._timeoutID);
+		this._timeoutID = null;
 	}
 };
 
 SerifManager.prototype.startPrintMessage = function () {
-	this.is_enable_printing_message = true;
+	this._is_enable_printing_message = true;
 };
 SerifManager.prototype.cancelPrintMessage = function () {
-	this.is_enable_printing_message = false;
+	this._is_enable_printing_message = false;
 };
 
 SerifManager.prototype.is_background_changed = function () {
 	return this._is_background_changed;
 };
 SerifManager.prototype.background_image = function () {
-	return this.background;
+	return this._background_image_name;
 };
 
 SerifManager.prototype.getImageName = function (pos) {
 	pos = pos || 0;
-	return(this.chara_id_list[pos] ? this.chara_id_list[pos] + "_" + this.exp_id_list[pos] : null);
+	return(this._chara_id_list[pos] ? this._chara_id_list[pos] + "_" + this._exp_id_list[pos] : null);
 };
 SerifManager.prototype.isTalking = function (pos) {
-	return this.pos === pos ? true : false;
+	return this._pos === pos ? true : false;
 };
 SerifManager.prototype.getOption = function () {
-	return this.option;
+	return this._option;
 };
 SerifManager.prototype.lines = function () {
-	return this.printing_lines;
+	return this._printing_lines;
 };
 
 
@@ -247,7 +242,7 @@ SerifManager.prototype.is_left_talking = function () {
 
 // NOTE: depricated
 SerifManager.prototype.font_color = function () {
-	return this.option.font_color;
+	return this._option.font_color;
 };
 
 
