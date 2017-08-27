@@ -1,15 +1,10 @@
 'use strict';
 
-var Util = require("./util");
-
 // typography speed
 var TYPOGRAPHY_SPEED = 10;
 
+var Util = require("./util");
 
-
-/* TODO:
-convert method name to camel case
-*/
 var SerifManager = function () {
 	this._timeoutID = null;
 
@@ -72,8 +67,7 @@ SerifManager.prototype.init = function (script) {
 	}
 };
 
-
-SerifManager.prototype.is_end = function () {
+SerifManager.prototype.isEnd = function () {
 	return this._progress === this._script.length - 1;
 };
 
@@ -184,10 +178,10 @@ SerifManager.prototype.cancelPrintMessage = function () {
 	this._is_enable_printing_message = false;
 };
 
-SerifManager.prototype.is_background_changed = function () {
+SerifManager.prototype.isBackgroundChanged = function () {
 	return this._is_background_changed;
 };
-SerifManager.prototype.background_image = function () {
+SerifManager.prototype.getBackgroundImageName = function () {
 	return this._background_image_name;
 };
 
@@ -207,12 +201,6 @@ SerifManager.prototype.lines = function () {
 
 
 
-
-
-
-
-
-
 // NOTE: depricated
 SerifManager.prototype.right_image = function () {
 	var pos = 1; // means right
@@ -225,8 +213,6 @@ SerifManager.prototype.left_image = function () {
 
 	return this.getImageName(pos);
 };
-
-
 // NOTE: depricated
 SerifManager.prototype.is_right_talking = function () {
 	var pos = 1; // means right
@@ -239,13 +225,21 @@ SerifManager.prototype.is_left_talking = function () {
 
 	return this.isTalking(pos);
 };
-
 // NOTE: depricated
 SerifManager.prototype.font_color = function () {
 	return this._option.font_color;
 };
-
-
-
+// NOTE: depricated
+SerifManager.prototype.is_end = function () {
+	return this.isEnd();
+};
+// NOTE: depricated
+SerifManager.prototype.is_background_changed = function () {
+	return this.isBackgroundChanged();
+};
+// NOTE: depricated
+SerifManager.prototype.background_image = function () {
+	return this.getBackgroundImageName();
+};
 
 module.exports = SerifManager;
