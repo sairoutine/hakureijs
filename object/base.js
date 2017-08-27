@@ -139,27 +139,47 @@ ObjectBase.prototype.isCollision = function(obj) {
 	return true;
 };
 
+
+ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
+	if(this.checkCollisionByPosition(x, y)) {
+		this.onCollision();
+		return true;
+	}
+
+	return false;
+};
+
 ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
 	var obj2 = this;
-	if(obj1.checkCollision(obj2)) {
+	if(obj1.checkCollisionByObject(obj2)) {
 		obj1.onCollision(obj2);
 		obj2.onCollision(obj1);
+		return true;
 	}
+	return false;
 };
 ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 	var obj1 = this;
+	var return_flag = false;
 	for(var i = 0; i < objs.length; i++) {
 		var obj2 = objs[i];
-		if(obj1.checkCollision(obj2)) {
+		if(obj1.checkCollisionByObject(obj2)) {
 			obj1.onCollision(obj2);
 			obj2.onCollision(obj1);
+			return_flag = true;
 		}
 	}
+
+	return return_flag;
 };
 
 
-
+// NOTE: depricated
 ObjectBase.prototype.checkCollision = function(obj) {
+	return this.checkCollisionByObject(obj);
+};
+
+ObjectBase.prototype.checkCollisionByObject = function(obj) {
 	if (!this.isCollision(obj) || !obj.isCollision(this)) return false;
 
 	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
@@ -169,6 +189,20 @@ ObjectBase.prototype.checkCollision = function(obj) {
 
 	return false;
 };
+
+ObjectBase.prototype.checkCollisionByPosition = function(x, y) {
+	if (!this.isCollision()) return false; // TODO: pass arguments of point object to isCollision method
+
+	if (this.x() - this.collisionWidth()/2 < x && x < this.x() + this.collisionWidth()/2 &&
+		this.y() - this.collisionHeight()/2 < y && y < this.y() + this.collisionHeight()/2) {
+		return true;
+	}
+
+	return false;
+};
+
+
+
 
 ObjectBase.prototype.getCollisionLeftX = function(obj) {
 	return this.x() - this.collisionWidth(obj) / 2;
