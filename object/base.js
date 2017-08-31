@@ -31,8 +31,9 @@ var ObjectBase = function(scene, object) {
 ObjectBase.prototype.init = function(){
 	this.frame_count = 0;
 
-	this._x = 0;
-	this._y = 0;
+	// NOTE: abolished
+	//this._x = 0;
+	//this._y = 0;
 
 	this.auto_disable_times_map = {};
 
