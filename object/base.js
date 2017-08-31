@@ -174,7 +174,7 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 };
 
 
-// NOTE: depricated
+// NOTE: deprecated
 ObjectBase.prototype.checkCollision = function(obj) {
 	return this.checkCollisionByObject(obj);
 };

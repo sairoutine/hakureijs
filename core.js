@@ -200,52 +200,52 @@ Core.prototype.is2D = function() {
 Core.prototype.is3D = function() {
 	return this.gl ? true : false;
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.isKeyDown = function(flag) {
 	return this.input_manager.isKeyDown(flag);
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.isKeyPush = function(flag) {
 	return this.input_manager.isKeyPush(flag);
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.getKeyDownTime = function(bit_code) {
 	return this.input_manager.getKeyDownTime(bit_code);
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.isLeftClickDown = function() {
 	return this.input_manager.isLeftClickDown();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.isLeftClickPush = function() {
 	return this.input_manager.isLeftClickPush();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.isRightClickDown = function() {
 	return this.input_manager.isRightClickDown();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.isRightClickPush = function() {
 	return this.input_manager.isRightClickPush();
 };
 
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.mousePositionX = function () {
 	return this.input_manager.mousePositionX();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.mousePositionY = function () {
 	return this.input_manager.mousePositionX();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.mouseMoveX = function () {
 	return this.input_manager.mouseMoveX();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.mouseMoveY = function () {
 	return this.input_manager.mouseMoveY();
 };
-// this method is depricated.
+// this method is deprecated.
 Core.prototype.mouseScroll = function () {
 	return this.input_manager.mouseScroll();
 };

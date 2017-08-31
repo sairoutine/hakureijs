@@ -103,7 +103,7 @@ SerifManager.prototype._showChara = function(script) {
 	var pos = script.pos;
 
 	if (pos) {
-		// NOTE: for depricated pos setting
+		// NOTE: for deprecated pos setting
 		if (pos === "left")  pos = 0;
 		if (pos === "right") pos = 1;
 
@@ -117,7 +117,7 @@ SerifManager.prototype._showChara = function(script) {
 SerifManager.prototype._setOption = function(script) {
 	this._option = script.option || {};
 
-	// for depricated script "font_color"
+	// for deprecated script "font_color"
 	if (script.font_color) {
 		this._option = Util.shallowCopyHash(this.option);
 		this._option.font_color = script.font_color;
@@ -201,43 +201,43 @@ SerifManager.prototype.lines = function () {
 
 
 
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.right_image = function () {
 	var pos = 1; // means right
 
 	return this.getImageName(pos);
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.left_image = function () {
 	var pos = 0; // means left
 
 	return this.getImageName(pos);
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.is_right_talking = function () {
 	var pos = 1; // means right
 
 	return this.isTalking(pos);
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.is_left_talking = function () {
 	var pos = 0; // means left
 
 	return this.isTalking(pos);
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.font_color = function () {
 	return this._option.font_color;
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.is_end = function () {
 	return this.isEnd();
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.is_background_changed = function () {
 	return this.isBackgroundChanged();
 };
-// NOTE: depricated
+// NOTE: deprecated
 SerifManager.prototype.background_image = function () {
 	return this.getBackgroundImageName();
 };
