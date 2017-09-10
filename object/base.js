@@ -97,6 +97,37 @@ ObjectBase.prototype.y = function(val) {
 
 /*
 *******************************
+* position methods
+*******************************
+*/
+
+ObjectBase.prototype.globalCenterX = function() {
+	return this.scene.x() + this.x();
+};
+
+ObjectBase.prototype.globalCenterY = function() {
+	return this.scene.y() + this.y();
+};
+
+
+ObjectBase.prototype.globalLeftX = function() {
+	return this.scene.x() + this.x() - this.width()/2;
+};
+
+ObjectBase.prototype.globalRightX = function() {
+	return this.scene.x() + this.x() + this.width()/2;
+};
+
+ObjectBase.prototype.globalUpY = function() {
+	return this.scene.x() + this.y() - this.height()/2;
+};
+
+ObjectBase.prototype.globalDownY = function() {
+	return this.scene.x() + this.y() + this.height()/2;
+};
+
+/*
+*******************************
 * sub object methods
 *******************************
 */
@@ -127,25 +158,6 @@ ObjectBase.prototype.removeAllSubObject = function() {
 */
 
 ObjectBase.prototype.onCollision = function(obj){
-};
-
-ObjectBase.prototype.globalCenterX = function() {
-	return this.scene.x() + this.x();
-};
-ObjectBase.prototype.globalCenterY = function() {
-	return this.scene.y() + this.y();
-};
-ObjectBase.prototype.globalLeftX = function() {
-	return this.scene.x() + this.x() - this.width()/2;
-};
-ObjectBase.prototype.globalRightX = function() {
-	return this.scene.x() + this.x() + this.width()/2;
-};
-ObjectBase.prototype.globalUpY = function() {
-	return this.scene.x() + this.y() - this.height()/2;
-};
-ObjectBase.prototype.globalDownY = function() {
-	return this.scene.x() + this.y() + this.height()/2;
 };
 
 ObjectBase.prototype.collisionWidth = function(obj) {
