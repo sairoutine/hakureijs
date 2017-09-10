@@ -60,11 +60,7 @@ ObjectBase.prototype.draw = function() {
 
 	// If is in DEBUG mode, show collision area
 	if(this.core.debug_manager.isShowingCollisionArea()) {
-		ctx.save();
-		ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
-		ctx.globalAlpha = 0.4;
-		ctx.fillRect(this.getCollisionLeftX(), this.getCollisionUpY(), this.collisionWidth(), this.collisionHeight());
-		ctx.restore();
+		this._drawCollisionArea();
 	}
 
 
@@ -218,6 +214,14 @@ ObjectBase.prototype.getCollisionUpY = function(obj) {
 };
 ObjectBase.prototype.getCollisionDownY = function(obj) {
 	return this.y() + this.collisionHeight(obj) / 2;
+};
+ObjectBase.prototype._drawCollisionArea = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+	ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
+	ctx.globalAlpha = 0.4;
+	ctx.fillRect(this.getCollisionLeftX(), this.getCollisionUpY(), this.collisionWidth(), this.collisionHeight());
+	ctx.restore();
 };
 
 
