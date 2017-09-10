@@ -95,6 +95,11 @@ ObjectBase.prototype.y = function(val) {
 	return this._y;
 };
 
+ObjectBase.prototype.setPosition = function(x, y) {
+	this._x = x;
+	this._y = y;
+};
+
 /*
 *******************************
 * position methods
