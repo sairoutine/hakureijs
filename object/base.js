@@ -18,7 +18,8 @@ var ObjectBase = function(scene, object) {
 	// manage flags that disappears in frame elapsed
 	this._auto_disable_times_map = {};
 
-	this._velocity = {magnitude:0, theta:0};
+	this._velocity = null;
+	this.resetVelocity();
 
 	// sub object
 	this.objects = [];
@@ -33,6 +34,8 @@ ObjectBase.prototype.init = function(){
 	//this._y = 0;
 
 	this._auto_disable_times_map = {};
+
+	this.resetVelocity();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
@@ -255,9 +258,14 @@ ObjectBase.prototype.y = function(val) {
 	return this._y;
 };
 
+
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this._velocity = velocity;
 };
+ObjectBase.prototype.resetVelocity = function() {
+	this._velocity = {magnitude:0, theta:0};
+};
+
 
 var EXTRA_OUT_OF_SIZE = 100;
 ObjectBase.prototype.isOutOfStage = function( ) {
