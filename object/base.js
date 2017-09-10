@@ -52,7 +52,8 @@ ObjectBase.prototype.beforeDraw = function(){
 		this.objects[i].beforeDraw();
 	}
 
-	this.move();
+	// move if this object is set velocity
+	this._move();
 };
 
 ObjectBase.prototype.draw = function() {
@@ -93,7 +94,9 @@ ObjectBase.prototype.removeAllSubObject = function() {
 	this.objects = [];
 };
 
-ObjectBase.prototype.move = function() {
+// move if this object is set velocity
+// TODO: doesn't move if the object's velocity magnitude is 0
+ObjectBase.prototype._move = function() {
 	var x = util.calcMoveXByVelocity(this._velocity);
 	var y = util.calcMoveYByVelocity(this._velocity);
 
