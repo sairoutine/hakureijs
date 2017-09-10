@@ -56,8 +56,9 @@ ObjectBase.prototype.beforeDraw = function(){
 
 ObjectBase.prototype.draw = function() {
 	var ctx = this.core.ctx;
-	// TODO: DEBUG
-	if(IS_SHOW_COLLISION) {
+
+	// If is in DEBUG mode, show collision area
+	if(this.core.debug_manager.isShowingCollisionArea()) {
 		ctx.save();
 		ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
 		ctx.globalAlpha = 0.4;

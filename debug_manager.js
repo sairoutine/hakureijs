@@ -5,6 +5,9 @@ var DebugManager = function (core) {
 	this.dom = null; // debug menu area
 
 	this.is_debug_mode = false; // default: false
+
+
+	this._is_showing_collision_area = false; // default: false
 };
 
 DebugManager.prototype.setOn = function (dom) {
@@ -46,6 +49,17 @@ DebugManager.prototype.addMenuButton = function (button_value, func) {
 
 	// add element
 	this.dom.appendChild(input);
+};
+
+// show collision area of object instance
+DebugManager.prototype.setShowingCollisionAreaOn = function () {
+	this._is_showing_collision_area = true;
+};
+DebugManager.prototype.setShowingCollisionAreaOff = function () {
+	this._is_showing_collision_area = false;
+};
+DebugManager.prototype.isShowingCollisionArea = function () {
+	return this._is_showing_collision_area;
 };
 
 module.exports = DebugManager;
