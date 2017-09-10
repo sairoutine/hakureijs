@@ -4,9 +4,6 @@ var util = require('../util');
 
 var id = 0;
 
-// is draw collision size
-var IS_SHOW_COLLISION = false;
-
 var ObjectBase = function(scene, object) {
 	this.scene = scene;
 	this.core = scene.core;
@@ -19,7 +16,7 @@ var ObjectBase = function(scene, object) {
 	this._y = 0; // local center y
 
 	// manage flags that disappears in frame elapsed
-	this.auto_disable_times_map = {};
+	this._auto_disable_times_map = {};
 
 	this.velocity = {magnitude:0, theta:0};
 
@@ -35,7 +32,7 @@ ObjectBase.prototype.init = function(){
 	//this._x = 0;
 	//this._y = 0;
 
-	this.auto_disable_times_map = {};
+	this._auto_disable_times_map = {};
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
@@ -234,17 +231,17 @@ ObjectBase.prototype.setAutoDisableFlag = function(flag_name, count) {
 
 	self[flag_name] = true;
 
-	self.auto_disable_times_map[flag_name] = self.frame_count + count;
+	self._auto_disable_times_map[flag_name] = self.frame_count + count;
 
 };
 
 // check flags that disappears in frame elapsed
 ObjectBase.prototype.checkAutoDisableFlags = function() {
 	var self = this;
-	for (var flag_name in self.auto_disable_times_map) {
-		if(this.auto_disable_times_map[flag_name] < self.frame_count) {
+	for (var flag_name in self._auto_disable_times_map) {
+		if(this._auto_disable_times_map[flag_name] < self.frame_count) {
 			self[flag_name] = false;
-			delete self.auto_disable_times_map[flag_name];
+			delete self._auto_disable_times_map[flag_name];
 		}
 	}
 };
