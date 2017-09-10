@@ -45,6 +45,7 @@ ObjectBase.prototype.init = function(){
 ObjectBase.prototype.beforeDraw = function(){
 	this.frame_count++;
 
+	// check flags that disappears in frame elapsed
 	this._checkAutoDisableFlags();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
@@ -229,6 +230,7 @@ ObjectBase.prototype.getCollisionDownY = function(obj) {
 
 // set flags that disappears in frame elapsed
 // TODO: enable to set flag which becomes false -> true
+// TODO: reset flag if the object calls init method
 ObjectBase.prototype.setAutoDisableFlag = function(flag_name, count) {
 	var self = this;
 
