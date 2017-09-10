@@ -94,15 +94,6 @@ ObjectBase.prototype.removeAllSubObject = function() {
 	this.objects = [];
 };
 
-// move if this object is set velocity
-// TODO: doesn't move if the object's velocity magnitude is 0
-ObjectBase.prototype._move = function() {
-	var x = util.calcMoveXByVelocity(this._velocity);
-	var y = util.calcMoveYByVelocity(this._velocity);
-
-	this._x += x;
-	this._y += y;
-};
 ObjectBase.prototype.onCollision = function(obj){
 };
 
@@ -279,6 +270,15 @@ ObjectBase.prototype.setVelocityMagnitude = function(magnitude) {
 };
 ObjectBase.prototype.setVelocityTheta = function(theta) {
 	this._velocity.theta = theta;
+};
+// move if this object is set velocity
+// TODO: doesn't move if the object's velocity magnitude is 0
+ObjectBase.prototype._move = function() {
+	var x = util.calcMoveXByVelocity(this._velocity);
+	var y = util.calcMoveYByVelocity(this._velocity);
+
+	this._x += x;
+	this._y += y;
 };
 
 
