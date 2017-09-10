@@ -186,6 +186,16 @@ ObjectBase.prototype.isCollision = function(obj) {
 };
 
 
+
+
+
+
+
+
+
+
+
+
 ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
 	if(this.checkCollisionByPosition(x, y)) {
 		this.onCollision();
@@ -241,6 +251,11 @@ ObjectBase.prototype.checkCollisionByPosition = function(x, y) {
 
 	return false;
 };
+
+
+
+
+
 
 
 
