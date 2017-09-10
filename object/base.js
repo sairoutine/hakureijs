@@ -265,6 +265,13 @@ ObjectBase.prototype.setVelocity = function(velocity) {
 ObjectBase.prototype.resetVelocity = function() {
 	this._velocity = {magnitude:0, theta:0};
 };
+ObjectBase.prototype.setVelocityMagnitude = function(magnitude) {
+	this._velocity.magnitude = magnitude;
+};
+ObjectBase.prototype.setVelocityTheta = function(theta) {
+	this._velocity.theta = theta;
+};
+
 
 
 var EXTRA_OUT_OF_SIZE = 100;
