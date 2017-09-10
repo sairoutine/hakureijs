@@ -157,15 +157,25 @@ ObjectBase.prototype.removeAllSubObject = function() {
 *******************************
 */
 
-ObjectBase.prototype.onCollision = function(obj){
-};
-
+// collision width
+// NOTE: the obj of arguments is collision target object
 ObjectBase.prototype.collisionWidth = function(obj) {
 	return 0;
 };
+
+// collision height
+// NOTE: the obj of arguments is collision target object
 ObjectBase.prototype.collisionHeight = function(obj) {
 	return 0;
 };
+
+// callback if the object is collision with
+// NOTE: the obj of arguments is collision target object
+ObjectBase.prototype.onCollision = function(obj){
+};
+
+// flag if the object is check collision with
+// NOTE: the obj of arguments is collision target object
 ObjectBase.prototype.isCollision = function(obj) {
 	return true;
 };
@@ -233,15 +243,19 @@ ObjectBase.prototype.checkCollisionByPosition = function(x, y) {
 ObjectBase.prototype.getCollisionLeftX = function(obj) {
 	return this.x() - this.collisionWidth(obj) / 2;
 };
+
 ObjectBase.prototype.getCollisionRightX = function(obj) {
 	return this.x() + this.collisionWidth(obj) / 2;
 };
+
 ObjectBase.prototype.getCollisionUpY = function(obj) {
 	return this.y() - this.collisionHeight(obj) / 2;
 };
+
 ObjectBase.prototype.getCollisionDownY = function(obj) {
 	return this.y() + this.collisionHeight(obj) / 2;
 };
+
 ObjectBase.prototype._drawCollisionArea = function() {
 	// make dummy object to decide collision width and height
 	var dummy_object = new ObjectBase(this.scene);
