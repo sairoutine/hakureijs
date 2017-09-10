@@ -273,18 +273,28 @@ ObjectBase.prototype._checkAutoDisableFlags = function() {
 	}
 };
 
+/*
+*******************************
+* velocity methods
+*******************************
+*/
+
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this._velocity = velocity;
 };
+
 ObjectBase.prototype.resetVelocity = function() {
 	this._velocity = {magnitude:0, theta:0};
 };
+
 ObjectBase.prototype.setVelocityMagnitude = function(magnitude) {
 	this._velocity.magnitude = magnitude;
 };
+
 ObjectBase.prototype.setVelocityTheta = function(theta) {
 	this._velocity.theta = theta;
 };
+
 // move if this object is set velocity
 // TODO: doesn't move if the object's velocity magnitude is 0
 ObjectBase.prototype._move = function() {
