@@ -2,6 +2,9 @@
 
 var util = require('../util');
 
+// used by isOutOfStage method
+var EXTRA_OUT_OF_SIZE = 100;
+
 var id = 0;
 
 var ObjectBase = function(scene, object) {
@@ -76,10 +79,33 @@ ObjectBase.prototype.afterDraw = function() {
 	}
 };
 
+ObjectBase.prototype.width = function() {
+	return 0;
+};
+ObjectBase.prototype.height = function() {
+	return 0;
+};
+
+ObjectBase.prototype.x = function(val) {
+	if (typeof val !== 'undefined') { this._x = val; }
+	return this._x;
+};
+ObjectBase.prototype.y = function(val) {
+	if (typeof val !== 'undefined') { this._y = val; }
+	return this._y;
+};
+
+/*
+*******************************
+* sub object methods
+*******************************
+*/
+
 // add sub object
 ObjectBase.prototype.addSubObject = function(object){
 	this.objects.push(object);
 };
+
 ObjectBase.prototype.removeSubObject = function(object){
 	// TODO: O(n) -> O(1)
 	for(var i = 0, len = this.objects.length; i < len; i++) {
@@ -94,15 +120,15 @@ ObjectBase.prototype.removeAllSubObject = function() {
 	this.objects = [];
 };
 
+/*
+*******************************
+* collision methods
+*******************************
+*/
+
 ObjectBase.prototype.onCollision = function(obj){
 };
 
-ObjectBase.prototype.width = function() {
-	return 0;
-};
-ObjectBase.prototype.height = function() {
-	return 0;
-};
 ObjectBase.prototype.globalCenterX = function() {
 	return this.scene.x() + this.x();
 };
@@ -218,13 +244,11 @@ ObjectBase.prototype._drawCollisionArea = function() {
 	ctx.restore();
 };
 
-
-
-
-
-
-
-
+/*
+*******************************
+* disable flag methods
+*******************************
+*/
 
 // set flags that disappears in frame elapsed
 // TODO: enable to set flag which becomes false -> true
@@ -249,16 +273,6 @@ ObjectBase.prototype._checkAutoDisableFlags = function() {
 	}
 };
 
-ObjectBase.prototype.x = function(val) {
-	if (typeof val !== 'undefined') { this._x = val; }
-	return this._x;
-};
-ObjectBase.prototype.y = function(val) {
-	if (typeof val !== 'undefined') { this._y = val; }
-	return this._y;
-};
-
-
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this._velocity = velocity;
 };
@@ -281,9 +295,13 @@ ObjectBase.prototype._move = function() {
 	this._y += y;
 };
 
+/*
+*******************************
+* other methods
+*******************************
+*/
 
-
-var EXTRA_OUT_OF_SIZE = 100;
+// TODO: this.core -> this.scene
 ObjectBase.prototype.isOutOfStage = function( ) {
 	if(this.x() + EXTRA_OUT_OF_SIZE < 0 ||
 	   this.y() + EXTRA_OUT_OF_SIZE < 0 ||
@@ -296,9 +314,4 @@ ObjectBase.prototype.isOutOfStage = function( ) {
 	return false;
 };
 
-
-
-
-
 module.exports = ObjectBase;
-
