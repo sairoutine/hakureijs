@@ -45,7 +45,7 @@ ObjectBase.prototype.init = function(){
 ObjectBase.prototype.beforeDraw = function(){
 	this.frame_count++;
 
-	this.checkAutoDisableFlags();
+	this._checkAutoDisableFlags();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].beforeDraw();
@@ -239,7 +239,7 @@ ObjectBase.prototype.setAutoDisableFlag = function(flag_name, count) {
 };
 
 // check flags that disappears in frame elapsed
-ObjectBase.prototype.checkAutoDisableFlags = function() {
+ObjectBase.prototype._checkAutoDisableFlags = function() {
 	var self = this;
 	for (var flag_name in self._auto_disable_times_map) {
 		if(this._auto_disable_times_map[flag_name] < self.frame_count) {
