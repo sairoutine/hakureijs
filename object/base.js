@@ -205,11 +205,6 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 };
 
 
-// NOTE: deprecated
-ObjectBase.prototype.checkCollision = function(obj) {
-	return this.checkCollisionByObject(obj);
-};
-
 ObjectBase.prototype.checkCollisionByObject = function(obj) {
 	if (!this.isCollision(obj) || !obj.isCollision(this)) return false;
 
@@ -248,12 +243,26 @@ ObjectBase.prototype.getCollisionDownY = function(obj) {
 	return this.y() + this.collisionHeight(obj) / 2;
 };
 ObjectBase.prototype._drawCollisionArea = function() {
+	// make dummy object to decide collision width and height
+	var dummy_object = new ObjectBase(this.scene);
+
 	var ctx = this.core.ctx;
 	ctx.save();
 	ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
 	ctx.globalAlpha = 0.4;
-	ctx.fillRect(this.getCollisionLeftX(), this.getCollisionUpY(), this.collisionWidth(), this.collisionHeight());
+	ctx.fillRect(
+		this.getCollisionLeftX(dummy_object),
+		this.getCollisionUpY(dummy_object),
+		this.collisionWidth(dummy_object),
+		this.collisionHeight(dummy_object)
+	);
 	ctx.restore();
+};
+
+
+// NOTE: deprecated
+ObjectBase.prototype.checkCollision = function(obj) {
+	return this.checkCollisionByObject(obj);
 };
 
 /*
