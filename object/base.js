@@ -185,34 +185,20 @@ ObjectBase.prototype.isCollision = function(obj) {
 	return true;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
-	var point = new ObjectPoint(this.scene);
-	point.init();
-	point.setPosition(x, y);
-
-	return this.checkCollisionWithObject(point);
-};
-
+// check Collision Detect with object and execute onCollision method if detect
 ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
 	var obj2 = this;
-	if(obj1.checkCollisionByObject(obj2)) {
+	var is_collision = obj1.intersect(obj2);
+
+	if(is_collision) {
 		obj1.onCollision(obj2);
 		obj2.onCollision(obj1);
-		return true;
 	}
-	return false;
+
+	return is_collision;
 };
+
+// check Collision Detect with object array and execute onCollision method if detect
 ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 	var obj1 = this;
 	var return_flag = false;
@@ -228,8 +214,17 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 	return return_flag;
 };
 
+// check Collision Detect with (x, y) and execute onCollision method if detect
+ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
+	var point = new ObjectPoint(this.scene);
+	point.init();
+	point.setPosition(x, y);
 
-ObjectBase.prototype.checkCollisionByObject = function(obj) {
+	return this.checkCollisionWithObject(point);
+};
+
+// is the object collides with obj of argument ?
+ObjectBase.prototype.intersect = function(obj) {
 	if (!this.isCollision(obj) || !obj.isCollision(this)) return false;
 
 	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
@@ -239,14 +234,6 @@ ObjectBase.prototype.checkCollisionByObject = function(obj) {
 
 	return false;
 };
-
-
-
-
-
-
-
-
 
 ObjectBase.prototype.getCollisionLeftX = function(obj) {
 	return this.x() - this.collisionWidth(obj) / 2;
@@ -287,6 +274,10 @@ ObjectBase.prototype.checkCollision = function(obj) {
 	return this.checkCollisionByObject(obj);
 };
 
+// NOTE: deprecated
+ObjectBase.prototype.checkCollisionByObject = function(obj) {
+	return this.intersect(obj);
+};
 /*
 *******************************
 * disable flag methods
