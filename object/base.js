@@ -197,12 +197,11 @@ ObjectBase.prototype.isCollision = function(obj) {
 
 
 ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
-	if(this.checkCollisionByPosition(x, y)) {
-		this.onCollision();
-		return true;
-	}
+	var point = new ObjectPoint(this.scene);
+	point.init();
+	point.setPosition(x, y);
 
-	return false;
+	return this.checkCollisionWithObject(point);
 };
 
 ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
@@ -235,17 +234,6 @@ ObjectBase.prototype.checkCollisionByObject = function(obj) {
 
 	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
 		Math.abs(this.y() - obj.y()) < this.collisionHeight(obj)/2 + obj.collisionHeight(this)/2) {
-		return true;
-	}
-
-	return false;
-};
-
-ObjectBase.prototype.checkCollisionByPosition = function(x, y) {
-	if (!this.isCollision()) return false; // TODO: pass arguments of point object to isCollision method
-
-	if (this.x() - this.collisionWidth()/2 < x && x < this.x() + this.collisionWidth()/2 &&
-		this.y() - this.collisionHeight()/2 < y && y < this.y() + this.collisionHeight()/2) {
 		return true;
 	}
 
@@ -377,6 +365,31 @@ ObjectBase.prototype.isOutOfStage = function( ) {
 	}
 
 	return false;
+};
+
+/*
+*******************************
+* point object class
+*******************************
+*/
+
+var ObjectPoint = function(scene) {
+	ObjectBase.apply(this, arguments);
+
+};
+util.inherit(ObjectPoint, ObjectBase);
+
+ObjectPoint.prototype.collisionWidth = function(){
+	return 1;
+};
+ObjectPoint.prototype.collisionHeight = function(){
+	return 1;
+};
+ObjectPoint.prototype.width = function() {
+	return 1;
+};
+ObjectPoint.prototype.height = function() {
+	return 1;
 };
 
 module.exports = ObjectBase;
