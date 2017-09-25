@@ -144,6 +144,16 @@ SceneBase.prototype.addObjects = function(object_list){
 SceneBase.prototype.removeAllObject = function() {
 	this.objects = [];
 };
+SceneBase.prototype.removeObject = function(object){
+	// TODO: O(n) -> O(1)
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		if(this.objects[i].id === object.id) {
+			this.objects.splice(i, 1);
+			break;
+		}
+	}
+};
+
 
 
 
