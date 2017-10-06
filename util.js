@@ -84,6 +84,31 @@ var Util = {
 		}
 		return to;
 	},
+
+	// for old browser
+	bind: function(func, oThis) {
+		if (typeof func !== 'function') {
+			// closest thing possible to the ECMAScript 5
+			// internal IsCallable function
+			throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+		}
+
+		var aArgs   = Array.prototype.slice.call(arguments, 1),
+		fToBind = func,
+		FNOP    = function() {},
+		fBound  = function() {
+			return fToBind.apply(func instanceof FNOP ? func : oThis,
+				aArgs.concat(Array.prototype.slice.call(arguments)));
+		};
+
+		if (func.prototype) {
+			// Function.prototype doesn't have a prototype property
+			FNOP.prototype = func.prototype;
+		}
+		fBound.prototype = new FNOP();
+
+		return fBound;
+	},
 };
 
 module.exports = Util;

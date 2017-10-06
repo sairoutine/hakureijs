@@ -11,7 +11,7 @@ var ObjectUIParts = function(scene, x, y, width, height, draw_function) {
 	this._width  = width;
 	this._height = height;
 
-	this._draw_function = draw_function.bind(this);
+	this._draw_function = Util.bind(draw_function, this);
 
 	this._is_show_rect = false;
 
