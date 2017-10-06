@@ -3,7 +3,7 @@ module.exports = {
 	util: require("./util"),
 	core: require("./core"),
 	// constant.BUTTON_NAME is deprecated.
-	constant: Object.assign(require("./constant/button"), {
+	constant: require("./util").assign(require("./constant/button"), {
 		button: require("./constant/button"),
 	}),
 	serif_manager: require("./serif_manager"),
