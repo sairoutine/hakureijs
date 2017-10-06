@@ -161,7 +161,7 @@ SerifManager.prototype._startPrintMessage = function () {
 		}
 	}
 
-	this._timeoutID = setTimeout(this._startPrintMessage.bind(this), TYPOGRAPHY_SPEED);
+	this._timeoutID = setTimeout(Util.bind(this._startPrintMessage, this), TYPOGRAPHY_SPEED);
 };
 
 SerifManager.prototype._cancelPrintMessage = function () {

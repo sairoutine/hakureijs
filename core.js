@@ -4,6 +4,7 @@
 
 var WebGLDebugUtils = require("webgl-debug");
 var CONSTANT = require("./constant/button");
+var Util = require("./util");
 var DebugManager = require("./debug_manager");
 var InputManager = require("./input_manager");
 var ImageLoader = require("./asset_loader/image");
@@ -142,7 +143,7 @@ Core.prototype.run = function(){
 	this.input_manager.afterRun();
 
 	// tick
-	this.request_id = requestAnimationFrame(this.run.bind(this));
+	this.request_id = requestAnimationFrame(Util.bind(this.run, this));
 };
 Core.prototype.currentScene = function() {
 	if(this.current_scene === null) {
