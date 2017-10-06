@@ -2,7 +2,10 @@
 module.exports = {
 	util: require("./util"),
 	core: require("./core"),
-	constant: require("./constant"),
+	// constant.BUTTON_NAME is deprecated.
+	constant: Object.assign(require("./constant/button"), {
+		button: require("./constant/button"),
+	}),
 	serif_manager: require("./serif_manager"),
 	shader_program: require("./shader_program"),
 	scene: {

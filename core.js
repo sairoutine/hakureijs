@@ -3,7 +3,7 @@
 /* TODO: create input_manager class */
 
 var WebGLDebugUtils = require("webgl-debug");
-var CONSTANT = require("./constant");
+var CONSTANT = require("./constant/button");
 var DebugManager = require("./debug_manager");
 var InputManager = require("./input_manager");
 var ImageLoader = require("./asset_loader/image");

@@ -6,7 +6,7 @@ var base_object = require('./base');
 var util = require('../util');
 var glmat = require('gl-matrix');
 
-var CONSTANT_3D = require('../constant_3d').SPRITE3D;
+var CONSTANT_3D = require('../constant/webgl').SPRITE3D;
 
 var PoolManager3D = function(scene, Class) {
 	base_object.apply(this, arguments);

@@ -1,7 +1,7 @@
 'use strict';
 var base_object = require('./base');
 var util = require('../util');
-var CONSTANT_3D = require('../constant_3d').SPRITE3D;
+var CONSTANT_3D = require('../constant/webgl').SPRITE3D;
 var glmat = require('gl-matrix');
 
 var Sprite3d = function(scene) {

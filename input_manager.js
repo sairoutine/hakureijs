@@ -1,6 +1,6 @@
 'use strict';
 
-var CONSTANT = require("./constant");
+var CONSTANT = require("./constant/button");
 var Util = require("./util");
 
 // const
