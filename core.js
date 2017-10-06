@@ -271,6 +271,16 @@ Core.prototype.fontLoadingDone = function() {
 	this.font_loader.notifyLoadingDone();
 };
 
+Core.prototype.isAllLoaded = function() {
+	if (this.image_loader.isAllLoaded() && this.audio_loader.isAllLoaded() && this.font_loader.isAllLoaded()) {
+		return true;
+	}
+	return false;
+};
+
+
+
+
 Core.prototype.setupEvents = function() {
 	if(!window) return;
 
