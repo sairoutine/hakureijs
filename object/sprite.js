@@ -41,7 +41,7 @@ Sprite.prototype.draw = function(){
 		ctx.translate(this.globalCenterX(), this.globalCenterY());
 
 		// rotate
-		var rotate = util.thetaToRadian(this.velocity.theta + this.rotateAdjust());
+		var rotate = util.thetaToRadian(this._velocity.theta + this.rotateAdjust());
 		ctx.rotate(rotate);
 
 		var sprite_width  = this.spriteWidth();
