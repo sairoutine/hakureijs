@@ -124,11 +124,11 @@ ObjectBase.prototype.globalRightX = function() {
 };
 
 ObjectBase.prototype.globalUpY = function() {
-	return this.scene.x() + this.y() - this.height()/2;
+	return this.scene.y() + this.y() - this.height()/2;
 };
 
 ObjectBase.prototype.globalDownY = function() {
-	return this.scene.x() + this.y() + this.height()/2;
+	return this.scene.y() + this.y() + this.height()/2;
 };
 
 /*
