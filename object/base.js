@@ -7,10 +7,10 @@ var EXTRA_OUT_OF_SIZE = 100;
 
 var id = 0;
 
-var ObjectBase = function(scene, object) {
+var ObjectBase = function(scene) {
 	this.scene = scene;
 	this.core = scene.core;
-	this.parent = object; // parent object if this is sub object
+	this.parent = null; // parent object if this is sub object
 	this.id = ++id;
 
 	this.frame_count = 0;
@@ -139,6 +139,7 @@ ObjectBase.prototype.globalDownY = function() {
 
 // add sub object
 ObjectBase.prototype.addSubObject = function(object){
+	object.setParent(this);
 	this.objects.push(object);
 };
 
@@ -146,6 +147,7 @@ ObjectBase.prototype.removeSubObject = function(object){
 	// TODO: O(n) -> O(1)
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		if(this.objects[i].id === object.id) {
+			this.objects[i].resetParent();
 			this.objects.splice(i, 1);
 			break;
 		}
@@ -153,7 +155,20 @@ ObjectBase.prototype.removeSubObject = function(object){
 };
 
 ObjectBase.prototype.removeAllSubObject = function() {
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].resetParent();
+	}
+
 	this.objects = [];
+};
+
+// set parent object if this is sub object
+ObjectBase.prototype.setParent = function(parent_object) {
+	this.parent = parent_object;
+};
+
+ObjectBase.prototype.resetParent = function() {
+	this.parent = null;
 };
 
 /*
