@@ -1,8 +1,8 @@
 'use strict';
 
-var SceneBase = function(core, scene) {
+var SceneBase = function(core) {
 	this.core = core;
-	this.parent = scene; // parent scene if this is sub scene
+	this.parent = null; // parent scene if this is sub scene
 	this.width = this.core.width; // default
 	this.height = this.core.height; // default
 
@@ -157,7 +157,14 @@ SceneBase.prototype.removeObject = function(object){
 
 
 
+// set parent scene if this is sub scene
+SceneBase.prototype.setParent = function(parent_scene) {
+	this.parent = parent_scene;
+};
 
+SceneBase.prototype.resetParent = function() {
+	this.parent = null;
+};
 
 SceneBase.prototype.currentSubScene = function() {
 	if(this.current_scene === null) {
@@ -171,6 +178,7 @@ SceneBase.prototype.getSubScene = function(name) {
 };
 
 SceneBase.prototype.addSubScene = function(name, scene) {
+	scene.setParent(this);
 	this.scenes[name] = scene;
 };
 SceneBase.prototype.changeSubScene = function() {
