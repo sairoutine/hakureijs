@@ -164,6 +164,7 @@ ObjectBase.prototype.removeAllSubObject = function() {
 
 // set parent object if this is sub object
 ObjectBase.prototype.setParent = function(parent_object) {
+	if(this.parent) throw new Error("already set parent");
 	this.parent = parent_object;
 };
 

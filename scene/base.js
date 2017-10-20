@@ -159,6 +159,7 @@ SceneBase.prototype.removeObject = function(object){
 
 // set parent scene if this is sub scene
 SceneBase.prototype.setParent = function(parent_scene) {
+	if(this.parent) throw new Error("already set parent");
 	this.parent = parent_scene;
 };
 
