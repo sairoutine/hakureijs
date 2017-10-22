@@ -38,6 +38,7 @@ ObjectUIParts.prototype.setVariable = function (name, value){
 };
 
 ObjectUIParts.prototype.draw = function(){
+	base_object.prototype.draw.apply(this, arguments);
 	var ctx = this.core.ctx;
 	ctx.save();
 	this._draw_function();
