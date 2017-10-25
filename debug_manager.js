@@ -8,6 +8,8 @@ var DebugManager = function (core) {
 
 
 	this._is_showing_collision_area = false; // default: false
+
+	this._variables = {};
 };
 
 DebugManager.prototype.setOn = function (dom) {
@@ -18,6 +20,19 @@ DebugManager.prototype.setOff = function () {
 	this.is_debug_mode = false;
 	this.dom = null;
 };
+
+DebugManager.prototype.set = function (name, value) {
+	if(!this.is_debug_mode) return;
+
+	this._variables[name] = value;
+};
+DebugManager.prototype.get = function (name) {
+	if(!this.is_debug_mode) return null;
+
+	return this._variables[name];
+};
+
+
 
 // add text menu
 DebugManager.prototype.addMenuText = function (text) {
