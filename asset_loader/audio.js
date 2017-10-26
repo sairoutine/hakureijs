@@ -170,7 +170,7 @@ AudioLoader.prototype._createSourceNode = function(name) {
 	var source = self.audio_context.createBufferSource();
 	source.buffer = data.audio;
 
-	if(data.loopStart || data.loopEnd) { source.loop = true; }
+	if("loopStart" in data || "loopEnd" in data) { source.loop = true; }
 	if(data.loopStart) { source.loopStart = data.loopStart; }
 	if(data.loopEnd)   { source.loopEnd = data.loopEnd; }
 
