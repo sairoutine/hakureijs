@@ -135,10 +135,18 @@ InputManager.prototype.isRightClickPush = function() {
 InputManager.prototype.handleMouseMove = function (d) {
 	d = d ? d : window.event;
 	d.preventDefault();
-	this.mouse_change_x = this.mouse_x - d.clientX;
-	this.mouse_change_y = this.mouse_y - d.clientY;
-	this.mouse_x = d.clientX;
-	this.mouse_y = d.clientY;
+
+	// get absolute coordinate position of canvas and adjust click position
+	// because clientX and clientY return the position from the document.
+	var rect = d.target.getBoundingClientRect();
+
+	var x = d.clientX - rect.left;
+	var y = d.clientY - rect.top;
+
+	this.mouse_change_x = this.mouse_x - x;
+	this.mouse_change_y = this.mouse_y - y;
+	this.mouse_x = x;
+	this.mouse_y = y;
 };
 InputManager.prototype.mousePositionX = function () {
 	return this.mouse_x;
