@@ -64,7 +64,7 @@ ObjectBase.prototype.draw = function() {
 
 	// If is in DEBUG mode, show collision area
 	if(this.core.debug_manager.isShowingCollisionArea()) {
-		this._drawCollisionArea();
+		this._drawCollisionArea("white");
 	}
 
 
@@ -267,13 +267,14 @@ ObjectBase.prototype.getCollisionDownY = function(obj) {
 	return this.y() + this.collisionHeight(obj) / 2;
 };
 
-ObjectBase.prototype._drawCollisionArea = function() {
+ObjectBase.prototype._drawCollisionArea = function(color) {
 	// make dummy object to decide collision width and height
 	var dummy_object = new ObjectBase(this.scene);
 
+	color = color || 'rgb( 255, 255, 255 )' ;
 	var ctx = this.core.ctx;
 	ctx.save();
-	ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
+	ctx.fillStyle = color;
 	ctx.globalAlpha = 0.4;
 	ctx.fillRect(
 		this.getCollisionLeftX(dummy_object),
