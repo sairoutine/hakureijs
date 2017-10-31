@@ -66,6 +66,55 @@ DebugManager.prototype.addMenuButton = function (button_value, func) {
 	this.dom.appendChild(input);
 };
 
+// add select pull down menu
+DebugManager.prototype.addMenuSelect = function (button_value, pulldown_list, func) {
+	if(!this.is_debug_mode) return;
+
+	var core = this.core;
+
+	// create element
+	var input = window.document.createElement('input');
+
+	// select tag
+	var select = window.document.createElement("select");
+
+	// label
+	var option_label = document.createElement("option");
+	option_label.setAttribute("value", "");
+	option_label.appendChild(document.createTextNode(button_value));
+	select.appendChild(option_label);
+
+	// add event
+	select.onchange = function () {
+		if(select.value === "") return;
+		func(core, select.value);
+	};
+
+	// set attributes
+	for (var i = 0, len = pulldown_list.length; i < len; i++) {
+		var opt = pulldown_list[i];
+		var value = opt.value;
+		var name = name in opt ? opt.name : value;
+
+		var option = document.createElement("option");
+		option.setAttribute("value", value);
+		option.appendChild( document.createTextNode(name) );
+		select.appendChild(option);
+	}
+
+	// add element
+	this.dom.appendChild(select);
+};
+
+
+
+
+
+
+
+
+
+
 // show collision area of object instance
 DebugManager.prototype.setShowingCollisionAreaOn = function () {
 	this._is_showing_collision_area = true;
