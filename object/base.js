@@ -24,6 +24,9 @@ var ObjectBase = function(scene) {
 	this._velocity = null;
 	this.resetVelocity();
 
+	this._previous_x = null;
+	this._previous_y = null;
+
 	// sub object
 	this.objects = [];
 
@@ -39,6 +42,9 @@ ObjectBase.prototype.init = function(){
 	this._auto_disable_times_map = {};
 
 	this.resetVelocity();
+
+	this._previous_x = null;
+	this._previous_y = null;
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
@@ -352,8 +358,25 @@ ObjectBase.prototype._move = function() {
 	var x = util.calcMoveXByVelocity(this._velocity);
 	var y = util.calcMoveYByVelocity(this._velocity);
 
+	// save previous (x,y)
+	this._previous_x = this._x;
+	this._previous_y = this._y;
+
 	this._x += x;
 	this._y += y;
+};
+
+ObjectBase.prototype.moveBack = function() {
+	if (this._previous_x === null && this._previous_y) return;
+
+	var current_x = this._x;
+	var current_y = this._y;
+
+	this._x = this._previous_x;
+	this._y = this._previous_y;
+
+	this._previous_x = current_x;
+	this._previous_y = current_y;
 };
 
 /*
