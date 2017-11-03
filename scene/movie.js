@@ -26,12 +26,15 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 	var video = document.createElement("video");
 	video.src = movie_path;
 	video.controls = false;
+	video.preload = "auto";
 	video.onended = function () {
 		self.notifyEnd();
 	};
+	video.oncanplaythrough = function () {
+		video.play();
+	};
+	video.load();
 
-	// auto play
-	video.play();
 
 	self.video = video;
 };
