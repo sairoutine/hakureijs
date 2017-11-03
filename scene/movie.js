@@ -39,6 +39,9 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 	// go if the movie is done.
 	self.next_scene_name = next_scene_name;
 
+	// stop bgm if it is played.
+	this.core.audio_loader.stopBGM();
+
 	var video = document.createElement("video");
 	video.src = movie_path;
 	video.controls = false;
