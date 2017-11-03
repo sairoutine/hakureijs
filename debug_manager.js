@@ -106,6 +106,51 @@ DebugManager.prototype.addMenuSelect = function (button_value, pulldown_list, fu
 	this.dom.appendChild(select);
 };
 
+DebugManager.prototype.addGitLatestCommitInfo = function (user_name, repo_name, branch) {
+	if(!this.is_debug_mode) return;
+
+	branch = branch || "master";
+
+	var core = this.core;
+
+	// create element
+	var dom = window.document.createElement('pre');
+
+	// add element
+	this.dom.appendChild(dom);
+
+	var git_api_url = "https://api.github.com/repos/" + user_name + "/" + repo_name + "/branches/" + branch;
+
+	// fetch git info
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function() {
+		if(xhr.status !== 200) {
+			return;
+		}
+
+		var json_text = xhr.response;
+
+		var json;
+		if (json_text) {
+			json = JSON.parse(json_text);
+		}
+		else {
+			throw new Error("Can't parse git lastest commit info");
+		}
+
+		dom.textContent =
+			//"sha: " + json.commit.sha + "\n" +
+			//"author: " + json.commit.commit.author.name + "\n" +
+			"last update date: " + json.commit.commit.author.date + "\n" +
+			//"message: " + json.commit.commit.message + "\n" +
+			""
+		;
+	};
+
+	xhr.open('GET', git_api_url, true);
+	xhr.send(null);
+};
+
 
 
 
