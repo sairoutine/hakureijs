@@ -41,9 +41,6 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 	video.src = movie_path;
 	video.controls = false;
 	video.preload = "auto";
-	video.onended = function () {
-		self.notifyEnd();
-	};
 	video.oncanplaythrough = function () {
 		self._calcDrawSizeAndPosition();
 
@@ -55,6 +52,14 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 
 
 	self.video = video;
+};
+
+SceneMovie.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.is_playing && this.video.ended) {
+		this.notifyEnd();
+	}
 };
 
 SceneMovie.prototype.draw = function(){
@@ -102,6 +107,8 @@ SceneMovie.prototype._calcDrawSizeAndPosition = function(){
 SceneMovie.prototype.notifyEnd = function(){
 	// release video data memory
 	this.video = null;
+
+	this.is_playing = false;
 
 	if (this.next_scene_name) {
 		this.core.changeScene(this.next_scene_name);
