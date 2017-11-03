@@ -141,7 +141,7 @@ DebugManager.prototype.addGitLatestCommitInfo = function (user_name, repo_name, 
 		dom.textContent =
 			//"sha: " + json.commit.sha + "\n" +
 			//"author: " + json.commit.commit.author.name + "\n" +
-			"last update date: " + json.commit.commit.author.date + "\n" +
+			"last update date: " + (new Date(json.commit.commit.author.date)) + "\n" +
 			//"message: " + json.commit.commit.message + "\n" +
 			""
 		;
