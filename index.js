@@ -9,8 +9,9 @@ module.exports = {
 	serif_manager: require("./serif_manager"),
 	shader_program: require("./shader_program"),
 	scene: {
-		base: require("./scene/base"),
+		base:    require("./scene/base"),
 		loading: require("./scene/loading"),
+		movie:   require("./scene/movie"),
 	},
 	object: {
 		base: require("./object/base"),
