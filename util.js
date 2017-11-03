@@ -54,6 +54,15 @@ var Util = {
 
 		return false;
 	},
+
+	getRandomInt: function(min, max) {
+		if (arguments.length === 1) {
+			max = arguments[0];
+			min = 1;
+		}
+
+		return Math.floor( Math.random() * (max - min + 1) ) + min;
+	},
 	shallowCopyHash: function (src_hash) {
 		var dst_hash = {};
 		for(var k in src_hash){
