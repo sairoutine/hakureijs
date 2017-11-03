@@ -162,12 +162,15 @@ DebugManager.prototype.addGitLatestCommitInfo = function (user_name, repo_name, 
 
 // show collision area of object instance
 DebugManager.prototype.setShowingCollisionAreaOn = function () {
+	if(!this.is_debug_mode) return null;
 	this._is_showing_collision_area = true;
 };
 DebugManager.prototype.setShowingCollisionAreaOff = function () {
+	if(!this.is_debug_mode) return null;
 	this._is_showing_collision_area = false;
 };
 DebugManager.prototype.isShowingCollisionArea = function () {
+	if(!this.is_debug_mode) return false;
 	return this._is_showing_collision_area;
 };
 
