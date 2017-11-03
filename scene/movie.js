@@ -14,6 +14,11 @@ var SceneMovie = function(core) {
 	this.next_scene_name = null;
 
 	this.is_playing = false;
+
+	this._height = null;
+	this._width  = null;
+	this._top    = null;
+	this._left   = null;
 };
 util.inherit(SceneMovie, base_scene);
 
@@ -23,6 +28,11 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 	var self = this;
 
 	self.is_playing = false;
+
+	self._height = null;
+	self._width  = null;
+	self._top    = null;
+	self._left   = null;
 
 	// go if the movie is done.
 	self.next_scene_name = next_scene_name;
@@ -35,8 +45,11 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 		self.notifyEnd();
 	};
 	video.oncanplaythrough = function () {
-		self.is_playing = true;
+		self._calcDrawSizeAndPosition();
+
 		video.play();
+
+		self.is_playing = true;
 	};
 	video.load();
 
@@ -55,6 +68,13 @@ SceneMovie.prototype.draw = function(){
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
+	if (this.is_playing) {
+		ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight, this._left, this._top, this._width, this._height);
+	}
+	ctx.restore();
+};
+
+SceneMovie.prototype._calcDrawSizeAndPosition = function(){
 	var scene_aspect = this.width / this.height; // canvas aspect
 	var video_aspect = this.video.videoWidth / this.video.videoHeight; // video aspect
 	var left, top, width, height;
@@ -72,10 +92,11 @@ SceneMovie.prototype.draw = function(){
 		left = (this.width - width) / 2;
 	}
 
-	if (this.is_playing) {
-		ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight, left, top, width, height);
-	}
-	ctx.restore();
+
+	this._height = height;
+	this._width  = width;
+	this._top    = top;
+	this._left   = left;
 };
 
 SceneMovie.prototype.notifyEnd = function(){
