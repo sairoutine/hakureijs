@@ -12,6 +12,8 @@ var SceneMovie = function(core) {
 
 	// go if the movie is done.
 	this.next_scene_name = null;
+
+	this.is_playing = false;
 };
 util.inherit(SceneMovie, base_scene);
 
@@ -19,6 +21,8 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 	base_scene.prototype.init.apply(this, arguments);
 
 	var self = this;
+
+	self.is_playing = false;
 
 	// go if the movie is done.
 	self.next_scene_name = next_scene_name;
@@ -31,6 +35,7 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 		self.notifyEnd();
 	};
 	video.oncanplaythrough = function () {
+		self.is_playing = true;
 		video.play();
 	};
 	video.load();
@@ -51,23 +56,25 @@ SceneMovie.prototype.draw = function(){
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	var scene_aspect = this.width / this.height; // canvas aspect
-	var video_aspect = this.video.videoWidth / this.video.videoHeight; // 画像のアスペクト比
+	var video_aspect = this.video.videoWidth / this.video.videoHeight; // video aspect
 	var left, top, width, height;
 
-	if(video_aspect >= scene_aspect) {// 画像が横長
+	if(video_aspect >= scene_aspect) { // video width is larger than it's height
 		width = this.width;
 		height = this.width / video_aspect;
 		top = (this.height - height) / 2;
 		left = 0;
 	}
-	else {// 画像が縦長
+	else { // video height is larger than it's width
 		height = this.height;
 		width = this.height * video_aspect;
 		top = 0;
 		left = (this.width - width) / 2;
 	}
 
-	ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight, left, top, width, height);
+	if (this.is_playing) {
+		ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight, left, top, width, height);
+	}
 	ctx.restore();
 };
 
