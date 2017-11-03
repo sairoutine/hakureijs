@@ -19,6 +19,8 @@ var SceneMovie = function(core) {
 	this._width  = null;
 	this._top    = null;
 	this._left   = null;
+
+	this.is_mute = false;
 };
 util.inherit(SceneMovie, base_scene);
 
@@ -48,6 +50,11 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 
 		self.is_playing = true;
 	};
+
+	if (this.is_mute) {
+		video.muted = true;
+	}
+
 	video.load();
 
 
