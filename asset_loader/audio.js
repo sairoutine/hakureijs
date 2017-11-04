@@ -154,8 +154,13 @@ AudioLoader.prototype.stopBGM = function() {
 		self._playing_bgm_name = null;
 	}
 };
-AudioLoader.prototype.isPlayingBGM = function() {
-	return this.audio_source ? true : false;
+AudioLoader.prototype.isPlayingBGM = function(name) {
+	if (typeof name === "undefined") {
+		return this.audio_source ? true : false;
+	}
+	else {
+		return this._playing_bgm_name === name ? true : false;
+	}
 };
 AudioLoader.prototype.currentPlayingBGM = function() {
 	return this._playing_bgm_name;
