@@ -138,6 +138,15 @@ SerifManager.prototype._printMessage = function (message) {
 
 	this._startPrintMessage();
 };
+// is waiting to be called next?
+SerifManager.prototype.isWaitingNext = function () {
+	return this.isEndPrinting() && !this.isEnd();
+};
+
+SerifManager.prototype.isEndPrinting = function () {
+	var char_length = this._char_list.length;
+	return this._char_idx >= char_length ? true : false;
+};
 
 SerifManager.prototype._startPrintMessage = function () {
 	var char_length = this._char_list.length;
