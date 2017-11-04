@@ -115,6 +115,7 @@ AudioLoader.prototype.isAllLoaded = function() {
 };
 
 AudioLoader.prototype.playSound = function(name) {
+	if (!(name in this.sounds)) throw new Error("Can't find sound '" + name + "'.");
 	this.soundflag |= this.sounds[name].id;
 };
 
