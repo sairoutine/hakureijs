@@ -20,11 +20,8 @@ var AudioLoader = function() {
 		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
 	}
 
-	// playing bgm name
-	this._playing_bgm_name = null;
-
-	// playing AudioBufferSourceNode instance
-	this.audio_source = null;
+	// key: bgm name, value: playing AudioBufferSourceNode instance
+	this._audio_source_map = {};
 };
 AudioLoader.prototype.init = function() {
 	// TODO: cancel already loading bgms and sounds
@@ -39,9 +36,7 @@ AudioLoader.prototype.init = function() {
 
 	this.soundflag = 0x00;
 
-	this._playing_bgm_name = null;
-
-	this.audio_source = null;
+	this._audio_source_map = {};
 };
 
 AudioLoader.prototype.loadSound = function(name, path, volume) {
@@ -135,42 +130,43 @@ AudioLoader.prototype.executePlaySound = function() {
 	}
 };
 AudioLoader.prototype.playBGM = function(name) {
-	var self = this;
-
 	// stop playing bgm
-	self.stopBGM();
+	this.stopAllBGM();
 
-	self._playing_bgm_name = name;
-	self.audio_source = self._createSourceNode(name);
-	self.audio_source.start(0);
+	this._audio_source_map[name] = this._createSourceNode(name);
+	this._audio_source_map[name].start(0);
 };
 
 // play if the bgm is not playing now
 AudioLoader.prototype.changeBGM = function(name) {
-	if (this._playing_bgm_name !== name) {
+	if (!this.isPlayingBGM(name)) {
 		this.playBGM(name);
 	}
 };
-AudioLoader.prototype.stopBGM = function() {
-	var self = this;
-	if(self.isPlayingBGM()) {
-		self.audio_source.stop(0);
-		self.audio_source = null;
-		self._playing_bgm_name = null;
+AudioLoader.prototype.stopAllBGM = function() {
+	for (var bgm_name in this._audio_source_map) {
+		this.stopBGM(bgm_name);
+	}
+};
+AudioLoader.prototype.stopBGM = function(name) {
+	if(typeof name === "undefined") {
+		return this.stopAllBGM();
+	}
+
+	if (name in this._audio_source_map) {
+		var audio_source = this._audio_source_map[name];
+		audio_source.stop(0);
+		delete this._audio_source_map[name];
 	}
 };
 AudioLoader.prototype.isPlayingBGM = function(name) {
-	if (typeof name === "undefined") {
-		return this.audio_source ? true : false;
+	if(typeof name === "undefined") {
+		return Object.keys(this._audio_source_map).length ? true : false;
 	}
 	else {
-		return this._playing_bgm_name === name ? true : false;
+		return name in this._audio_source_map ? true : false;
 	}
 };
-AudioLoader.prototype.currentPlayingBGM = function() {
-	return this._playing_bgm_name;
-};
-
 
 // create AudioBufferSourceNode instance
 AudioLoader.prototype._createSourceNode = function(name) {
