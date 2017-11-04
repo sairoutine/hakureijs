@@ -133,9 +133,17 @@ AudioLoader.prototype.playBGM = function(name) {
 	// stop playing bgm
 	this.stopAllBGM();
 
+	this.addBGM(name);
+};
+AudioLoader.prototype.addBGM = function(name) {
+	if (this.isPlayingBGM(name)) {
+		this.stopBGM(name);
+	}
+
 	this._audio_source_map[name] = this._createSourceNode(name);
 	this._audio_source_map[name].start(0);
 };
+
 
 // play if the bgm is not playing now
 AudioLoader.prototype.changeBGM = function(name) {
@@ -148,6 +156,16 @@ AudioLoader.prototype.stopAllBGM = function() {
 		this.stopBGM(bgm_name);
 	}
 };
+AudioLoader.prototype.stopBGMWithout = function(exclude_bgm_name) {
+	for (var bgm_name in this._audio_source_map) {
+		if (bgm_name !== exclude_bgm_name) {
+			this.stopBGM(bgm_name);
+		}
+	}
+};
+
+
+
 AudioLoader.prototype.stopBGM = function(name) {
 	if(typeof name === "undefined") {
 		return this.stopAllBGM();
