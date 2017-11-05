@@ -7,8 +7,6 @@ var AudioLoader = function() {
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
 
-	this.id = 0;
-
 	// key: sound_name, value: only true
 	// which determine what sound is played.
 	this._reserved_play_sound_name_map = {};
@@ -32,8 +30,6 @@ AudioLoader.prototype.init = function() {
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
-
-	this.id = 0;
 
 	this._reserved_play_sound_name_map = {};
 
@@ -59,7 +55,6 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 	audio.addEventListener('canplay', onload_function);
 	audio.load();
 	self.sounds[name] = {
-		id: 1 << self.id++,
 		audio: audio,
 	};
 };
