@@ -9,8 +9,9 @@ var AudioLoader = function() {
 
 	this.id = 0;
 
-	// flag which determine what sound.
-	this.soundflag = 0x00;
+	// key: sound_name, value: only true
+	// which determine what sound is played.
+	this._reserved_play_sound_name_map = {};
 
 	this.audio_context = null;
 	if (window && window.AudioContext) {
@@ -34,7 +35,7 @@ AudioLoader.prototype.init = function() {
 
 	this.id = 0;
 
-	this.soundflag = 0x00;
+	this._reserved_play_sound_name_map = {};
 
 	this._audio_source_map = {};
 };
@@ -111,22 +112,19 @@ AudioLoader.prototype.isAllLoaded = function() {
 
 AudioLoader.prototype.playSound = function(name) {
 	if (!(name in this.sounds)) throw new Error("Can't find sound '" + name + "'.");
-	this.soundflag |= this.sounds[name].id;
+
+	this._reserved_play_sound_name_map[name] = true;
 };
 
 AudioLoader.prototype.executePlaySound = function() {
+	for(var name in this._reserved_play_sound_name_map) {
+		// play
+		this.sounds[name].audio.pause();
+		this.sounds[name].audio.currentTime = 0;
+		this.sounds[name].audio.play();
 
-	for(var name in this.sounds) {
-		if(this.soundflag & this.sounds[name].id) {
-			// play
-			this.sounds[name].audio.pause();
-			this.sounds[name].audio.currentTime = 0;
-			this.sounds[name].audio.play();
-
-			// delete flag
-			this.soundflag &= ~this.sounds[name].id;
-
-		}
+		// delete flag
+		delete this._reserved_play_sound_name_map[name];
 	}
 };
 AudioLoader.prototype.playBGM = function(name) {
