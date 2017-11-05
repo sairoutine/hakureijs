@@ -39,6 +39,8 @@ ImageLoader.prototype.isAllLoaded = function() {
 };
 
 ImageLoader.prototype.getImage = function(name) {
+	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
+
 	return this.images[name];
 };
 
