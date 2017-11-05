@@ -191,7 +191,7 @@ AudioLoader.prototype._createSourceNode = function(name) {
 	if(data.loopStart) { source.loopStart = data.loopStart; }
 	if(data.loopEnd)   { source.loopEnd = data.loopEnd; }
 
-	var audio_gain = this.audio_context.createGain();
+	var audio_gain = self.audio_context.createGain();
 	audio_gain.gain.value = data.volume || 1.0;
 
 	source.connect(audio_gain);
