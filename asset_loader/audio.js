@@ -202,6 +202,80 @@ AudioLoader.prototype.fadeOutBGM = function (fadeout_time, bgm_name) {
 	gain.linearRampToValueAtTime(0, endTime);
 };
 
+AudioLoader.prototype.muteAllBGM = function () {
+	for (var bgm_name in this._audio_source_map) {
+		this.muteBGM(bgm_name);
+	}
+};
+
+AudioLoader.prototype.muteBGM = function (bgm_name) {
+	if(typeof bgm_name === "undefined") {
+		return this.muteAllBGM();
+	}
+
+	var map = this._audio_source_map[bgm_name];
+
+	if (!map) return;
+
+	var audio_gain = map.gain_node;
+
+	audio_gain.gain.value = 0;
+};
+AudioLoader.prototype.unMuteAllBGM = function () {
+	for (var bgm_name in this._audio_source_map) {
+		this.unMuteBGM(bgm_name);
+	}
+};
+
+AudioLoader.prototype.unMuteBGM = function (bgm_name) {
+	if(typeof bgm_name === "undefined") {
+		return this.unMuteAllBGM();
+	}
+
+	var map = this._audio_source_map[bgm_name];
+
+	if (!map) return;
+
+	var audio_gain = map.gain_node;
+
+	var data = this.bgms[bgm_name];
+	audio_gain.gain.value = data.volume || 1.0;
+};
+
+AudioLoader.prototype.unMuteWithFadeInAllBGM = function (fadein_time) {
+	for (var bgm_name in this._audio_source_map) {
+		this.unMuteWithFadeInBGM(fadein_time, bgm_name);
+	}
+};
+
+AudioLoader.prototype.unMuteWithFadeInBGM = function (fadein_time, bgm_name) {
+	if(typeof bgm_name === "undefined") {
+		return this.unMuteWithFadeInAllBGM(fadein_time);
+	}
+
+	var map = this._audio_source_map[bgm_name];
+
+	if (!map) return;
+
+	var data = this.bgms[bgm_name];
+
+	var audio_gain = map.gain_node;
+
+	var gain = audio_gain.gain;
+	var startTime = this.audio_context.currentTime;
+	gain.setValueAtTime(gain.value, startTime); // for old browser
+	var endTime = startTime + fadein_time;
+	gain.linearRampToValueAtTime(data.volume, endTime);
+};
+
+
+
+
+
+
+
+
+
 // create AudioBufferSourceNode and GainNode instance
 AudioLoader.prototype._createSourceNodeAndGainNode = function(name) {
 	var self = this;
