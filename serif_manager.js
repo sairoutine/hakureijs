@@ -207,6 +207,12 @@ SerifManager.prototype.getOption = function () {
 SerifManager.prototype.lines = function () {
 	return this._printing_lines;
 };
+SerifManager.prototype.getSerifRowsCount = function () {
+	// TODO: only calculate once
+	var serif = this._script[this._progress].serif;
+	return( (serif.match(new RegExp("\n", "g")) || []).length + 1 );
+};
+
 
 
 
