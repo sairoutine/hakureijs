@@ -178,7 +178,7 @@ StorageBase.prototype.del = function() {
 StorageBase.prototype._removeLocalFile = function() {
 	var Klass = this.constructor;
 	var fs = window.require('fs');
-	var file_path = this._localFilePath(Klass.KEY());
+	var file_path = Klass._localFilePath(Klass.KEY());
 
 	if (fs.existsSync(file_path)) {
 		fs.unlinkSync(file_path);
