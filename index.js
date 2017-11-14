@@ -16,6 +16,7 @@ module.exports = {
 	object: {
 		base: require("./object/base"),
 		sprite: require("./object/sprite"),
+		window: require("./object/window"),
 		sprite3d: require("./object/sprite3d"),
 		pool_manager: require("./object/pool_manager"),
 		pool_manager3d: require("./object/pool_manager3d"),
