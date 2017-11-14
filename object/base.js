@@ -106,6 +106,17 @@ ObjectBase.prototype.setPosition = function(x, y) {
 	this._y = y;
 };
 
+ObjectBase.prototype.root = function() {
+	if (this.parent) {
+		return this.parent.root();
+	}
+	else {
+		return this;
+	}
+};
+
+
+
 /*
 *******************************
 * position methods

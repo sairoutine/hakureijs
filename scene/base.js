@@ -252,6 +252,18 @@ SceneBase.prototype.y = function(val) {
 	if (typeof val !== 'undefined') { this._y = val; }
 	return this._y;
 };
+SceneBase.prototype.root = function() {
+	if (this.parent) {
+		return this.parent.root();
+	}
+	else {
+		return this;
+	}
+};
+
+
+
+
 
 module.exports = SceneBase;
 
