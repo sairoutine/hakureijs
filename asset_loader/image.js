@@ -41,19 +41,23 @@ ImageLoader.prototype.loadImage = function(name, path, scale_width, scale_height
 ImageLoader.prototype.isAllLoaded = function() {
 	return this.loaded_image_num === this.loading_image_num;
 };
+ImageLoader.prototype.isLoaded = function(name) {
+	return((name in this.images) ? true : false);
+};
+
 
 ImageLoader.prototype.getImage = function(name) {
-	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
+	if (!this.isLoaded(name)) throw new Error("Can't find image '" + name + "'.");
 
 	return this.images[name].image;
 };
 ImageLoader.prototype.getScaleWidth = function(name) {
-	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
+	if (!this.isLoaded(name)) throw new Error("Can't find image '" + name + "'.");
 
 	return this.images[name].scale_width;
 };
 ImageLoader.prototype.getScaleHeight = function(name) {
-	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
+	if (!this.isLoaded(name)) throw new Error("Can't find image '" + name + "'.");
 
 	return this.images[name].scale_height;
 };
