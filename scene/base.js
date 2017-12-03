@@ -27,6 +27,11 @@ var SceneBase = function(core) {
 	this._fade_out_duration = null;
 	this._fade_out_color = null;
 	this._fade_out_start_frame_count = null;
+
+	// property for wait to start bgm
+	this._wait_to_start_bgm_name = null;
+	this._wait_to_start_bgm_duration = null;
+	this._wait_to_start_bgm_start_frame_count = null;
 };
 
 SceneBase.prototype.init = function(){
@@ -49,13 +54,28 @@ SceneBase.prototype.init = function(){
 	this._fade_out_color = null;
 	this._fade_out_start_frame_count = null;
 
+	// property for wait to start bgm
+	this._wait_to_start_bgm_name = null;
+	this._wait_to_start_bgm_duration = null;
+	this._wait_to_start_bgm_start_frame_count = null;
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
 	}
 };
 
 SceneBase.prototype.beforeDraw = function(){
-	this.frame_count++;
+	// for setWaitToStartBGM method
+	if (this._wait_to_start_bgm_name) {
+		if(this.frame_count - this._wait_to_start_bgm_start_frame_count >= this._wait_to_start_bgm_duration) {
+			this.core.audio_loader.playBGM(this._wait_to_start_bgm_name);
+
+			// reset properties for wait to start bgm
+			this._wait_to_start_bgm_name = null;
+			this._wait_to_start_bgm_duration = null;
+			this._wait_to_start_bgm_start_frame_count = null;
+		}
+	}
 
 	// go to next sub scene if next scene is set
 	this.changeNextSubSceneIfReserved();
@@ -65,6 +85,8 @@ SceneBase.prototype.beforeDraw = function(){
 	}
 
 	if(this.currentSubScene()) this.currentSubScene().beforeDraw();
+
+	this.frame_count++;
 };
 
 SceneBase.prototype.draw = function(){
@@ -243,6 +265,16 @@ SceneBase.prototype.isInFadeOut = function() {
 SceneBase.prototype.isSetFadeOut = function() {
 	return this._fade_out_duration && this._fade_out_color ? true : false;
 };
+
+SceneBase.prototype.setWaitToStartBGM = function(bgm_name, wait_count) {
+	if(!wait_count) wait_count = 0;
+	this._wait_to_start_bgm_name = bgm_name;
+	this._wait_to_start_bgm_duration = wait_count;
+	this._wait_to_start_bgm_start_frame_count = this.frame_count;
+
+};
+
+
 
 SceneBase.prototype.x = function(val) {
 	if (typeof val !== 'undefined') { this._x = val; }
