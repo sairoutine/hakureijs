@@ -65,6 +65,9 @@ var Core = function(canvas, options) {
 	this._reserved_next_scene = null; // next scene which changes next frame run
 	this.scenes = {};
 
+	this._cursor_image_name = null;
+	this._default_cursor_image_name = null;
+
 	this.frame_count = 0;
 
 	this.request_id = null;
@@ -117,6 +120,9 @@ Core.prototype.run = function(){
 	// play sound which already set to play
 	this.audio_loader.executePlaySound();
 
+	// change default cursor image
+	this.changeDefaultCursorImage();
+
 	var current_scene = this.currentScene();
 	if(current_scene) {
 		current_scene.beforeDraw();
@@ -125,6 +131,10 @@ Core.prototype.run = function(){
 		this.clearCanvas();
 
 		current_scene.draw();
+
+		// overwrite cursor image on scene
+		this._renderCursorImage();
+
 		current_scene.afterDraw();
 	}
 
@@ -328,6 +338,61 @@ Core.prototype.createWebGLContext = function(canvas) {
 	return gl;
 };
 
+Core.prototype.enableCursorImage = function(default_image_name) {
+	// disable to show browser default cursor
+	this.canvas_dom.style.cursor = "none";
+
+	this._default_cursor_image_name = default_image_name;
+};
+
+// use your own cursor image
+Core.prototype.isUsingCursorImage = function() {
+	return this._default_cursor_image_name ? true : false;
+};
+
+Core.prototype.changeCursorImage = function(image_name) {
+	this._cursor_image_name = image_name;
+};
+// change browser default cursor
+Core.prototype.disableCursorImage = function(image_name) {
+	if (!this.isUsingCursorImage()) return;
+
+	this.canvas_dom.style.cursor = "auto";
+	this._cursor_image_name = null;
+	this._default_cursor_image_name = null;
+};
+Core.prototype.changeDefaultCursorImage = function() {
+	if (!this.isUsingCursorImage()) return;
+	this._cursor_image_name = this._default_cursor_image_name;
+};
+Core.prototype._renderCursorImage = function () {
+	if (!this.isUsingCursorImage()) return;
+
+	var ctx = this.ctx;
+
+	if (!ctx) return;
+
+	ctx.save();
+
+	var cursor = this.image_loader.getImage(this._cursor_image_name);
+
+	// if it is in loading scene, not show cursor
+	if (!cursor) return;
+
+	var x = this.input_manager.mousePositionX();
+	var y = this.input_manager.mousePositionY();
+
+	var scale_width  = this.image_loader.getScaleWidth(this._cursor_image_name);
+	var scale_height = this.image_loader.getScaleHeight(this._cursor_image_name);
+	ctx.translate(x, y);
+	ctx.drawImage(cursor,
+		0,
+		0,
+		cursor.width*scale_width,
+		cursor.height*scale_height
+	);
+	ctx.restore();
+};
 
 
 
