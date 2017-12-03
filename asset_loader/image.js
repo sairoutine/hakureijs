@@ -9,7 +9,7 @@ var ImageLoader = function() {
 ImageLoader.prototype.init = function() {
 	// cancel already loading images
 	for(var name in this.images){
-		this.images[name].src = "";
+		this.images[name].image.src = "";
 	}
 
 	this.images = {};
@@ -18,7 +18,7 @@ ImageLoader.prototype.init = function() {
 	this.loaded_image_num = 0;
 };
 
-ImageLoader.prototype.loadImage = function(name, path) {
+ImageLoader.prototype.loadImage = function(name, path, scale_width, scale_height) {
 	var self = this;
 
 	self.loading_image_num++;
@@ -31,7 +31,11 @@ ImageLoader.prototype.loadImage = function(name, path) {
 	var image = new Image();
 	image.src = path;
 	image.onload = onload_function;
-	this.images[name] = image;
+	this.images[name] = {
+		scale_width: scale_width,
+		scale_height: scale_height,
+		image: image,
+	};
 };
 
 ImageLoader.prototype.isAllLoaded = function() {
@@ -41,8 +45,20 @@ ImageLoader.prototype.isAllLoaded = function() {
 ImageLoader.prototype.getImage = function(name) {
 	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
 
-	return this.images[name];
+	return this.images[name].image;
 };
+ImageLoader.prototype.getScaleWidth = function(name) {
+	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
+
+	return this.images[name].scale_width;
+};
+ImageLoader.prototype.getScaleHeight = function(name) {
+	if (!(name in this.images)) throw new Error("Can't find image '" + name + "'.");
+
+	return this.images[name].scale_height;
+};
+
+
 
 ImageLoader.prototype.progress = function() {
 	return this.loaded_image_num / this.loading_image_num;
