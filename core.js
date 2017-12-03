@@ -368,6 +368,9 @@ Core.prototype.changeDefaultCursorImage = function() {
 Core.prototype._renderCursorImage = function () {
 	if (!this.isUsingCursorImage()) return;
 
+	// if it is in loading scene, not show cursor
+	if (!this.image_loader.isLoaded(this._cursor_image_name)) return;
+
 	var ctx = this.ctx;
 
 	if (!ctx) return;
@@ -375,9 +378,6 @@ Core.prototype._renderCursorImage = function () {
 	ctx.save();
 
 	var cursor = this.image_loader.getImage(this._cursor_image_name);
-
-	// if it is in loading scene, not show cursor
-	if (!cursor) return;
 
 	var x = this.input_manager.mousePositionX();
 	var y = this.input_manager.mousePositionY();
