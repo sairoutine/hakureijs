@@ -42,7 +42,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 	var self = this;
 	self.loading_audio_num++;
 
-	if(!volume) volume = 1.0;
+	if(typeof volume === 'undefined') volume = 1.0;
 
 
 	// it's done to load sound
@@ -64,6 +64,8 @@ AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd)
 
 	var self = this;
 	self.loading_audio_num++;
+
+	if(typeof volume === 'undefined') volume = 1.0;
 
 	// it's done to load audio
 	var successCallback = function(audioBuffer) {
@@ -239,7 +241,7 @@ AudioLoader.prototype.unMuteBGM = function (bgm_name) {
 	var audio_gain = map.gain_node;
 
 	var data = this.bgms[bgm_name];
-	audio_gain.gain.value = data.volume || 1.0;
+	audio_gain.gain.value = data.volume;
 };
 
 AudioLoader.prototype.unMuteWithFadeInAllBGM = function (fadein_time) {
@@ -289,7 +291,7 @@ AudioLoader.prototype._createSourceNodeAndGainNode = function(name) {
 	if(data.loopEnd)   { source.loopEnd = data.loopEnd; }
 
 	var audio_gain = self.audio_context.createGain();
-	audio_gain.gain.value = data.volume || 1.0;
+	audio_gain.gain.value = data.volume;
 
 	source.connect(audio_gain);
 
