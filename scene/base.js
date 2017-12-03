@@ -266,6 +266,7 @@ SceneBase.prototype.isSetFadeOut = function() {
 	return this._fade_out_duration && this._fade_out_color ? true : false;
 };
 
+// play bgm after some wait counts
 SceneBase.prototype.setWaitToStartBGM = function(bgm_name, wait_count) {
 	if(!wait_count) wait_count = 0;
 	this._wait_to_start_bgm_name = bgm_name;
