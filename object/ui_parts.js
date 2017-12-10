@@ -11,11 +11,13 @@ var ObjectUIParts = function(scene, x, y, width, height, draw_function) {
 	this._width  = width;
 	this._height = height;
 
-	this._draw_function = Util.bind(draw_function, this);
+	this._draw_function = null;
+	if (typeof draw_function !== "undefined") {
+		this._draw_function = Util.bind(draw_function, this);
+	}
 
 	this._is_show_rect = false;
 
-	this._scale = 1;
 };
 Util.inherit(ObjectUIParts, base_object);
 
@@ -41,7 +43,9 @@ ObjectUIParts.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
 	var ctx = this.core.ctx;
 	ctx.save();
-	this._draw_function();
+	if (this._draw_function) {
+		this._draw_function();
+	}
 	ctx.restore();
 
 	if(this._is_show_rect) {
