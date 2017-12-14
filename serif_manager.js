@@ -102,16 +102,16 @@ SerifManager.prototype._showBackground = function(script) {
 SerifManager.prototype._showChara = function(script) {
 	var pos = script.pos;
 
-	if (pos) {
-		// NOTE: for deprecated pos setting
-		if (pos === "left")  pos = 0;
-		if (pos === "right") pos = 1;
+	// NOTE: for deprecated pos setting
+	if (pos === "left")  pos = 0;
+	if (pos === "right") pos = 1;
 
-		this._pos  = pos;
+	if (!pos) pos = 0;
 
-		this._chara_id_list[pos] = script.chara;
-		this._exp_id_list[pos]   = script.exp;
-	}
+	this._pos  = pos;
+
+	this._chara_id_list[pos] = script.chara;
+	this._exp_id_list[pos]   = script.exp;
 };
 
 SerifManager.prototype._setOption = function(script) {
@@ -196,8 +196,13 @@ SerifManager.prototype.getBackgroundImageName = function () {
 
 SerifManager.prototype.getImageName = function (pos) {
 	pos = pos || 0;
-	return(this._chara_id_list[pos] ? this._chara_id_list[pos] + "_" + this._exp_id_list[pos] : null);
+	return(this._chara_id_list[pos] ? this.getChara(pos) + "_" + this._exp_id_list[pos] : null);
 };
+SerifManager.prototype.getChara = function (pos) {
+	pos = pos || 0;
+	return(this._chara_id_list[pos] ? this._chara_id_list[pos] : null);
+};
+
 SerifManager.prototype.isTalking = function (pos) {
 	return this._pos === pos ? true : false;
 };
