@@ -2,6 +2,7 @@
 
 var SceneBase = function(core) {
 	this.core = core;
+	// TODO: parent -> parent() because ajust to root method
 	this.parent = null; // parent scene if this is sub scene
 	this.width = this.core.width; // default
 	this.height = this.core.height; // default
