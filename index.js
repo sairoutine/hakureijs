@@ -15,6 +15,7 @@ module.exports = {
 	},
 	object: {
 		base: require("./object/base"),
+		point: require("./object/point"),
 		sprite: require("./object/sprite"),
 		window: require("./object/window"),
 		sprite3d: require("./object/sprite3d"),

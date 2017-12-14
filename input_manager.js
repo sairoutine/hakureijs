@@ -2,6 +2,7 @@
 
 var CONSTANT = require("./constant/button");
 var Util = require("./util");
+var ObjectPoint = require("./object/point");
 
 // const
 var DEFAULT_BUTTON_ID_TO_BIT_CODE = {
@@ -148,6 +149,20 @@ InputManager.prototype.handleMouseMove = function (d) {
 	this.mouse_x = x;
 	this.mouse_y = y;
 };
+
+InputManager.prototype.mousePositionPoint = function (scene) {
+	var x = this.mousePositionX();
+	var y = this.mousePositionY();
+
+	var point = new ObjectPoint(scene);
+	point.init();
+	point.setPosition(x, y);
+
+
+	return point;
+};
+
+
 InputManager.prototype.mousePositionX = function () {
 	return this.mouse_x;
 };
