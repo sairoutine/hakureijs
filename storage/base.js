@@ -27,10 +27,14 @@ StorageBase.prototype.set = function(key, value) {
 StorageBase.prototype.get = function(key) {
 	return this._data[key];
 };
+StorageBase.prototype.exists = function(key) {
+	return key in this._data;
+};
+
 StorageBase.prototype.remove = function(key) {
 	return delete this._data[key];
 };
-StorageBase.prototype.isEmpty = function(key) {
+StorageBase.prototype.isEmpty = function() {
 	return Object.keys(this._data).length === 0;
 };
 StorageBase.prototype.toHash = function() {
