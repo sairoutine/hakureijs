@@ -1,4 +1,5 @@
 'use strict';
+var Util = require("./util");
 
 var DebugManager = function (core) {
 	this.core = core;
@@ -151,14 +152,40 @@ DebugManager.prototype.addGitLatestCommitInfo = function (user_name, repo_name, 
 	xhr.send(null);
 };
 
+// TODO: decide where to move this function
+var base64toBlob = function(base64) {
+	var tmp = base64.split(',');
+	var data = atob(tmp[1]);
+	var mime = tmp[0].split(':')[1].split(';')[0];
+	var buf = new Uint8Array(data.length);
+	for (var i = 0; i < data.length; i++) {
+		buf[i] = data.charCodeAt(i);
+	}
+	// blobデータを作成
+	var blob = new Blob([buf], { type: mime });
+	return blob;
+};
 
+DebugManager.prototype.addCaputureImageButton = function (button_value, filename) {
+	if(!this.is_debug_mode) return;
 
+	var canvas_dom = this.core.canvas_dom;
 
+	this.addMenuButton(button_value, function () {
+		var current_filename = filename;
 
+		// default filename is unixtime
+		if(typeof filename === "undefined") {
+			var date = new Date();
+			current_filename = Math.floor(date.getTime() / 1000);
+		}
 
+		var base64 = canvas_dom.toDataURL("image/png");
 
-
-
+		var blob = base64toBlob(base64);
+		Util.downloadBlob(blob, current_filename + ".png");
+	});
+};
 
 // show collision area of object instance
 DebugManager.prototype.setShowingCollisionAreaOn = function () {

@@ -63,6 +63,21 @@ var Util = {
 
 		return Math.floor( Math.random() * (max - min + 1) ) + min;
 	},
+	// save blob object to your computer
+	downloadBlob: function (blob, fileName) {
+		// create url
+		var url = (window.URL || window.webkitURL);
+		var dataUrl = url.createObjectURL(blob);
+		// create mouse event
+		var event = document.createEvent("MouseEvents");
+		event.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		// create a tag
+		var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+		a.href = dataUrl;
+		a.download = fileName;
+		// dispatch mouse click event to a link
+		a.dispatchEvent(event);
+	},
 	shallowCopyHash: function (src_hash) {
 		var dst_hash = {};
 		for(var k in src_hash){
