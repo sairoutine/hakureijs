@@ -299,8 +299,7 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
 	}
 
 	// unable to use right click menu.
-	// NOTE: not used
-	// this.canvas_dom.oncontextmenu = function() { return false; };
+	canvas_dom.oncontextmenu = function() { return false; };
 
 	// bind gamepad
 	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
