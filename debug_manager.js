@@ -46,6 +46,18 @@ DebugManager.prototype.addMenuText = function (text) {
 	// add element
 	this.dom.appendChild(dom);
 };
+// add image
+DebugManager.prototype.addMenuImage = function (image_path) {
+	if(!this.is_debug_mode) return;
+
+	// create element
+	var dom = window.document.createElement('img');
+	dom.src = image_path;
+
+	// add element
+	this.dom.appendChild(dom);
+};
+
 
 // add button menu
 DebugManager.prototype.addMenuButton = function (button_value, func) {
