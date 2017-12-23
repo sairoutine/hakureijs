@@ -132,10 +132,10 @@ Core.prototype.run = function(){
 
 		current_scene.draw();
 
+		current_scene.afterDraw();
+
 		// overwrite cursor image on scene
 		this._renderCursorImage();
-
-		current_scene.afterDraw();
 	}
 
 	/*
