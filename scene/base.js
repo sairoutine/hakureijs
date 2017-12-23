@@ -209,6 +209,10 @@ SceneBase.prototype.changeSubScene = function() {
 	var args = Array.prototype.slice.call(arguments); // to convert array object
 	this._reserved_next_scene = args;
 
+	// immediately if no sub scene is set
+	if (!this.current_scene) {
+		this.changeNextSubSceneIfReserved();
+	}
 };
 SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 	if(this._reserved_next_scene) {

@@ -169,6 +169,11 @@ Core.prototype.addScene = function(name, scene) {
 Core.prototype.changeScene = function() {
 	var args = Array.prototype.slice.call(arguments); // to convert array object
 	this._reserved_next_scene = args;
+
+	// immediately if no scene is set
+	if (!this.current_scene) {
+		this.changeNextSceneIfReserved();
+	}
 };
 Core.prototype.changeNextSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
