@@ -34,8 +34,10 @@ var SerifManager = function () {
 	this._printing_lines = [];
 };
 
-SerifManager.prototype.init = function (script) {
+SerifManager.prototype.init = function (script, auto_start_flag) {
 	if(!script) console.error("set script arguments to use serif_manager class");
+
+	auto_start_flag = typeof auto_start_flag === "undefined" ? true : false;
 
 	// serif scenario
 	this._script = script;
@@ -62,7 +64,7 @@ SerifManager.prototype.init = function (script) {
 	this._line_num = 0;
 	this._printing_lines = [];
 
-	if(!this.is_end()) {
+	if(auto_start_flag && !this.is_end()) {
 		this.next(); // start
 	}
 };
@@ -214,7 +216,10 @@ SerifManager.prototype.lines = function () {
 };
 SerifManager.prototype.getSerifRowsCount = function () {
 	// TODO: only calculate once
-	var serif = this._script[this._progress].serif;
+	var script = this._script[this._progress];
+	if (!script) return 0;
+
+	var serif = script.serif;
 	return( (serif.match(new RegExp("\n", "g")) || []).length + 1 );
 };
 
