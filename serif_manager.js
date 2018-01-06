@@ -64,7 +64,7 @@ SerifManager.prototype.init = function (script, auto_start_flag) {
 	this._line_num = 0;
 	this._printing_lines = [];
 
-	if(auto_start_flag && !this.is_end()) {
+	if(auto_start_flag && !this.isEnd()) {
 		this.next(); // start
 	}
 };
@@ -228,42 +228,53 @@ SerifManager.prototype.getSerifRowsCount = function () {
 
 // NOTE: deprecated
 SerifManager.prototype.right_image = function () {
+	console.error("right_image method is deprecated. you should use getImageName method");
+
 	var pos = 1; // means right
 
 	return this.getImageName(pos);
 };
 // NOTE: deprecated
 SerifManager.prototype.left_image = function () {
+	console.error("left_image method is deprecated. you should use getImageName method");
+
 	var pos = 0; // means left
 
 	return this.getImageName(pos);
 };
 // NOTE: deprecated
 SerifManager.prototype.is_right_talking = function () {
+	console.error("is_right_talking method is deprecated. you should use isTalking method");
+
 	var pos = 1; // means right
 
 	return this.isTalking(pos);
 };
 // NOTE: deprecated
 SerifManager.prototype.is_left_talking = function () {
+	console.error("is_left_talking method is deprecated. you should use isTalking method");
 	var pos = 0; // means left
 
 	return this.isTalking(pos);
 };
 // NOTE: deprecated
 SerifManager.prototype.font_color = function () {
+	console.error("font_color method is deprecated. you should use getOption().font_color method");
 	return this._option.font_color;
 };
 // NOTE: deprecated
 SerifManager.prototype.is_end = function () {
+	console.error("is_end method is deprecated. you should use isEnd method");
 	return this.isEnd();
 };
 // NOTE: deprecated
 SerifManager.prototype.is_background_changed = function () {
+	console.error("is_background_changed method is deprecated. you should use isBackgroundChanged method");
 	return this.isBackgroundChanged();
 };
 // NOTE: deprecated
 SerifManager.prototype.background_image = function () {
+	console.error("background_image method is deprecated. you should use getBackgroundImageName method");
 	return this.getBackgroundImageName();
 };
 
