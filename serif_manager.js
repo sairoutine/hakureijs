@@ -89,7 +89,9 @@ SerifManager.prototype.next = function () {
 	}
 	else {
 		// If serif is empty, show chara without talking and next
-		this.next();
+		if(!this.isEnd()) {
+			this.next();
+		}
 	}
 };
 
