@@ -166,7 +166,7 @@ Core.prototype.currentScene = function() {
 Core.prototype.addScene = function(name, scene) {
 	this.scenes[name] = scene;
 };
-Core.prototype.changeScene = function(scene_name) {
+Core.prototype.changeScene = function(scene_name, varArgs) {
 	if(!(scene_name in this.scenes)) throw new Error (scene_name + " scene doesn't exists.");
 
 	var args = Array.prototype.slice.call(arguments); // to convert array object
