@@ -131,6 +131,7 @@ AudioLoader.prototype.playBGM = function(name) {
 	this.addBGM(name);
 };
 AudioLoader.prototype.addBGM = function(name) {
+	if (!this.audio_context) return;
 	if (this.isPlayingBGM(name)) {
 		this.stopBGM(name);
 	}
@@ -187,6 +188,7 @@ AudioLoader.prototype.fadeOutAllBGM = function (fadeout_time) {
 };
 
 AudioLoader.prototype.fadeOutBGM = function (fadeout_time, bgm_name) {
+	if (!this.audio_context) return;
 	if(typeof bgm_name === "undefined") {
 		return this.fadeOutAllBGM(fadeout_time);
 	}
@@ -251,6 +253,7 @@ AudioLoader.prototype.unMuteWithFadeInAllBGM = function (fadein_time) {
 };
 
 AudioLoader.prototype.unMuteWithFadeInBGM = function (fadein_time, bgm_name) {
+	if (!this.audio_context) return;
 	if(typeof bgm_name === "undefined") {
 		return this.unMuteWithFadeInAllBGM(fadein_time);
 	}
@@ -280,6 +283,7 @@ AudioLoader.prototype.unMuteWithFadeInBGM = function (fadein_time, bgm_name) {
 
 // create AudioBufferSourceNode and GainNode instance
 AudioLoader.prototype._createSourceNodeAndGainNode = function(name) {
+	if (!this.audio_context) return;
 	var self = this;
 	var data = self.bgms[name];
 
