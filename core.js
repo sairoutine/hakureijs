@@ -3,7 +3,6 @@
 /* TODO: create input_manager class */
 
 var WebGLDebugUtils = require("webgl-debug");
-var CONSTANT = require("./constant/button");
 var Util = require("./util");
 var DebugManager = require("./debug_manager");
 var InputManager = require("./input_manager");
@@ -284,11 +283,6 @@ Core.prototype.fullscreen = function() {
 	}
 };
 
-// it is done to load fonts
-Core.prototype.fontLoadingDone = function() {
-	this.font_loader.notifyLoadingDone();
-};
-
 Core.prototype.isAllLoaded = function() {
 	if (this.image_loader.isAllLoaded() && this.audio_loader.isAllLoaded() && this.font_loader.isAllLoaded()) {
 		return true;
@@ -301,8 +295,6 @@ Core.prototype.isAllLoaded = function() {
 
 Core.prototype.setupEvents = function() {
 	if(!window) return;
-
-	var self = this;
 
 	// setup WebAudio
 	window.AudioContext = (function(){
@@ -317,15 +309,7 @@ Core.prototype.setupEvents = function() {
 			function(callback) { window.setTimeout(callback, 1000 / 60); };
 	})();
 
-
-	// If the browser has `document.fonts`, wait font loading.
-	// Note: safari 10.0 has document.fonts but not occur loadingdone event
-	if(window.document && window.document.fonts && !navigator.userAgent.toLowerCase().indexOf("safari")) {
-		window.document.fonts.addEventListener('loadingdone', function() { self.fontLoadingDone(); });
-	}
-	else {
-		self.fontLoadingDone();
-	}
+	this.font_loader.setupEvents();
 
 	this.input_manager.setupEvents(this.canvas_dom);
 };
