@@ -1,12 +1,10 @@
 'use strict';
 
-// TODO:
-// for travis-ci test
-// for safari
-// test for 0 font
-// source code reviewing
-// for old browser
-// Backward compatibility
+// TODO: refactor
+// - change private property name
+// - _isLoadedDone and fontStatuses's is_loaded are duplicated?
+// - isAllLoaded and progress method is a little slow
+// - add comment
 
 var FontLoader = function() {
 	this._isLoadedDone = false;
@@ -152,6 +150,7 @@ FontLoader.prototype._createFontFaceStyle = function(name, url, format) {
     style.sheet.insertRule(rule, 0);
 };
 
+// fonts set by @font-face is loaded by while using it.
 FontLoader.prototype._createFontLoadingDOM = function(name) {
     var div = window.document.createElement('div');
     var text = window.document.createTextNode('.');
