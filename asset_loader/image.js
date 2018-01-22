@@ -65,6 +65,9 @@ ImageLoader.prototype.getScaleHeight = function(name) {
 
 
 ImageLoader.prototype.progress = function() {
+	// avoid division by zero
+	if (this.loading_image_num === 0) return 1;
+
 	return this.loaded_image_num / this.loading_image_num;
 };
 

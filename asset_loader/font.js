@@ -35,6 +35,10 @@ FontLoader.prototype.progress = function() {
 
 		if(this.isLoaded(name)) loaded_font_num++;
 	}
+
+	// avoid division by zero
+	if (all_font_num === 0) return 1;
+
 	return loaded_font_num / all_font_num;
 };
 

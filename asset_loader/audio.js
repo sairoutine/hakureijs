@@ -314,6 +314,9 @@ AudioLoader.prototype._createSourceNodeAndGainNode = function(name) {
 };
 
 AudioLoader.prototype.progress = function() {
+	// avoid division by zero
+	if (this.loading_audio_num === 0) return 1;
+
 	return this.loaded_audio_num / this.loading_audio_num;
 };
 
