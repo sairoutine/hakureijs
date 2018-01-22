@@ -108,6 +108,7 @@ AudioLoader.prototype.isAllLoaded = function() {
 };
 
 AudioLoader.prototype.playSound = function(name) {
+	if (!this.audio_context) return;
 	if (!(name in this.sounds)) throw new Error("Can't find sound '" + name + "'.");
 
 	this._reserved_play_sound_name_map[name] = true;
