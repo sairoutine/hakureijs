@@ -50,9 +50,7 @@ SceneLoading.prototype.init = function(assets, next_scene_name) {
 SceneLoading.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	// TODO: not wait font loading if no font is ready to load
-	//if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded() && this.core.font_loader.isAllLoaded()) {
-	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded()) {
+	if (this.core.isAllLoaded()) {
 		this.notifyAllLoaded();
 	}
 };
