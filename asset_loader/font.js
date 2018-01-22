@@ -43,10 +43,11 @@ FontLoader.prototype.progress = function() {
 FontLoader.prototype.setupEvents = function() {
 	var self = this;
 	if(self.canUseCssFontLoading()) {
-        window.document.fonts.ready.then(function(fonts){
+		// TODO: after all font loading, calling init method and adding same font loading can't fire ready event
+		window.document.fonts.ready.then(function(fonts){
 			self._isLoadedDone = true;
 			self._loadedFonts = fonts;
-        }).catch(function(error){
+		}).catch(function(error){
 			throw new Error("Can't load font.");
 		});
 	}
@@ -60,7 +61,7 @@ FontLoader.prototype.setupEvents = function() {
 		self._isLoadedDone = true;
 		self._loadedFonts  = null;
 	}
-};
+	};
 
 // check if it's enable to use document.fonts.ready
 var _canUseCssFontLoading = window.document && window.document.fonts && window.document.fonts.ready;
