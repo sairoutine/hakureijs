@@ -69,7 +69,11 @@ FontLoader.prototype.canUseCssFontLoading = function(){
 // check if it's enable to use document.fonts's loadingdone event
 // Note: safari 10.0 has document.fonts but not occur loadingdone event
 FontLoader.prototype.canUseCssFont = function(){
-	return window.document && window.document.fonts && !navigator.userAgent.toLowerCase().indexOf("safari");
+	return window.document && window.document.fonts && !this.isSafari10();
+};
+
+FontLoader.prototype.isSafari10 = function() {
+	return navigator.userAgent.toLowerCase().indexOf("safari") && navigator.userAgent.toLowerCase().indexOf("version/10.0");
 };
 
 FontLoader.prototype.isLoaded = function(name) {
