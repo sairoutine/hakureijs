@@ -6,6 +6,7 @@
 // test for 0 font
 // source code reviewing
 // for old browser
+// Backward compatibility
 
 var FontLoader = function() {
 	this._isLoadedDone = false;
