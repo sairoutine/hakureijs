@@ -292,7 +292,7 @@ Core.prototype.isAllLoaded = function() {
 
 
 
-
+// TODO: If destroy core instance, delete event handler, if do not, memory leak
 Core.prototype.setupEvents = function() {
 	if(!window) return;
 
@@ -309,10 +309,87 @@ Core.prototype.setupEvents = function() {
 			function(callback) { window.setTimeout(callback, 1000 / 60); };
 	})();
 
+	this._setupError();
+
 	this.font_loader.setupEvents();
 
 	this.input_manager.setupEvents(this.canvas_dom);
 };
+
+
+Core.prototype._setupError = function() {
+	/*
+	 * msg: error message
+	 * file: file path
+	 * line: row number
+	 * column: column number
+	 * err: error object
+	 */
+
+	var self = this;
+	window.onerror = function (msg, file, line, column, err) {
+		self.showError(msg, file, line, column, err);
+
+		// restart game at error point
+		//self.request_id = requestAnimationFrame(Util.bind(self.run, self));
+
+		// or
+
+		// restart game at first point
+		//self.init();
+		//self.startRun();
+	};
+};
+
+
+Core.prototype.showError = function(msg, file, line, column, err) {
+	this.clearCanvas();
+
+	if (this.is2D()) {
+		// TODO: create html dom and overlay it on canvas
+		var ctx = this.ctx;
+		var x = 30;
+		var y = 100;
+
+		ctx.save();
+		ctx.fillStyle = 'black';
+		ctx.fillRect(0, 0, this.width, this.height);
+		ctx.restore();
+
+		ctx.save();
+		ctx.fillStyle = "red";
+		ctx.font = "60px 'sans-serif'";
+		ctx.fillText('Error', x, y);
+
+		y+= 60;
+
+		ctx.fillStyle = "white";
+		ctx.font = "30px 'sans-serif'";
+
+		ctx.fillText(msg, x, y);
+		y+= 30 + 5;
+		ctx.fillText("File: " + file, x, y);
+		y+= 30 + 5;
+		ctx.fillText("Line: " + line + ":" + column, x, y);
+		y+= 30 + 5;
+		ctx.fillText("Stack Trace: ", x, y);
+		y+= 30 + 5;
+		x+= 30 + 5;
+		var stack = err.stack.split("\n");
+		for (var i = 0, len = stack.length; i < len; i++) {
+			var text = stack[i];
+			ctx.fillText(text, x, y);
+			y += 30 + 5;
+		}
+		ctx.restore();
+	}
+	else if (this.is3D()) {
+		// TODO: render canvas by WebGL
+		window.alert(msg + "\n" + line + ":" + column);
+	}
+};
+
+
 
 Core.prototype.createWebGLContext = function(canvas) {
 	var gl;
