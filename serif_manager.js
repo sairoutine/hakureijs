@@ -5,7 +5,10 @@ var TYPOGRAPHY_SPEED = 10;
 
 var Util = require("./util");
 
-var SerifManager = function () {
+var SerifManager = function (option) {
+	option = option || {};
+	this._is_auto_start = "auto_start" in option ? option.auto_start : true;
+
 	this._timeoutID = null;
 
 	// serif scenario
@@ -34,10 +37,8 @@ var SerifManager = function () {
 	this._printing_lines = [];
 };
 
-SerifManager.prototype.init = function (script, auto_start_flag) {
+SerifManager.prototype.init = function (script) {
 	if(!script) console.error("set script arguments to use serif_manager class");
-
-	auto_start_flag = typeof auto_start_flag === "undefined" ? true : false;
 
 	// serif scenario
 	this._script = script;
@@ -64,10 +65,16 @@ SerifManager.prototype.init = function (script, auto_start_flag) {
 	this._line_num = 0;
 	this._printing_lines = [];
 
-	if(auto_start_flag && !this.isEnd()) {
+	if(this._is_auto_start && !this.isEnd()) {
 		this.next(); // start
 	}
 };
+
+SerifManager.prototype.setAutoStart = function (flag) {
+	this._is_auto_start = flag;
+};
+
+
 
 SerifManager.prototype.isEnd = function () {
 	return this._progress === this._script.length - 1;
