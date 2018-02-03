@@ -97,11 +97,7 @@ FontLoader.prototype.isLoaded = function(name) {
 
 FontLoader.prototype.checkFontLoaded = function(name) {
     if (this.canUseCssFontLoading()) {
-        if(this._loadedFonts){
-            return this._loadedFonts.check('10px "'+name+'"');
-        }
-
-        return false;
+		return window.document.fonts.check('10px "'+name+'"');
     } else {
         if (!this._hiddenCanvas) {
             this._hiddenCanvas = window.document.createElement('canvas');
