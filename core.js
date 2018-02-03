@@ -5,6 +5,7 @@
 var WebGLDebugUtils = require("webgl-debug");
 var Util = require("./util");
 var DebugManager = require("./debug_manager");
+var TimeManager = require("./time_manager");
 var InputManager = require("./input_manager");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
@@ -55,6 +56,8 @@ var Core = function(canvas, options) {
 
 	this.debug_manager = new DebugManager(this);
 
+	this.time_manager = new TimeManager(this);
+
 	this.input_manager = new InputManager();
 
 	this.width = Number(canvas.getAttribute('width'));
@@ -85,6 +88,7 @@ Core.prototype.init = function () {
 
 	// TODO:
 	//this.debug_manager.init();
+	this.time_manager.init();
 	this.input_manager.init();
 
 	this.image_loader.init();
@@ -120,6 +124,9 @@ Core.prototype.run = function(){
 
 	// go to next scene if next scene is set
 	this.changeNextSceneIfReserved();
+
+	// play sound which already set to play
+	this.time_manager.executeEvents();
 
 	// play sound which already set to play
 	this.audio_loader.executePlaySound();
@@ -467,6 +474,8 @@ Core.prototype._renderCursorImage = function () {
 	ctx.restore();
 };
 
-
+Core.prototype.setTimeout = function (callback, frame_count) {
+	this.time_manager.setTimeout(callback, frame_count);
+};
 
 module.exports = Core;
