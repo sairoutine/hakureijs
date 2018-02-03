@@ -93,6 +93,11 @@ Core.prototype.init = function () {
 
 	this.addScene("loading", new SceneLoading(this));
 };
+
+Core.prototype.reload = function () {
+	this.init();
+};
+
 Core.prototype.isRunning = function () {
 	return this.request_id ? true : false;
 };
