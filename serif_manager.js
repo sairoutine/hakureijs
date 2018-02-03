@@ -79,6 +79,9 @@ SerifManager.prototype.setAutoStart = function (flag) {
 SerifManager.prototype.isEnd = function () {
 	return this._progress === this._script.length - 1;
 };
+SerifManager.prototype.isStart = function () {
+	return this._progress > -1;
+};
 
 SerifManager.prototype.next = function () {
 	this._progress++;
