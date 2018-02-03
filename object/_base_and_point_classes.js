@@ -70,8 +70,6 @@ ObjectBase.prototype.beforeDraw = function(){
 };
 
 ObjectBase.prototype.draw = function() {
-	var ctx = this.core.ctx;
-
 	// If is in DEBUG mode, show collision area
 	if(this.core.debug_manager.isShowingCollisionArea()) {
 		this._drawCollisionArea("white");
