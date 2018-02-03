@@ -23,6 +23,10 @@ var AudioLoader = function() {
 	this._audio_source_map = {};
 };
 AudioLoader.prototype.init = function() {
+	// cancel already playing bgms if init method is called by re-init
+	this.stopAllBGM();
+
+	// TODO: cancel already playing sound?
 	// TODO: cancel already loading bgms and sounds
 
 	this.sounds = {};
