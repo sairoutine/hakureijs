@@ -249,7 +249,8 @@ SceneBase.prototype.isInFadeIn = function() {
 
 
 SceneBase.prototype.setFadeOut = function(duration, color) {
-	this._fade_out_duration = duration || 30;
+	duration = typeof duration !== "undefined" ? duration : 30;
+	this._fade_out_duration = duration;
 	this._fade_out_color = color || 'black';
 };
 SceneBase.prototype.startFadeOut = function() {
