@@ -18,8 +18,16 @@ var ObjectUIParts = function(scene, x, y, width, height, draw_function) {
 
 	this._is_show_rect = false;
 
+	this._collision_callback = null;
 };
 Util.inherit(ObjectUIParts, base_object);
+
+ObjectUIParts.prototype.onCollision = function(obj) {
+	if (this._collision_callback) {
+		this._collision_callback(obj);
+	}
+};
+
 
 ObjectUIParts.prototype.collisionWidth = function(){
 	return this._width;
@@ -38,6 +46,10 @@ ObjectUIParts.prototype.setVariable = function (name, value){
 	this[name] = value;
 	return this;
 };
+ObjectUIParts.prototype.setCollisionCallback = function (func){
+	this._collision_callback = Util.bind(func, this);
+};
+
 
 ObjectUIParts.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
