@@ -46,6 +46,17 @@ DebugManager.prototype.addMenuText = function (text) {
 	// add element
 	this.dom.appendChild(dom);
 };
+// add <br> tag
+DebugManager.prototype.addNewLine = function () {
+	if(!this.is_debug_mode) return;
+
+	// create element
+	var dom = window.document.createElement('br');
+
+	// add element
+	this.dom.appendChild(dom);
+};
+
 // add image
 DebugManager.prototype.addMenuImage = function (image_path) {
 	if(!this.is_debug_mode) return;
@@ -85,9 +96,6 @@ DebugManager.prototype.addMenuSelect = function (button_value, pulldown_list, fu
 
 	var core = this.core;
 
-	// create element
-	var input = window.document.createElement('input');
-
 	// select tag
 	var select = window.document.createElement("select");
 
@@ -123,8 +131,6 @@ DebugManager.prototype.addGitLatestCommitInfo = function (user_name, repo_name, 
 	if(!this.is_debug_mode) return;
 
 	branch = branch || "master";
-
-	var core = this.core;
 
 	// create element
 	var dom = window.document.createElement('pre');
