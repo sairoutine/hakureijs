@@ -4,6 +4,7 @@
 var TYPOGRAPHY_SPEED = 10;
 
 var Util = require("./util");
+var BaseClass = require("./serif_manager_deprecated_notifier_base");
 
 var SerifManager = function (option) {
 	option = option || {};
@@ -36,6 +37,7 @@ var SerifManager = function (option) {
 	this._line_num = 0;
 	this._printing_lines = [];
 };
+Util.inherit(SerifManager, BaseClass);
 
 SerifManager.prototype.init = function (script) {
 	if(!script) console.error("set script arguments to use serif_manager class");
