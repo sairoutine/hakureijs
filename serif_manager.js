@@ -4,7 +4,7 @@
 var TYPOGRAPHY_SPEED = 10;
 
 var Util = require("./util");
-var BaseClass = require("./serif_manager_deprecated_notifier_base");
+var BaseClass = require("./serif_manager_abolished_notifier_base");
 
 var SerifManager = function (option) {
 	option = option || {};
