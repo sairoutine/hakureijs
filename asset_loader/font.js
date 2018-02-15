@@ -64,7 +64,7 @@ FontLoader.prototype.setupEvents = function() {
 	};
 
 // check if it's enable to use document.fonts.ready
-var _canUseCssFontLoading = window.document && window.document.fonts && window.document.fonts.ready;
+var _canUseCssFontLoading = window.document && window.document.fonts && window.document.fonts.ready && document.fonts.ready.then;
 FontLoader.prototype.canUseCssFontLoading = function(){
 	return _canUseCssFontLoading;
 };
