@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable new-cap */
 
 /*
  * TODO: split load and save method by sync and async
@@ -106,6 +107,7 @@ StorageBase.prototype._saveToWebStorage = function() {
 		window.localStorage.setItem(key, data);
 	}
 	catch (e) {
+		// nothing to do
 	}
 };
 
@@ -138,7 +140,6 @@ StorageBase._loadFromLocalFile = function() {
 
 	var data = fs.readFileSync(file_path, { encoding: 'utf8' });
 
-	var Klass = this;
 	if (data) {
 		return JSON.parse(data);
 	}
@@ -154,9 +155,9 @@ StorageBase._loadFromWebStorage = function() {
 		data = window.localStorage.getItem(key);
 	}
 	catch (e) {
+		// nothing to do
 	}
 
-	var Klass = this;
 	if (data) {
 		return JSON.parse(data);
 	}
@@ -196,6 +197,7 @@ StorageBase.prototype._removeWebStorage = function() {
 		window.localStorage.removeItem(key);
 	}
 	catch (e) {
+		// nothing to do
 	}
 };
 
