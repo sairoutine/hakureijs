@@ -9,17 +9,19 @@
 
 var Util = require("../util");
 
-var DEFAULT_KEY = "hakurei_engine:default";
-
 var StorageBase = function (data) {
 	if(!data) data = {};
 	this._data = data;
 };
 
 // save file unique key
+//
+// for browser: local storage key name
+// for electron or node-webkit: file name
+//
 // this constant must be overridden!
 StorageBase.KEY = function() {
-	return DEFAULT_KEY;
+	throw new Error("KEY method must be overridden.");
 };
 
 StorageBase.prototype.set = function(key, value) {
