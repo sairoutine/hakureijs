@@ -2,15 +2,15 @@
 var base_class = require('./base');
 var util = require('../util');
 
-var StorageSave = function(scene) {
+var StorageScenario = function(scene) {
 	base_class.apply(this, arguments);
 };
-util.inherit(StorageSave, base_class);
+util.inherit(StorageScenario, base_class);
 
 var PREFIX = "hakurei_engine";
-var KEY = "save";
+var KEY = "scenario";
 
-StorageSave.KEY = function(){
+StorageScenario.KEY = function(){
 	if (!this.isLocalMode() && window && window.location) {
 		// localstorage key for browser
 		return([PREFIX, KEY, window.location.pathname].join(":"));
@@ -21,4 +21,4 @@ StorageSave.KEY = function(){
 	}
 };
 
-module.exports = StorageSave;
+module.exports = StorageScenario;
