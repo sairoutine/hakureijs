@@ -221,6 +221,7 @@ AudioLoader.prototype.muteAllBGM = function () {
 };
 
 AudioLoader.prototype.muteBGM = function (bgm_name) {
+	if (!this.audio_context) return;
 	if(typeof bgm_name === "undefined") {
 		return this.muteAllBGM();
 	}
@@ -231,7 +232,8 @@ AudioLoader.prototype.muteBGM = function (bgm_name) {
 
 	var audio_gain = map.gain_node;
 
-	audio_gain.gain.value = 0;
+	// mute
+	audio_gain.gain.setValueAtTime(0, this.audio_context.currentTime);
 };
 AudioLoader.prototype.unMuteAllBGM = function () {
 	for (var bgm_name in this._audio_source_map) {
@@ -240,6 +242,7 @@ AudioLoader.prototype.unMuteAllBGM = function () {
 };
 
 AudioLoader.prototype.unMuteBGM = function (bgm_name) {
+	if (!this.audio_context) return;
 	if(typeof bgm_name === "undefined") {
 		return this.unMuteAllBGM();
 	}
@@ -251,7 +254,7 @@ AudioLoader.prototype.unMuteBGM = function (bgm_name) {
 	var audio_gain = map.gain_node;
 
 	var data = this.bgms[bgm_name];
-	audio_gain.gain.value = data.volume;
+	audio_gain.gain.setValueAtTime(data.volume, this.audio_context.currentTime);
 };
 
 AudioLoader.prototype.unMuteWithFadeInAllBGM = function (fadein_time) {
@@ -303,7 +306,7 @@ AudioLoader.prototype._createSourceNodeAndGainNode = function(name) {
 	if(data.loopEnd)   { source.loopEnd = data.loopEnd; }
 
 	var audio_gain = self.audio_context.createGain();
-	audio_gain.gain.value = data.volume;
+	audio_gain.gain.setValueAtTime(data.volume, self.audio_context.currentTime);
 
 	source.connect(audio_gain);
 
