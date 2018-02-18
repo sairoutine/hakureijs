@@ -1,16 +1,18 @@
 'use strict';
 
-/* TODO: create input_manager class */
+/* TODO: create scene_manager class */
 
 var WebGLDebugUtils = require("webgl-debug");
 var Util = require("./util");
 var DebugManager = require("./manager/debug");
 var TimeManager = require("./manager/time");
+var SaveManager = require("./manager/save");
 var InputManager = require("./manager/input");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
 var SceneLoading = require('./scene/loading');
+var StorageScenario = require('./storage/scenario');
 
 var ShaderProgram = require('./shader_program');
 var VS = require("./shader/main.vs");
@@ -58,6 +60,8 @@ var Core = function(canvas, options) {
 
 	this.time_manager = new TimeManager(this);
 
+	this.save_manager = new SaveManager();
+
 	this.input_manager = new InputManager();
 
 	this.width = Number(canvas.getAttribute('width'));
@@ -94,6 +98,9 @@ Core.prototype.init = function () {
 	this.image_loader.init();
 	this.audio_loader.init();
 	this.font_loader.init();
+
+	this.save_manager.addClass("scenario", StorageScenario);
+	this.save_manager.initialLoad();
 
 	this.addScene("loading", new SceneLoading(this));
 };
