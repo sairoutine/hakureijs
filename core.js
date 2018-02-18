@@ -81,6 +81,12 @@ var Core = function(canvas, options) {
 	this.image_loader = new ImageLoader();
 	this.audio_loader = new AudioLoader();
 	this.font_loader = new FontLoader();
+
+	// add default scene
+	this.addScene("loading", new SceneLoading(this));
+
+	// add default save
+	this.save_manager.addClass("scenario", StorageScenario);
 };
 Core.prototype.init = function () {
 	this.current_scene = null;
@@ -99,10 +105,7 @@ Core.prototype.init = function () {
 	this.audio_loader.init();
 	this.font_loader.init();
 
-	this.save_manager.addClass("scenario", StorageScenario);
 	this.save_manager.initialLoad();
-
-	this.addScene("loading", new SceneLoading(this));
 };
 
 Core.prototype.reload = function () {
