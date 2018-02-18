@@ -7,6 +7,7 @@ module.exports = {
 		button: require("./constant/button"),
 	}),
 	serif_manager: require("./manager/serif"),
+	save_manager: require("./manager/save"),
 	shader_program: require("./shader_program"),
 	scene: {
 		base:    require("./scene/base"),
