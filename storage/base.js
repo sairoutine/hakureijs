@@ -24,6 +24,11 @@ StorageBase.KEY = function() {
 	throw new Error("KEY method must be overridden.");
 };
 
+// save file directory for Electron or NW.js
+StorageBase.localFileDirectory = function() {
+	return "save";
+};
+
 StorageBase.prototype.set = function(key, value) {
 	this._data[key] = value;
 };
@@ -89,7 +94,7 @@ StorageBase._localFileDirectoryPath = function() {
 	var app  = window.require('electron').remote.app;
 	var base = app.getPath("appData");
 	var app_name = app.getName();
-	return path.join(base, app_name, 'save/');
+	return path.join(base, app_name, this.localFileDirectory());
 };
 
 StorageBase._localFileName = function(key) {
