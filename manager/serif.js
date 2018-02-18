@@ -3,8 +3,8 @@
 // typography speed
 var TYPOGRAPHY_SPEED = 10;
 
-var Util = require("./util");
-var BaseClass = require("./serif_manager_abolished_notifier_base");
+var Util = require("../util");
+var BaseClass = require("./serif_abolished_notifier_base");
 
 var SerifManager = function (option) {
 	option = option || {};

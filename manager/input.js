@@ -1,8 +1,8 @@
 'use strict';
 
-var CONSTANT = require("./constant/button");
-var Util = require("./util");
-var ObjectPoint = require("./object/point");
+var CONSTANT = require("../constant/button");
+var Util = require("../util");
+var ObjectPoint = require("../object/point");
 
 // const
 var DEFAULT_BUTTON_ID_TO_BIT_CODE = {

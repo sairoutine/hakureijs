@@ -1,5 +1,5 @@
 'use strict';
-var Util = require("./util");
+var Util = require("../util");
 
 var DebugManager = function (core) {
 	this.core = core;

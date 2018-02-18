@@ -6,7 +6,7 @@ module.exports = {
 	constant: require("./util").assign(require("./constant/button"), {
 		button: require("./constant/button"),
 	}),
-	serif_manager: require("./serif_manager"),
+	serif_manager: require("./manager/serif"),
 	shader_program: require("./shader_program"),
 	scene: {
 		base:    require("./scene/base"),

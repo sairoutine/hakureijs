@@ -4,9 +4,9 @@
 
 var WebGLDebugUtils = require("webgl-debug");
 var Util = require("./util");
-var DebugManager = require("./debug_manager");
-var TimeManager = require("./time_manager");
-var InputManager = require("./input_manager");
+var DebugManager = require("./manager/debug");
+var TimeManager = require("./manager/time");
+var InputManager = require("./manager/input");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
