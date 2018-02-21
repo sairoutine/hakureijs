@@ -6,7 +6,7 @@ var TYPOGRAPHY_SPEED = 10;
 var Util = require("../util");
 var BaseClass = require("./serif_abolished_notifier_base");
 
-var SerifManager = function (option) {
+var ScenarioManager = function (option) {
 	option = option || {};
 	this._is_auto_start = "auto_start" in option ? option.auto_start : true;
 
@@ -37,9 +37,9 @@ var SerifManager = function (option) {
 	this._line_num = 0;
 	this._printing_lines = [];
 };
-Util.inherit(SerifManager, BaseClass);
+Util.inherit(ScenarioManager, BaseClass);
 
-SerifManager.prototype.init = function (script) {
+ScenarioManager.prototype.init = function (script) {
 	if(!script) console.error("set script arguments to use serif_manager class");
 
 	// serif scenario
@@ -72,20 +72,20 @@ SerifManager.prototype.init = function (script) {
 	}
 };
 
-SerifManager.prototype.setAutoStart = function (flag) {
+ScenarioManager.prototype.setAutoStart = function (flag) {
 	this._is_auto_start = flag;
 };
 
 
 
-SerifManager.prototype.isEnd = function () {
+ScenarioManager.prototype.isEnd = function () {
 	return this._progress === this._script.length - 1;
 };
-SerifManager.prototype.isStart = function () {
+ScenarioManager.prototype.isStart = function () {
 	return this._progress > -1;
 };
 
-SerifManager.prototype.next = function () {
+ScenarioManager.prototype.next = function () {
 	this._progress++;
 
 	var script = this._script[this._progress];
@@ -107,7 +107,7 @@ SerifManager.prototype.next = function () {
 	}
 };
 
-SerifManager.prototype._showBackground = function(script) {
+ScenarioManager.prototype._showBackground = function(script) {
 	this._is_background_changed = false;
 	if(script.background && this._background_image_name !== script.background) {
 		this._is_background_changed = true;
@@ -115,7 +115,7 @@ SerifManager.prototype._showBackground = function(script) {
 	}
 };
 
-SerifManager.prototype._showChara = function(script) {
+ScenarioManager.prototype._showChara = function(script) {
 	var pos = script.pos;
 
 	// NOTE: for deprecated pos setting
@@ -130,7 +130,7 @@ SerifManager.prototype._showChara = function(script) {
 	this._exp_id_list[pos]   = script.exp;
 };
 
-SerifManager.prototype._setOption = function(script) {
+ScenarioManager.prototype._setOption = function(script) {
 	this._option = script.option || {};
 
 	// for deprecated script "font_color"
@@ -140,7 +140,7 @@ SerifManager.prototype._setOption = function(script) {
 	}
 };
 
-SerifManager.prototype._printMessage = function (message) {
+ScenarioManager.prototype._printMessage = function (message) {
 	// cancel already started message
 	this._cancelPrintMessage();
 
@@ -155,16 +155,16 @@ SerifManager.prototype._printMessage = function (message) {
 	this._startPrintMessage();
 };
 // is waiting to be called next?
-SerifManager.prototype.isWaitingNext = function () {
+ScenarioManager.prototype.isWaitingNext = function () {
 	return this.isEndPrinting() && !this.isEnd();
 };
 
-SerifManager.prototype.isEndPrinting = function () {
+ScenarioManager.prototype.isEndPrinting = function () {
 	var char_length = this._char_list.length;
 	return this._char_idx >= char_length ? true : false;
 };
 
-SerifManager.prototype._startPrintMessage = function () {
+ScenarioManager.prototype._startPrintMessage = function () {
 	var char_length = this._char_list.length;
 	if (this._char_idx >= char_length) return;
 
@@ -189,46 +189,46 @@ SerifManager.prototype._startPrintMessage = function () {
 	this._timeoutID = setTimeout(Util.bind(this._startPrintMessage, this), TYPOGRAPHY_SPEED);
 };
 
-SerifManager.prototype._cancelPrintMessage = function () {
+ScenarioManager.prototype._cancelPrintMessage = function () {
 	if(this._timeoutID !== null) {
 		clearTimeout(this._timeoutID);
 		this._timeoutID = null;
 	}
 };
 
-SerifManager.prototype.startPrintMessage = function () {
+ScenarioManager.prototype.startPrintMessage = function () {
 	this._is_enable_printing_message = true;
 };
-SerifManager.prototype.cancelPrintMessage = function () {
+ScenarioManager.prototype.cancelPrintMessage = function () {
 	this._is_enable_printing_message = false;
 };
 
-SerifManager.prototype.isBackgroundChanged = function () {
+ScenarioManager.prototype.isBackgroundChanged = function () {
 	return this._is_background_changed;
 };
-SerifManager.prototype.getBackgroundImageName = function () {
+ScenarioManager.prototype.getBackgroundImageName = function () {
 	return this._background_image_name;
 };
 
-SerifManager.prototype.getImageName = function (pos) {
+ScenarioManager.prototype.getImageName = function (pos) {
 	pos = pos || 0;
 	return(this._chara_id_list[pos] ? this.getChara(pos) + "_" + this._exp_id_list[pos] : null);
 };
-SerifManager.prototype.getChara = function (pos) {
+ScenarioManager.prototype.getChara = function (pos) {
 	pos = pos || 0;
 	return(this._chara_id_list[pos] ? this._chara_id_list[pos] : null);
 };
 
-SerifManager.prototype.isTalking = function (pos) {
+ScenarioManager.prototype.isTalking = function (pos) {
 	return this._pos === pos ? true : false;
 };
-SerifManager.prototype.getOption = function () {
+ScenarioManager.prototype.getOption = function () {
 	return this._option;
 };
-SerifManager.prototype.lines = function () {
+ScenarioManager.prototype.lines = function () {
 	return this._printing_lines;
 };
-SerifManager.prototype.getSerifRowsCount = function () {
+ScenarioManager.prototype.getSerifRowsCount = function () {
 	// TODO: only calculate once
 	var script = this._script[this._progress];
 	if (!script) return 0;
@@ -241,7 +241,7 @@ SerifManager.prototype.getSerifRowsCount = function () {
 
 
 // NOTE: deprecated
-SerifManager.prototype.right_image = function () {
+ScenarioManager.prototype.right_image = function () {
 	console.error("right_image method is deprecated. you should use getImageName method");
 
 	var pos = 1; // means right
@@ -249,7 +249,7 @@ SerifManager.prototype.right_image = function () {
 	return this.getImageName(pos);
 };
 // NOTE: deprecated
-SerifManager.prototype.left_image = function () {
+ScenarioManager.prototype.left_image = function () {
 	console.error("left_image method is deprecated. you should use getImageName method");
 
 	var pos = 0; // means left
@@ -257,7 +257,7 @@ SerifManager.prototype.left_image = function () {
 	return this.getImageName(pos);
 };
 // NOTE: deprecated
-SerifManager.prototype.is_right_talking = function () {
+ScenarioManager.prototype.is_right_talking = function () {
 	console.error("is_right_talking method is deprecated. you should use isTalking method");
 
 	var pos = 1; // means right
@@ -265,31 +265,31 @@ SerifManager.prototype.is_right_talking = function () {
 	return this.isTalking(pos);
 };
 // NOTE: deprecated
-SerifManager.prototype.is_left_talking = function () {
+ScenarioManager.prototype.is_left_talking = function () {
 	console.error("is_left_talking method is deprecated. you should use isTalking method");
 	var pos = 0; // means left
 
 	return this.isTalking(pos);
 };
 // NOTE: deprecated
-SerifManager.prototype.font_color = function () {
+ScenarioManager.prototype.font_color = function () {
 	console.error("font_color method is deprecated. you should use getOption().font_color method");
 	return this._option.font_color;
 };
 // NOTE: deprecated
-SerifManager.prototype.is_end = function () {
+ScenarioManager.prototype.is_end = function () {
 	console.error("is_end method is deprecated. you should use isEnd method");
 	return this.isEnd();
 };
 // NOTE: deprecated
-SerifManager.prototype.is_background_changed = function () {
+ScenarioManager.prototype.is_background_changed = function () {
 	console.error("is_background_changed method is deprecated. you should use isBackgroundChanged method");
 	return this.isBackgroundChanged();
 };
 // NOTE: deprecated
-SerifManager.prototype.background_image = function () {
+ScenarioManager.prototype.background_image = function () {
 	console.error("background_image method is deprecated. you should use getBackgroundImageName method");
 	return this.getBackgroundImageName();
 };
 
-module.exports = SerifManager;
+module.exports = ScenarioManager;
