@@ -2,13 +2,19 @@
 module.exports = {
 	util: require("./util"),
 	core: require("./core"),
+	shader_program: require("./shader_program"),
 	// constant.BUTTON_NAME is deprecated.
 	constant: require("./util").assign(require("./constant/button"), {
 		button: require("./constant/button"),
 	}),
-	serif_manager: require("./manager/serif"),
+	// deprecated namespaces.
+	serif_manager: require("./manager/scenario"),
+	// deprecated namespaces.
 	save_manager: require("./manager/save"),
-	shader_program: require("./shader_program"),
+	manager: {
+		save: require("./manager/save"),
+		scenario: require("./manager/scenario"),
+	},
 	scene: {
 		base:    require("./scene/base"),
 		loading: require("./scene/loading"),
