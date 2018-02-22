@@ -1,15 +1,22 @@
 'use strict';
 
-// typography speed
+// TODO: add _isStartPrintLetter, isPausePrintLetter method
+
+// default typography speed
 var TYPOGRAPHY_SPEED = 10;
+// default chara position
+var POSITION = 0;
 
 var Util = require("../util");
 var BaseClass = require("./serif_abolished_notifier_base");
 
 var ScenarioManager = function (option) {
 	option = option || {};
-	this._is_auto_start = "auto_start" in option ? option.auto_start : true;
+	this._typography_speed = "typography_speed" in option ? option.typography_speed : TYPOGRAPHY_SPEED;
 
+	// if scenario is not started, _timeoutID is null.
+	// so that, if scenario is started, _timeoutID always have ID.
+	// NOTE: pausePrintLetter method does not clear _timeoutID.
 	this._timeoutID = null;
 
 	// serif scenario
@@ -18,86 +25,111 @@ var ScenarioManager = function (option) {
 	// where serif has progressed
 	this._progress = null;
 
-	this._chara_id_list  = [];
-	this._exp_id_list    = [];
-	this._option = {};
+	// chara
+	this._current_talking_pos  = null; // which chara is talking
+	this._pos_to_chara_id_map = {};
+	this._pos_to_exp_id_map = {};
 
-	// which chara is talking, left or right
-	this._pos = null;
-
+	// background
 	this._is_background_changed = false;
-	this._background_image_name = null;
+	this._current_bg_image_name  = null;
 
-	this._char_list = "";
-	this._char_idx = 0;
+	// option
+	this._current_option = {};
 
-	this._is_enable_printing_message = true;
+	// letter data to print
+	this._current_message_letter_list = [];
+	this._current_message_sentenses_num = null;
 
-	// now printing message
-	this._line_num = 0;
-	this._printing_lines = [];
+	// current printed sentences
+	this._letter_idx = 0;
+	this._sentences_line_num = 0;
+	this._current_printed_sentences = [];
+
+	// If true, _printLetter method does nothing
+	this._is_pause_print_letter = false;
 };
 Util.inherit(ScenarioManager, BaseClass);
 
 ScenarioManager.prototype.init = function (script) {
-	if(!script) console.error("set script arguments to use serif_manager class");
+	if(!script) console.error("set script arguments to use scenario_manager class");
 
-	// serif scenario
+	if (this._timeoutID) this._stopPrintLetter();
+
 	this._script = script;
 
-	this._chara_id_list  = [];
-	this._exp_id_list    = [];
-	this._option = {};
-
-
-
 	this._progress = -1;
-	this._timeoutID = null;
-	this._pos  = null;
 
+	// chara
+	this._current_talking_pos  = null;
+	this._pos_to_chara_id_map = {};
+	this._pos_to_exp_id_map = {};
+
+	// background
 	this._is_background_changed = false;
-	this._background_image_name = null;
+	this._current_bg_image_name  = null;
 
+	// option
+	this._current_option = {};
 
-	this._char_list = "";
-	this._char_idx = 0;
+	// letter data to print
+	this._current_message_letter_list = [];
+	this._current_message_sentenses_num = null;
 
-	this._is_enable_printing_message = true;
+	// current printed sentences
+	this._letter_idx = 0;
+	this._sentences_line_num = 0;
+	this._current_printed_sentences = [];
 
-	this._line_num = 0;
-	this._printing_lines = [];
-
-	if(this._is_auto_start && !this.isEnd()) {
-		this.next(); // start
-	}
+	this._is_pause_print_letter = false;
 };
 
-ScenarioManager.prototype.setAutoStart = function (flag) {
-	this._is_auto_start = flag;
+ScenarioManager.prototype.start = function (progress) {
+	if(!this._script) throw new Error("start method must be called after instance was initialized.");
+
+	this._progress = progress || 0;
+
+	this._setupCurrentSerifScript();
 };
 
 
+ScenarioManager.prototype.next = function (choice) {
+	this._progress++;
 
-ScenarioManager.prototype.isEnd = function () {
-	return this._progress === this._script.length - 1;
+	this._setupCurrentSerifScript(choice);
 };
+
 ScenarioManager.prototype.isStart = function () {
 	return this._progress > -1;
 };
+ScenarioManager.prototype.isEnd = function () {
+	return this._progress === this._script.length - 1;
+};
 
-ScenarioManager.prototype.next = function () {
-	this._progress++;
+
+
+ScenarioManager.prototype.isPrintLetterEnd = function () {
+	var letter_length = this._current_message_letter_list.length;
+	return this._letter_idx >= letter_length ? true : false;
+};
+
+
+ScenarioManager.prototype._setupCurrentSerifScript = function (choice) {
+	// chosen serif junction
+	choice = choice || 0;
 
 	var script = this._script[this._progress];
 
-	this._showChara(script);
+	// TODO:
+	// 分岐に合わせて script が配列ならば、その分岐へ
+	// 配列でなくハッシュならそのまま script 扱い
 
-	this._showBackground(script);
-
-	this._setOption(script);
+	this._setupChara(script);
+	this._setupBackground(script);
+	this._setupOption(script);
 
 	if(script.serif) {
-		this._printMessage(script.serif);
+		this._setupSerif(script);
 	}
 	else {
 		// If serif is empty, show chara without talking and next
@@ -107,137 +139,133 @@ ScenarioManager.prototype.next = function () {
 	}
 };
 
-ScenarioManager.prototype._showBackground = function(script) {
+ScenarioManager.prototype._setupChara = function(script) {
+	var pos   = script.pos;
+	var chara = script.chara;
+	var exp   = script.exp;
+
+	if (!pos) pos = POSITION;
+
+	this._current_talking_pos  = pos;
+	this._pos_to_chara_id_map[this._current_talking_pos] = chara;
+	this._pos_to_exp_id_map[this._current_talking_pos]   = exp;
+};
+
+ScenarioManager.prototype._setupBackground = function(script) {
+	var background = script.background;
+
 	this._is_background_changed = false;
-	if(script.background && this._background_image_name !== script.background) {
+
+	if(background && this._current_bg_image_name !== background) {
 		this._is_background_changed = true;
-		this._background_image_name  = script.background;
+		this._current_bg_image_name  = background;
 	}
 };
 
-ScenarioManager.prototype._showChara = function(script) {
-	var pos = script.pos;
-
-	// NOTE: for deprecated pos setting
-	if (pos === "left")  pos = 0;
-	if (pos === "right") pos = 1;
-
-	if (!pos) pos = 0;
-
-	this._pos  = pos;
-
-	this._chara_id_list[pos] = script.chara;
-	this._exp_id_list[pos]   = script.exp;
+ScenarioManager.prototype._setupOption = function(script) {
+	this._current_option = script.option || {};
 };
 
-ScenarioManager.prototype._setOption = function(script) {
-	this._option = script.option || {};
+ScenarioManager.prototype._setupSerif = function (script) {
+	var message = script.serif;
 
-	// for deprecated script "font_color"
-	if (script.font_color) {
-		this._option = Util.shallowCopyHash(this.option);
-		this._option.font_color = script.font_color;
-	}
-};
-
-ScenarioManager.prototype._printMessage = function (message) {
 	// cancel already started message
-	this._cancelPrintMessage();
+	this._stopPrintLetter();
 
-	// setup to show message
-	this._char_list = message.split("");
-	this._char_idx = 0;
+	// setup letter data to print
+	this._current_message_letter_list = message.split("");
 
-	// clear showing message
-	this._line_num = 0;
-	this._printing_lines = [];
-
-	this._startPrintMessage();
-};
-// is waiting to be called next?
-ScenarioManager.prototype.isWaitingNext = function () {
-	return this.isEndPrinting() && !this.isEnd();
-};
-
-ScenarioManager.prototype.isEndPrinting = function () {
-	var char_length = this._char_list.length;
-	return this._char_idx >= char_length ? true : false;
-};
-
-ScenarioManager.prototype._startPrintMessage = function () {
-	var char_length = this._char_list.length;
-	if (this._char_idx >= char_length) return;
-
-	if(this._is_enable_printing_message) {
-		var ch = this._char_list[this._char_idx];
-		this._char_idx++;
-
-		if (ch === "\n") {
-			this._line_num++;
-		}
-		else {
-			// initialize
-			if(!this._printing_lines[this._line_num]) {
-				this._printing_lines[this._line_num] = "";
-			}
-
-			// show A word
-			this._printing_lines[this._line_num] = this._printing_lines[this._line_num] + ch;
-		}
+	// count newline of current message
+	this._current_message_sentenses_num = 1;
+	for (var i = 0, len = this._current_message_letter_list.length; i < len; i++) {
+		if (this._current_message_letter_list[i] === "\n") this._current_message_sentenses_num++;
 	}
 
-	this._timeoutID = setTimeout(Util.bind(this._startPrintMessage, this), TYPOGRAPHY_SPEED);
+	// clear current printed sentences
+	this._letter_idx = 0;
+	this._sentences_line_num = 0;
+	this._current_printed_sentences = [];
+
+	// start message
+	this._startPrintLetter();
 };
 
-ScenarioManager.prototype._cancelPrintMessage = function () {
+ScenarioManager.prototype._startPrintLetter = function () {
+	this._printLetter();
+
+	this._timeoutID = setTimeout(Util.bind(this._startPrintLetter, this), this._typography_speed);
+};
+
+ScenarioManager.prototype._stopPrintLetter = function () {
 	if(this._timeoutID !== null) {
 		clearTimeout(this._timeoutID);
 		this._timeoutID = null;
 	}
 };
 
-ScenarioManager.prototype.startPrintMessage = function () {
-	this._is_enable_printing_message = true;
+ScenarioManager.prototype._printLetter = function () {
+	if (this.isEndPrinting()) return;
+
+	if(this._is_pause_print_letter) return;
+
+	var current_message_letter_list = this._current_message_letter_list;
+
+	// get A letter to add
+	var letter = current_message_letter_list[this._letter_idx++];
+
+	if (letter === "\n") {
+		this._sentences_line_num++;
+	}
+	else {
+		// initialize if needed
+		if(!this._current_printed_sentences[this._sentences_line_num]) {
+			this._current_printed_sentences[this._sentences_line_num] = "";
+		}
+
+		// print A letter
+		this._current_printed_sentences[this._sentences_line_num] += letter;
+	}
+
 };
-ScenarioManager.prototype.cancelPrintMessage = function () {
-	this._is_enable_printing_message = false;
+
+ScenarioManager.prototype.resumePrintLetter = function () {
+	this._is_pause_print_letter = false;
+};
+ScenarioManager.prototype.pausePrintLetter = function () {
+	this._is_pause_print_letter = true;
+};
+
+ScenarioManager.prototype.getCurrentPrintedSentences = function () {
+	return this._current_printed_sentences;
+};
+
+ScenarioManager.prototype.getCurrentSentenceNum = function () {
+	return this._current_message_sentenses_num;
 };
 
 ScenarioManager.prototype.isBackgroundChanged = function () {
 	return this._is_background_changed;
 };
-ScenarioManager.prototype.getBackgroundImageName = function () {
-	return this._background_image_name;
+
+ScenarioManager.prototype.getCurrentBackgroundImageName = function () {
+	return this._current_bg_image_name;
 };
 
-ScenarioManager.prototype.getImageName = function (pos) {
-	pos = pos || 0;
-	return(this._chara_id_list[pos] ? this.getChara(pos) + "_" + this._exp_id_list[pos] : null);
-};
-ScenarioManager.prototype.getChara = function (pos) {
-	pos = pos || 0;
-	return(this._chara_id_list[pos] ? this._chara_id_list[pos] : null);
+ScenarioManager.prototype.getCurrentOption = function () {
+	return this._current_option;
 };
 
-ScenarioManager.prototype.isTalking = function (pos) {
-	return this._pos === pos ? true : false;
-};
-ScenarioManager.prototype.getOption = function () {
-	return this._option;
-};
-ScenarioManager.prototype.lines = function () {
-	return this._printing_lines;
-};
-ScenarioManager.prototype.getSerifRowsCount = function () {
-	// TODO: only calculate once
-	var script = this._script[this._progress];
-	if (!script) return 0;
-
-	var serif = script.serif;
-	return( (serif.match(new RegExp("\n", "g")) || []).length + 1 );
+ScenarioManager.prototype.getCurrentCharaNameByPosition = function (pos) {
+	pos = pos || POSITION;
+	return this._pos_to_chara_id_map[pos];
 };
 
+ScenarioManager.prototype.getCurrentCharaExpressionByPosition = function (pos) {
+	pos = pos || POSITION;
+	return this._pos_to_exp_id_map[pos];
+};
 
-
-
+ScenarioManager.prototype.isCurrentTalkingByPosition = function (pos) {
+	return this._current_talking_pos === pos;
+};
 module.exports = ScenarioManager;
