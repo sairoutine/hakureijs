@@ -10,7 +10,9 @@ var POSITION = 0;
 var Util = require("../util");
 var BaseClass = require("./serif_abolished_notifier_base");
 
-var ScenarioManager = function (option) {
+var ScenarioManager = function (core, option) {
+	this.core = core;
+
 	option = option || {};
 	this._typography_speed = "typography_speed" in option ? option.typography_speed : TYPOGRAPHY_SPEED;
 
@@ -169,6 +171,8 @@ ScenarioManager.prototype._setupCurrentSerifScript = function () {
 	this._setupJunction(script);
 	this._setupOption(script);
 
+	this._saveSerifPlayed(script);
+
 	if(script.serif) {
 		this._setupSerif(script);
 	}
@@ -179,7 +183,6 @@ ScenarioManager.prototype._setupCurrentSerifScript = function () {
 		}
 	}
 };
-
 ScenarioManager.prototype._setupChara = function(script) {
 	var pos   = script.pos;
 	var chara = script.chara;
@@ -211,6 +214,18 @@ ScenarioManager.prototype._setupJunction = function(script) {
 ScenarioManager.prototype._setupOption = function(script) {
 	this._current_option = script.option || {};
 };
+
+ScenarioManager.prototype._saveSerifPlayed = function(script) {
+	var id = script.id;
+	var is_save = script.save;
+
+	if (!is_save) return;
+
+	if (typeof id === "undefined") throw new Error("script save property needs id property");
+
+	this.core.save_manager.scenario.incrementPlayedCount(id);
+};
+
 
 ScenarioManager.prototype._setupSerif = function (script) {
 	var message = script.serif;
