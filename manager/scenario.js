@@ -34,6 +34,9 @@ var ScenarioManager = function (option) {
 	this._is_background_changed = false;
 	this._current_bg_image_name  = null;
 
+	// junction
+	this._current_junction_list = [];
+
 	// option
 	this._current_option = {};
 
@@ -56,7 +59,7 @@ ScenarioManager.prototype.init = function (script) {
 
 	if (this._timeoutID) this._stopPrintLetter();
 
-	this._script = script;
+	this._script = script.slice(); // shallow copy
 
 	this._progress = -1;
 
@@ -68,6 +71,9 @@ ScenarioManager.prototype.init = function (script) {
 	// background
 	this._is_background_changed = false;
 	this._current_bg_image_name  = null;
+
+	// junction
+	this._current_junction_list = [];
 
 	// option
 	this._current_option = {};
@@ -94,10 +100,51 @@ ScenarioManager.prototype.start = function (progress) {
 
 
 ScenarioManager.prototype.next = function (choice) {
+	// chosen serif junction
+	choice = choice || 0;
+
+	if (this.isEnd()) return false;
+
 	this._progress++;
 
-	this._setupCurrentSerifScript(choice);
+	this._chooseNextSerifScript(choice);
+
+	this._setupCurrentSerifScript();
+
+	return true;
 };
+ScenarioManager.prototype._chooseNextSerifScript = function (choice) {
+	var script = this._script[this._progress];
+
+	var type = script.type || "serif";
+
+	var chosen_serifs;
+	if (type === "serif") {
+		// do nothing
+	}
+	else if (type === "junction_serif") {
+		chosen_serifs = script.serifs[choice];
+		// delete current script and insert new chosen serif list
+		Array.prototype.splice.apply(this._script, [this._progress, 1].concat(chosen_serifs));
+	}
+	else if (type === "criteria_serif") {
+		var criteria_name = script.criteria;
+		choice = this._execCriteriaFunction(criteria_name);
+		chosen_serifs = script.serifs[choice];
+
+		// delete current script and insert new chosen serif list
+		Array.prototype.splice.apply(this._script, [this._progress, 1].concat(chosen_serifs));
+	}
+	else {
+		throw new Error("Unknown serif script type: " + type);
+	}
+};
+
+ScenarioManager.prototype._execCriteriaFunction = function (criteria_name) {
+	// TODO:
+};
+
+
 
 ScenarioManager.prototype.isStart = function () {
 	return this._progress > -1;
@@ -114,18 +161,12 @@ ScenarioManager.prototype.isPrintLetterEnd = function () {
 };
 
 
-ScenarioManager.prototype._setupCurrentSerifScript = function (choice) {
-	// chosen serif junction
-	choice = choice || 0;
-
+ScenarioManager.prototype._setupCurrentSerifScript = function () {
 	var script = this._script[this._progress];
-
-	// TODO:
-	// 分岐に合わせて script が配列ならば、その分岐へ
-	// 配列でなくハッシュならそのまま script 扱い
 
 	this._setupChara(script);
 	this._setupBackground(script);
+	this._setupJunction(script);
 	this._setupOption(script);
 
 	if(script.serif) {
@@ -160,6 +201,11 @@ ScenarioManager.prototype._setupBackground = function(script) {
 		this._is_background_changed = true;
 		this._current_bg_image_name  = background;
 	}
+};
+
+ScenarioManager.prototype._setupJunction = function(script) {
+	var junction_list = script.junction;
+	this._current_junction_list = junction_list || [];
 };
 
 ScenarioManager.prototype._setupOption = function(script) {
@@ -268,4 +314,16 @@ ScenarioManager.prototype.getCurrentCharaExpressionByPosition = function (pos) {
 ScenarioManager.prototype.isCurrentTalkingByPosition = function (pos) {
 	return this._current_talking_pos === pos;
 };
+
+ScenarioManager.prototype.isCurrentSerifExistsJunction = function () {
+	return this._current_junction_list.length > 0;
+};
+
+ScenarioManager.prototype.getCurrentJunctionList = function () {
+	return this._current_junction_list;
+};
+
+
+
+
 module.exports = ScenarioManager;
