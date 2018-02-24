@@ -285,7 +285,7 @@ ScenarioManager.prototype._stopPrintLetter = function () {
 };
 
 ScenarioManager.prototype._printLetter = function () {
-	if (this.isEndPrinting()) return;
+	if (this.isPrintLetterEnd()) return;
 
 	if(this._is_pause_print_letter) return;
 
