@@ -15,6 +15,7 @@ describe('ScenarioManager', function() {
 		canvasMockify(canvas);
 
 		core = new Core(canvas);
+		core.init();
 		scenario = new ScenarioManager(core);
 	});
 	after(function () {
@@ -274,6 +275,7 @@ describe('ScenarioManager', function() {
 			canvasMockify(canvas);
 
 			core = new Core(canvas);
+			core.init();
 			scenario = new ScenarioManager(core, {
 				criteria: {
 					criteria1: function (core, num) {
@@ -306,7 +308,22 @@ describe('ScenarioManager', function() {
 		});
 	});
 
+    describe('serif script save flag', function() {
+		var script = [
+			{"id": "test-1", "chara": "chara1", "serif": "セリフ", save: true},
+			{"id": "test-2", "chara": "chara1", "serif": "セリフ", save: false},
+		];
 
+		before(function() {
+			scenario.init(script);
+		});
 
-	// TODO: save test
+        it('saves correct flag', function() {
+			scenario.start();
+			scenario.next();
+
+			assert(scenario.core.save_manager.scenario.getPlayedCount("test-1") === 1);
+			assert(scenario.core.save_manager.scenario.getPlayedCount("test-2") === 0);
+		});
+	});
 });
