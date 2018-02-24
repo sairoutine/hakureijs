@@ -29,12 +29,17 @@ StorageScenario.prototype.getSerifStatus = function(id) {
 	return status;
 };
 
+StorageScenario.prototype.getPlayedCount = function(id){
+	var status = this.getSerifStatus(id);
+
+	return status.played_count || 0;
+};
+
 StorageScenario.prototype.incrementPlayedCount = function(id){
 	var status = this.getSerifStatus(id);
 
 	status.played_count = status.played_count || 0;
 	status.played_count++;
-
 	this.set(id, status);
 };
 
