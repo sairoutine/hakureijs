@@ -63,7 +63,7 @@ var ScenarioManager = function (core, option) {
 Util.inherit(ScenarioManager, BaseClass);
 
 ScenarioManager.prototype.init = function (script) {
-	if(!script) console.error("set script arguments to use scenario_manager class");
+	if(!script) throw new Error("set script arguments to use scenario_manager class");
 
 	if (this._timeoutID) this._stopPrintLetter();
 
@@ -152,6 +152,9 @@ ScenarioManager.prototype._chooseNextSerifScript = function (choice) {
 
 		// delete current script and insert new chosen serif list
 		Array.prototype.splice.apply(this._script, [this._progress, 1].concat(chosen_serifs));
+
+		// check criteria recursively
+		this._chooseNextSerifScript();
 	}
 	else {
 		throw new Error("Unknown serif script type: " + type);
@@ -163,7 +166,7 @@ ScenarioManager.prototype._execCriteriaFunction = function (criteria_name, argum
 
 	if(!criteria_function) throw new Error(criteria_name + " criteria does not exists");
 
-	return criteria_function([this.core].concat(argument_list));
+	return criteria_function.apply({}, [this.core].concat(argument_list));
 };
 
 
