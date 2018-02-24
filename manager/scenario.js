@@ -17,6 +17,11 @@ var ScenarioManager = function (core, option) {
 	this._typography_speed      = "typography_speed" in option ? option.typography_speed : TYPOGRAPHY_SPEED;
 	this._criteria_function_map = "criteria"         in option ? option.criteria : {};
 
+	// event handler
+	this._event_to_callback = {
+		printend: function () {},
+	};
+
 	// if scenario is not started, _timeoutID is null.
 	// so that, if scenario is started, _timeoutID always have ID.
 	// NOTE: pausePrintLetter method does not clear _timeoutID.
@@ -92,6 +97,15 @@ ScenarioManager.prototype.init = function (script) {
 
 	this._is_pause_print_letter = false;
 };
+ScenarioManager.prototype.on = function (event, callback) {
+	this._event_to_callback[event] = callback;
+};
+ScenarioManager.prototype.removeEvent = function (event) {
+	this._event_to_callback[event] = function(){};
+};
+
+
+
 
 ScenarioManager.prototype.start = function (progress) {
 	if(!this._script) throw new Error("start method must be called after instance was initialized.");
@@ -292,7 +306,10 @@ ScenarioManager.prototype._printLetter = function () {
 		// print A letter
 		this._current_printed_sentences[this._sentences_line_num] += letter;
 	}
-
+	// If printing has finished, call printend callback.
+	if (this.isPrintLetterEnd()) {
+		this._event_to_callback.printend();
+	}
 };
 
 ScenarioManager.prototype.resumePrintLetter = function () {
