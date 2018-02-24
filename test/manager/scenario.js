@@ -142,7 +142,7 @@ describe('ScenarioManager', function() {
 			scenario.removeEvent("printend");
 		});
 
-        it('prints correct serif', function(done) {
+        it('returns correct serif', function(done) {
 			scenario.on("printend", function() {
 				assert.deepEqual(scenario.getCurrentPrintedSentences(), ["――ったく、貴女は昔から何も変わってないのね"]);
 				assert(scenario.getCurrentBackgroundImageName() === "epilogue3");
@@ -178,7 +178,7 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('change background flag correctly', function() {
+        it('returns background flag correctly', function() {
 			scenario.start();
 			assert(scenario.isBackgroundChanged() === true);
 			scenario.next();
@@ -190,8 +190,38 @@ describe('ScenarioManager', function() {
 		});
 	});
 
+    describe('junction', function() {
+		var script = [
+			{"type": "serif","chara": "chara", "serif": "セリフ"},
+			{"type": "junction_serif", "serifs": [
+				[
+					{"chara": "0-1-chara", "serif": "セリフ"},
+					{"chara": "0-2-chara", "serif": "セリフ"},
+				],
+				[
+					{"chara": "1-1-chara", "serif": "セリフ"},
+					{"chara": "1-2-chara", "serif": "セリフ"},
+				],
+			]},
+			{"type": "serif","chara": "chara", "serif": "セリフ"},
+		];
 
-	// TODO: junction test
+		before(function() {
+			scenario.init(script);
+		});
+
+        it('change serif correctly', function() {
+			scenario.start();
+			scenario.next(1);
+			assert(scenario.getCurrentCharaNameByPosition() === "1-1-chara");
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "1-2-chara");
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "chara");
+		});
+	});
+
+
 	// TODO: criteria test
 	// TODO: save test
 });
