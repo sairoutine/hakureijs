@@ -44,6 +44,12 @@ describe('ScenarioManager', function() {
 			scenario.start();
 			assert(scenario.getCurrentCharaNameByPosition() === "chara1");
 		});
+
+        it('should start serif script by arguments', function() {
+			scenario.start(1);
+			assert(scenario.getCurrentCharaNameByPosition() === "chara2");
+		});
+
 	});
 
 });
