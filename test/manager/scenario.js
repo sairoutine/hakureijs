@@ -221,7 +221,92 @@ describe('ScenarioManager', function() {
 		});
 	});
 
+    describe('criteria', function() {
+		var script = [
+			{"type": "serif","chara": "chara", "serif": "セリフ"},
+			{"type": "criteria_serif", "criteria": "criteria1", "arguments": [100], "serifs": [
+				[
+					{"chara": "0-1-chara", "serif": "セリフ"},
+					{"chara": "0-2-chara", "serif": "セリフ"},
+					{"type": "criteria_serif", "criteria": "criteria2", "serifs": [
+						[
+							{"chara": "0-3-1-chara", "serif": "セリフ"},
+							{"chara": "0-3-1-chara", "serif": "セリフ"},
+						],
+						[
+							{"chara": "0-3-2-chara", "serif": "セリフ"},
+							{"chara": "0-3-2-chara", "serif": "セリフ"},
+						],
+					]},
+				],
+				[
+					{"chara": "1-1-chara", "serif": "セリフ"},
+					{"chara": "1-2-chara", "serif": "セリフ"},
+					{"type": "criteria_serif", "criteria": "criteria2", "serifs": [
+						[
+							{"type": "criteria_serif", "criteria": "criteria2", "serifs": [
+								[
+									{"chara": "1-3-1-1-1-chara", "serif": "セリフ"},
+									{"chara": "1-3-1-1-2-chara", "serif": "セリフ"},
+								],
+								[
+									{"chara": "1-3-1-2-1-chara", "serif": "セリフ"},
+									{"chara": "1-3-1-2-2-chara", "serif": "セリフ"},
+								],
+							]},
+							{"chara": "1-3-1-3-chara", "serif": "セリフ"},
+						],
+						[
+							{"chara": "1-3-2-chara", "serif": "セリフ"},
+							{"chara": "1-3-2-chara", "serif": "セリフ"},
+						],
+					]},
+				],
+			]},
+			{"type": "serif","chara": "chara", "serif": "セリフ"},
+		];
 
-	// TODO: criteria test
+		var scenario;
+
+		before(function() {
+			// canvas mock
+			var canvas = dom.window.document.createElement("canvas");
+			canvasMockify(canvas);
+
+			core = new Core(canvas);
+			scenario = new ScenarioManager(core, {
+				criteria: {
+					criteria1: function (core, num) {
+						return num >= 50 ? 1 : 0;
+					},
+					criteria2: function (core) {
+						return 0;
+					},
+				},
+			});
+			scenario.init(script);
+		});
+		after(function () {
+			// TODO: fix not call private method
+			scenario._stopPrintLetter();
+		});
+
+        it('change serif correctly', function() {
+			scenario.start();
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "1-1-chara");
+			scenario.next();
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "1-3-1-1-1-chara");
+			scenario.next();
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "1-3-1-3-chara");
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "chara");
+		});
+	});
+
+
+
 	// TODO: save test
 });
