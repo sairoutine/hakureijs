@@ -62,7 +62,7 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('check whether is start correctly', function() {
+        it('check whether is start and end correctly', function() {
 			assert(scenario.isStart() === false);
 			assert(scenario.isEnd()   === false);
 			scenario.start();
@@ -79,5 +79,119 @@ describe('ScenarioManager', function() {
 		});
 	});
 
+    describe('printLetter', function() {
+		var script = [
+			{"chara": "chara1", "serif": "セリフ1"},
+			{"chara": "chara2", "serif": "セリフ2"}
+		];
 
+		beforeEach(function() {
+			scenario.init(script);
+			scenario.removeEvent("printend");
+		});
+
+        it('starts and finishes to print letter', function(done) {
+			scenario.on("printend", function() {
+				assert(scenario.isPrintLetterEnd() === true);
+
+				done();
+			});
+
+			scenario.start();
+			assert(scenario.isPrintLetterEnd() === false);
+		});
+
+        it('starts and finishes to print letter twice', function(done) {
+			var count = 0;
+			scenario.on("printend", function() {
+				count++;
+				if (count === script.length) {
+					// TODO: fix not call private method
+					scenario._stopPrintLetter();
+					return done();
+				}
+				else {
+					scenario.next();
+				}
+			});
+
+			scenario.start();
+		});
+
+        it('is enable to pause and resume to print letter', function(done) {
+			scenario.on("printend", function() {
+				done();
+			});
+
+			scenario.start();
+			scenario.pausePrintLetter();
+			scenario.resumePrintLetter();
+		});
+
+
+	});
+
+    describe('current serif status', function() {
+		var script = [
+			{"id": "epilogue-0", "type": "serif", "pos":"right","chara":"reimu","exp":"normal2", "serif":"ってあれ？　この辺に筆を落としたはずなんだけれど……"},
+			{"id": "epilogue-1", "type": "serif", "pos":"left","chara":"yukari","exp":"normal1","background":"epilogue3","save": false, "serif":"――ったく、貴女は昔から何も変わってないのね", "junction": ["そうね", "そんなことない"], "option": {"font_color": "#8b5fbf", "fukidashi": "normal"}}
+		];
+
+		beforeEach(function() {
+			scenario.init(script);
+			scenario.removeEvent("printend");
+		});
+
+        it('prints correct serif', function(done) {
+			scenario.on("printend", function() {
+				assert.deepEqual(scenario.getCurrentPrintedSentences(), ["――ったく、貴女は昔から何も変わってないのね"]);
+				assert(scenario.getCurrentBackgroundImageName() === "epilogue3");
+				assert(scenario.getCurrentOption().font_color === "#8b5fbf");
+				assert(scenario.getCurrentCharaNameByPosition("left")  === "yukari");
+				assert(scenario.getCurrentCharaNameByPosition("right") === "reimu");
+				assert(scenario.getCurrentCharaExpressionByPosition("left")  === "normal1");
+				assert(scenario.getCurrentCharaExpressionByPosition("right") === "normal2");
+				assert(scenario.isCurrentTalkingByPosition("left")  === true);
+				assert(scenario.isCurrentTalkingByPosition("right") === false);
+				assert(scenario.isCurrentSerifExistsJunction() === true);
+				assert.deepEqual(scenario.getCurrentJunctionList(), ["そうね", "そんなことない"]);
+
+				done();
+			});
+
+			scenario.start();
+			scenario.next();
+
+			assert(scenario.getCurrentSentenceNum() === 1);
+		});
+	});
+
+    describe('#isBackgroundChanged()', function() {
+		var script = [
+			{"chara": "chara1", "serif": "セリフ", "background": "test1"},
+			{"chara": "chara1", "serif": "セリフ", "background": "test2"},
+			{"chara": "chara1", "serif": "セリフ"},
+			{"chara": "chara1", "serif": "セリフ", "background": "test2"},
+		];
+
+		before(function() {
+			scenario.init(script);
+		});
+
+        it('change background flag correctly', function() {
+			scenario.start();
+			assert(scenario.isBackgroundChanged() === true);
+			scenario.next();
+			assert(scenario.isBackgroundChanged() === true);
+			scenario.next();
+			assert(scenario.isBackgroundChanged() === false);
+			scenario.next();
+			assert(scenario.isBackgroundChanged() === false);
+		});
+	});
+
+
+	// TODO: junction test
+	// TODO: criteria test
+	// TODO: save test
 });
