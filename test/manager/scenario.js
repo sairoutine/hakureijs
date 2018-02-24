@@ -14,12 +14,12 @@ describe('ScenarioManager', function() {
 		var canvas = dom.window.document.createElement("canvas");
 		canvasMockify(canvas);
 
-		// use timeout mock
-		global.setTimeout = function(){};
-		global.clearTimeout = function(){};
-
 		core = new Core(canvas);
 		scenario = new ScenarioManager(core);
+	});
+	after(function () {
+		// TODO: fix not call private method
+		scenario._stopPrintLetter();
 	});
 
     describe('#init()', function() {
