@@ -14,7 +14,8 @@ var ScenarioManager = function (core, option) {
 	this.core = core;
 
 	option = option || {};
-	this._typography_speed = "typography_speed" in option ? option.typography_speed : TYPOGRAPHY_SPEED;
+	this._typography_speed      = "typography_speed" in option ? option.typography_speed : TYPOGRAPHY_SPEED;
+	this._criteria_function_map = "criteria"         in option ? option.criteria : {};
 
 	// if scenario is not started, _timeoutID is null.
 	// so that, if scenario is started, _timeoutID always have ID.
@@ -131,7 +132,8 @@ ScenarioManager.prototype._chooseNextSerifScript = function (choice) {
 	}
 	else if (type === "criteria_serif") {
 		var criteria_name = script.criteria;
-		choice = this._execCriteriaFunction(criteria_name);
+		var argument_list = script.arguments;
+		choice = this._execCriteriaFunction(criteria_name, argument_list);
 		chosen_serifs = script.serifs[choice];
 
 		// delete current script and insert new chosen serif list
@@ -142,8 +144,12 @@ ScenarioManager.prototype._chooseNextSerifScript = function (choice) {
 	}
 };
 
-ScenarioManager.prototype._execCriteriaFunction = function (criteria_name) {
-	// TODO:
+ScenarioManager.prototype._execCriteriaFunction = function (criteria_name, argument_list) {
+	var criteria_function = this._criteria_function_map[criteria_name];
+
+	if(!criteria_function) throw new Error(criteria_name + " criteria does not exists");
+
+	return criteria_function([this.core].concat(argument_list));
 };
 
 
