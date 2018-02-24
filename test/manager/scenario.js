@@ -52,4 +52,32 @@ describe('ScenarioManager', function() {
 
 	});
 
+    describe('#next(), isStart(), isEnd()', function() {
+		var script = [
+			{"chara": "chara1", "serif": "セリフ1"},
+			{"chara": "chara2", "serif": "セリフ2"}
+		];
+
+		before(function() {
+			scenario.init(script);
+		});
+
+        it('check whether is start correctly', function() {
+			assert(scenario.isStart() === false);
+			assert(scenario.isEnd()   === false);
+			scenario.start();
+			assert(scenario.isStart() === true);
+			assert(scenario.isEnd()   === false);
+		});
+
+        it('should go next', function() {
+			scenario.next();
+			assert(scenario.getCurrentCharaNameByPosition() === "chara2");
+
+			assert(scenario.isStart() === true);
+			assert(scenario.isEnd()   === true);
+		});
+	});
+
+
 });
