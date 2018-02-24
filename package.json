@@ -4,7 +4,7 @@
   "description": "HakureiJS is a HTML5 2D game engine for doujin game.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require intelli-espower-loader --recursive"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,12 @@
   "dependencies": {
     "gl-matrix": "2.3.2",
     "webgl-debug": "1.0.2"
+  },
+  "devDependencies": {
+    "canvas-mock": "0.0.0",
+    "intelli-espower-loader": "1.0.1",
+    "jsdom": "11.6.2",
+    "mocha": "5.0.1",
+    "power-assert": "1.4.4"
   }
 }
