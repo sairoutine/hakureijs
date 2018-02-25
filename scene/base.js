@@ -1,4 +1,6 @@
 'use strict';
+var ObjectBase = require("../object/base");
+var Util = require('../util');
 
 var SceneBase = function(core) {
 	this.core = core;
@@ -33,6 +35,10 @@ var SceneBase = function(core) {
 	this._wait_to_start_bgm_name = null;
 	this._wait_to_start_bgm_duration = null;
 	this._wait_to_start_bgm_start_frame_count = null;
+
+	// UI view
+	this.ui = new UI(this);
+	this.addObject(this.ui);
 };
 
 SceneBase.prototype.init = function(){
@@ -301,8 +307,17 @@ SceneBase.prototype.root = function() {
 };
 
 
+/*
+*******************************
+* UI view object class
+*******************************
+*/
 
+var UI = function(scene) {
+	ObjectBase.apply(this, arguments);
 
+};
+Util.inherit(UI, ObjectBase);
 
 module.exports = SceneBase;
 
