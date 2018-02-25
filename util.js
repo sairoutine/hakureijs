@@ -133,6 +133,15 @@ var Util = {
 
 		return fBound;
 	},
+	// for old browser
+	// NOTE: not perfect polyfill
+	defineProperty: function(klass, prop_name) {
+		var private_prop_name = "_" + prop_name;
+		klass.prototype[prop_name] = function(val) {
+			if (typeof val !== 'undefined') { this[private_prop_name] = val; }
+			return this[private_prop_name];
+		};
+	},
 };
 
 module.exports = Util;
