@@ -99,9 +99,13 @@ ScenarioManager.prototype.init = function (script) {
 };
 ScenarioManager.prototype.on = function (event, callback) {
 	this._event_to_callback[event] = callback;
+
+	return this;
 };
 ScenarioManager.prototype.removeEvent = function (event) {
 	this._event_to_callback[event] = function(){};
+
+	return this;
 };
 
 
