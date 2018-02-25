@@ -36,6 +36,9 @@ var ObjectBase = function(scene) {
 
 };
 
+Util.defineProperty(ObjectBase, "x");
+Util.defineProperty(ObjectBase, "y");
+
 ObjectBase.prototype.init = function(){
 	this.frame_count = 0;
 
@@ -92,15 +95,6 @@ ObjectBase.prototype.width = function() {
 };
 ObjectBase.prototype.height = function() {
 	return 0;
-};
-
-ObjectBase.prototype.x = function(val) {
-	if (typeof val !== 'undefined') { this._x = val; }
-	return this._x;
-};
-ObjectBase.prototype.y = function(val) {
-	if (typeof val !== 'undefined') { this._y = val; }
-	return this._y;
 };
 
 ObjectBase.prototype.setPosition = function(x, y) {
