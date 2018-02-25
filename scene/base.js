@@ -36,6 +36,9 @@ var SceneBase = function(core) {
 	this._wait_to_start_bgm_duration = null;
 	this._wait_to_start_bgm_start_frame_count = null;
 
+	// property for background
+	this._background_color = null;
+
 	// UI view
 	this.ui = new UI(this);
 	this.addObject(this.ui);
@@ -97,10 +100,25 @@ SceneBase.prototype.beforeDraw = function(){
 };
 
 SceneBase.prototype.draw = function(){
+	this._drawBackground();
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].draw();
 	}
 	if(this.currentSubScene()) this.currentSubScene().draw();
+};
+
+SceneBase.prototype._drawBackground = function() {
+	var ctx = this.core.ctx;
+
+	// background color
+	if (this._background_color) {
+		ctx.save();
+		ctx.fillStyle = this._background_color;
+		ctx.fillRect(0, 0, this.width, this.height);
+		ctx.restore();
+	}
+
 };
 
 SceneBase.prototype.afterDraw = function(){
@@ -135,7 +153,6 @@ SceneBase.prototype.afterDraw = function(){
 	// fade out
 	else if (this.isInFadeOut()) {
 		ctx.save();
-
 		// tranparent settings
 		if(this.frame_count - this._fade_out_start_frame_count < this._fade_out_duration) {
 			alpha = (this.frame_count - this._fade_out_start_frame_count) / this._fade_out_duration;
@@ -305,7 +322,9 @@ SceneBase.prototype.root = function() {
 		return this;
 	}
 };
-
+SceneBase.prototype.setBackgroundColor = function(color) {
+	this._background_color = color;
+};
 
 /*
 *******************************
