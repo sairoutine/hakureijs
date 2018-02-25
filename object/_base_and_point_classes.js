@@ -156,6 +156,19 @@ ObjectBase.prototype.addSubObject = function(object){
 	this.objects.push(object);
 };
 
+// add sub object list
+ObjectBase.prototype.addSubObjects = function(object_list){
+	// set parent
+	for (var i = 0, len = object_list.length; i < len; i++) {
+		var object = object_list[i];
+		object.setParent(this);
+	}
+
+	this.objects = this.objects.concat(object_list);
+};
+
+
+
 ObjectBase.prototype.removeSubObject = function(object){
 	// TODO: O(n) -> O(1)
 	for(var i = 0, len = this.objects.length; i < len; i++) {
