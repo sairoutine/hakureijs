@@ -1,15 +1,13 @@
 'use strict';
-module.exports = {
+var Hakurei = {
+	// deprecated namespaces
 	util: require("./util"),
 	core: require("./core"),
 	shader_program: require("./shader_program"),
-	// constant.BUTTON_NAME is deprecated.
 	constant: require("./util").assign(require("./constant/button"), {
 		button: require("./constant/button"),
 	}),
-	// deprecated namespaces.
 	serif_manager: require("./manager/scenario"),
-	// deprecated namespaces.
 	save_manager: require("./manager/save"),
 	manager: {
 		save: require("./manager/save"),
@@ -40,4 +38,40 @@ module.exports = {
 		save: require("./storage/save"),
 	},
 
+	// recommended namespaces
+	Util: require("./util"),
+	Core: require("./core"),
+	ShaderProgram: require("./shader_program"),
+	Constant: {
+		Button: require("./constant/button"),
+	},
+	Manager: {
+		Save: require("./manager/save"),
+		Scenario: require("./manager/scenario"),
+	},
+	Scene: {
+		Base:    require("./scene/base"),
+		Loading: require("./scene/loading"),
+		Movie:   require("./scene/movie"),
+	},
+	Object: {
+		Base: require("./object/base"),
+		Point: require("./object/point"),
+		Sprite: require("./object/sprite"),
+		Window: require("./object/window"),
+		Sprite3d: require("./object/sprite3d"),
+		PoolManager: require("./object/pool_manager"),
+		PoolManager3d: require("./object/pool_manager3d"),
+		UIParts: require("./object/ui_parts"),
+	},
+	AssetLoader: {
+		Image: require("./asset_loader/image"),
+		Audio: require("./asset_loader/audio"),
+		Font:  require("./asset_loader/font"),
+	},
+	Storage: {
+		Base: require("./storage/base"),
+		Save: require("./storage/save"),
+	},
 };
+module.exports = Hakurei;
