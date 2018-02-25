@@ -3,7 +3,7 @@
 // internal class
 // you should require base.js or point.js
 
-var util = require('../util');
+var Util = require('../util');
 
 // used by isOutOfStage method
 var EXTRA_OUT_OF_SIZE = 100;
@@ -368,8 +368,8 @@ ObjectBase.prototype.setVelocityTheta = function(theta) {
 // move if this object is set velocity
 // TODO: doesn't move if the object's velocity magnitude is 0
 ObjectBase.prototype._move = function() {
-	var x = util.calcMoveXByVelocity(this._velocity);
-	var y = util.calcMoveYByVelocity(this._velocity);
+	var x = Util.calcMoveXByVelocity(this._velocity);
+	var y = Util.calcMoveYByVelocity(this._velocity);
 
 	// save previous (x,y)
 	this._previous_x = this._x;
@@ -421,7 +421,7 @@ var ObjectPoint = function(scene) {
 	ObjectBase.apply(this, arguments);
 
 };
-util.inherit(ObjectPoint, ObjectBase);
+Util.inherit(ObjectPoint, ObjectBase);
 
 ObjectPoint.prototype.collisionWidth = function(){
 	return 1;
