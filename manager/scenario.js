@@ -22,9 +22,6 @@ var ScenarioManager = function (core, option) {
 		printend: function () {},
 	};
 
-	// if scenario is not started, _timeoutID is null.
-	// so that, if scenario is started, _timeoutID always have ID.
-	// NOTE: pausePrintLetter method does not clear _timeoutID.
 	this._timeoutID = null;
 
 	// serif scenario
@@ -56,9 +53,6 @@ var ScenarioManager = function (core, option) {
 	this._letter_idx = 0;
 	this._sentences_line_num = 0;
 	this._current_printed_sentences = [];
-
-	// If true, _printLetter method does nothing
-	this._is_pause_print_letter = false;
 };
 Util.inherit(ScenarioManager, BaseClass);
 
@@ -94,8 +88,6 @@ ScenarioManager.prototype.init = function (script) {
 	this._letter_idx = 0;
 	this._sentences_line_num = 0;
 	this._current_printed_sentences = [];
-
-	this._is_pause_print_letter = false;
 };
 ScenarioManager.prototype.on = function (event, callback) {
 	this._event_to_callback[event] = callback;
@@ -277,11 +269,15 @@ ScenarioManager.prototype._setupSerif = function (script) {
 	// start message
 	this._startPrintLetter();
 };
-
 ScenarioManager.prototype._startPrintLetter = function () {
 	this._printLetter();
 
-	this._timeoutID = setTimeout(Util.bind(this._startPrintLetter, this), this._typography_speed);
+	if (!this.isPrintLetterEnd()) {
+		this._timeoutID = setTimeout(Util.bind(this._startPrintLetter, this), this._typography_speed);
+	}
+	else {
+		this._timeoutID = null;
+	}
 };
 
 ScenarioManager.prototype._stopPrintLetter = function () {
@@ -293,8 +289,6 @@ ScenarioManager.prototype._stopPrintLetter = function () {
 
 ScenarioManager.prototype._printLetter = function () {
 	if (this.isPrintLetterEnd()) return;
-
-	if(this._is_pause_print_letter) return;
 
 	var current_message_letter_list = this._current_message_letter_list;
 
@@ -320,10 +314,10 @@ ScenarioManager.prototype._printLetter = function () {
 };
 
 ScenarioManager.prototype.resumePrintLetter = function () {
-	this._is_pause_print_letter = false;
+	this._startPrintLetter();
 };
 ScenarioManager.prototype.pausePrintLetter = function () {
-	this._is_pause_print_letter = true;
+	this._stopPrintLetter();
 };
 
 ScenarioManager.prototype.getCurrentPrintedSentences = function () {
