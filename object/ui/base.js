@@ -46,10 +46,14 @@ ObjectUIBase.prototype.removeEvent = function (event) {
 	return this;
 };
 
+ObjectUIBase.prototype._callEvent = function (event) {
+	this._event_to_callback[event].apply(this);
+};
+
 ObjectUIBase.prototype.beforeDraw = function() {
 	BaseObject.prototype.beforeDraw.apply(this, arguments);
 
-	this._event_to_callback.beforedraw.apply(this);
+	this._callEvent("beforedraw");
 };
 
 ObjectUIBase.prototype.draw = function() {
