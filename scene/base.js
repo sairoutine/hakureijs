@@ -41,7 +41,7 @@ var SceneBase = function(core) {
 
 	// UI view
 	this.ui = new UI(this);
-	this.addObject(this.ui);
+	this.addObject(this.ui); // TODO: draw after all objects drawed
 };
 
 SceneBase.prototype.init = function(){
