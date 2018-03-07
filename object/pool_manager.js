@@ -1,7 +1,7 @@
 'use strict';
-
+// TODO: rename manager -> container
 // TODO: add pooling logic
-// TODO: split manager class and pool manager class
+// TODO: split object container class and pool object container class
 var base_object = require('./base');
 var util = require('../util');
 
