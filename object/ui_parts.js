@@ -1,4 +1,6 @@
 'use strict';
+// deprecated. use ui objects
+
 var base_object = require('./base');
 var Util = require('../util');
 
