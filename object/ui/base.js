@@ -9,8 +9,9 @@ var ObjectUIBase = function(scene, option) {
 	option = option || {};
 
 	this._default_property = {
-		x: option.x || 0,
-		y: option.y || 0,
+		x:        option.x        || 0,
+		y:        option.y        || 0,
+		children: option.children || [],
 	};
 
 	// event handler
@@ -18,11 +19,17 @@ var ObjectUIBase = function(scene, option) {
 		beforedraw: function () {},
 	};
 
+	// children
+	this.objects = this._default_property.children;
+
 	this._show_call_count = 0;
 };
 Util.inherit(ObjectUIBase, BaseObject);
 
 ObjectUIBase.prototype.init = function() {
+	// reset children
+	this.objects = this._default_property.children;
+
 	BaseObject.prototype.init.apply(this, arguments);
 
 	this._show_call_count = 0;
