@@ -57,10 +57,25 @@ ObjectUIBase.prototype._callEvent = function (event) {
 	this._event_to_callback[event].apply(this);
 };
 
+ObjectUIBase.prototype.isEventSet = function (event) {
+	return this._event_to_callback[event] ? true : false;
+};
+
+
+
 ObjectUIBase.prototype.beforeDraw = function() {
 	BaseObject.prototype.beforeDraw.apply(this, arguments);
 
 	this._callEvent("beforedraw");
+
+	if (this.isEventSet("click") && this.core.input_manager.isLeftClickPush()) {
+		var x = this.core.input_manager.mousePositionX();
+		var y = this.core.input_manager.mousePositionY();
+
+		if(this.checkCollisionWithPosition(x, y)) {
+			this._callEvent("click");
+		}
+	}
 };
 
 ObjectUIBase.prototype.draw = function() {
@@ -70,6 +85,16 @@ ObjectUIBase.prototype.draw = function() {
 ObjectUIBase.prototype.isShow = function() {
 	return this._show_call_count > 0;
 };
+
+ObjectUIBase.prototype.collisionWidth = function() {
+	return this.width();
+};
+
+ObjectUIBase.prototype.collisionHeight = function() {
+	return this.height();
+};
+
+
 
 ObjectUIBase.prototype.show = function() {
 	++this._show_call_count;
