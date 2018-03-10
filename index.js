@@ -62,9 +62,11 @@ var Hakurei = {
 		PoolManager3d: require("./object/pool_manager3d"),
 		UIParts: require("./object/ui_parts"),
 		UI: {
-			Base:    require("./object/ui/base"),
-			Text:    require("./object/ui/text"),
-			Spinner: require("./object/ui/spinner"),
+			Base:            require("./object/ui/base"),
+			Text:            require("./object/ui/text"),
+			Spinner:         require("./object/ui/spinner"),
+			Group:           require("./object/ui/group"),
+			Image:           require("./object/ui/image"),
 		},
 	},
 	AssetLoader: {
