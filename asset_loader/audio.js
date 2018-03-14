@@ -132,6 +132,26 @@ AudioLoader.prototype.executePlaySound = function() {
 		delete this._reserved_play_sound_name_map[name];
 	}
 };
+
+AudioLoader.prototype.playSoundByDataURL = function(dataurl, volume) {
+	if(!window || !window.Audio) return;
+
+	if(typeof volume === 'undefined') volume = 1.0;
+
+	var audio = new window.Audio();
+	audio.volume = volume;
+	audio.src = dataurl;
+	audio.addEventListener('canplay', function () {
+		audio.play();
+	});
+	audio.addEventListener("error", function () {
+		throw new Error("Audio Element error. code: " + audio.error.code + ", message: " + audio.error.message);
+	});
+	audio.load();
+};
+
+
+
 AudioLoader.prototype.playBGM = function(name) {
 	// stop playing bgm
 	this.stopAllBGM();
