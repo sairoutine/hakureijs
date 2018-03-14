@@ -205,6 +205,64 @@ DebugManager.prototype.addCaputureImageButton = function (button_value, filename
 	});
 };
 
+var READ_TYPE_TO_FILEREADER_FUNCTION_NAME = {
+	array_buffer: "readAsArrayBuffer",
+	binary_string: "readAsBinaryString",
+	text: "readAsText",
+	data_url: "readAsDataURL",
+};
+
+
+// add upload button
+DebugManager.prototype.addUploadFileButton = function (value, func, read_type) {
+	if(!this.is_debug_mode) return;
+
+	if(typeof read_type === "undefined") read_type = "array_buffer";
+
+	if(!READ_TYPE_TO_FILEREADER_FUNCTION_NAME[read_type]) throw new Error("Unknown read_type: " + read_type);
+
+	// add text
+	var dom = window.document.createElement('pre');
+	dom.style ="display:inline"; // unable to insert br
+	dom.textContent = value;
+	this.dom.appendChild(dom);
+
+	// create element
+	var input = window.document.createElement('input');
+
+	// set attributes
+	input.setAttribute('type', 'file');
+
+	var reader_func_name = READ_TYPE_TO_FILEREADER_FUNCTION_NAME[read_type];
+	var core = this.core;
+
+	input.onchange = function (e) {
+		if(!input.value) return;
+
+
+		var file = e.target.files[0]; // FileList object
+		var reader = new FileReader();
+		var type = file.type;
+
+		reader.onload = function (e) {
+			var result = e.target.result;
+			func(core, type, result);
+		};
+
+		reader[reader_func_name](file);
+	};
+
+	// occur onchange event if same file is set
+	input.onclick = function (e) {
+		input.value = null;
+	};
+
+	// add element
+	this.dom.appendChild(input);
+};
+
+
+
 // show collision area of object instance
 DebugManager.prototype.setShowingCollisionAreaOn = function () {
 	if(!this.is_debug_mode) return null;
