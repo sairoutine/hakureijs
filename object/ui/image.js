@@ -52,10 +52,8 @@ ObjectUIImage.prototype.draw = function() {
 	ctx.save();
 	ctx.translate(this.x(), this.y());
 	ctx.drawImage(image,
-		//-width/2,
-		//-height/2,
-		0,
-		0,
+		-width/2,
+		-height/2,
 		width,
 		height
 	);
