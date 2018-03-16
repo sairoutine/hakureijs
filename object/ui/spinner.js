@@ -58,5 +58,7 @@ ObjectUISpinner.prototype.draw = function() {
     ctx.restore();
 };
 
+ObjectUISpinner.prototype.width = function() { return this.size()/2; };
+ObjectUISpinner.prototype.height = function() { return this.size()/2; };
 
 module.exports = ObjectUISpinner;
