@@ -43,7 +43,6 @@ ObjectUIImage.prototype.beforeDraw = function() {
 
 ObjectUIImage.prototype.draw = function() {
 	if (!this.isShow()) return;
-	BaseObjectUI.prototype.draw.apply(this, arguments);
 
 	var image = this.core.image_loader.getImage(this.image_name());
 	var width  = image.width  * this.scale();
@@ -58,6 +57,7 @@ ObjectUIImage.prototype.draw = function() {
 		height
 	);
 	ctx.restore();
+	BaseObjectUI.prototype.draw.apply(this, arguments);
 };
 
 

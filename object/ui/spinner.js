@@ -36,7 +36,6 @@ ObjectUISpinner.prototype.beforeDraw = function() {
 
 ObjectUISpinner.prototype.draw = function() {
 	if (!this.isShow()) return;
-	BaseObjectUI.prototype.draw.apply(this, arguments);
 
 	var ctx = this.core.ctx;
 
@@ -56,6 +55,7 @@ ObjectUISpinner.prototype.draw = function() {
         ctx.stroke();
     }
     ctx.restore();
+	BaseObjectUI.prototype.draw.apply(this, arguments);
 };
 
 ObjectUISpinner.prototype.width = function() { return this.size()/2; };

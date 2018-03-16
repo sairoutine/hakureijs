@@ -37,7 +37,6 @@ ObjectUIText.prototype.beforeDraw = function() {
 
 ObjectUIText.prototype.draw = function() {
 	if (!this.isShow()) return;
-	BaseObjectUI.prototype.draw.apply(this, arguments);
 
 	var ctx = this.core.ctx;
 
@@ -47,6 +46,7 @@ ObjectUIText.prototype.draw = function() {
 	ctx.font = this.textSize() + " 'sans-serif'";
 	ctx.fillText(this.text(), this.x(), this.y());
 	ctx.restore();
+	BaseObjectUI.prototype.draw.apply(this, arguments);
 };
 
 

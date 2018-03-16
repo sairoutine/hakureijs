@@ -34,7 +34,6 @@ ObjectUIGroup.prototype.beforeDraw = function() {
 
 ObjectUIGroup.prototype.draw = function() {
 	if (!this.isShow()) return;
-	BaseObjectUI.prototype.draw.apply(this, arguments);
 
 	var ctx = this.core.ctx;
 
@@ -45,6 +44,7 @@ ObjectUIGroup.prototype.draw = function() {
 		ctx.fillRect(-this.width()/2, -this.height()/2, this.width(), this.height());
 		ctx.restore();
 	}
+	BaseObjectUI.prototype.draw.apply(this, arguments);
 };
 
 
