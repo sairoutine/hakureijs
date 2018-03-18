@@ -195,9 +195,11 @@ AudioLoader.prototype.stopBGM = function(name) {
 		return this.stopAllBGM();
 	}
 
+	// NOTE: not use AudioBufferSourceNode's stop method
+	// because it creates noises.
+	this.fadeOutBGM(0.1, name);
+
 	if (name in this._audio_source_map) {
-		var audio_source = this._audio_source_map[name].source_node;
-		audio_source.stop(0);
 		delete this._audio_source_map[name];
 	}
 };
