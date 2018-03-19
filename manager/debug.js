@@ -1,6 +1,9 @@
 'use strict';
 var Util = require("../util");
 
+// per frame
+var FPS_CALCULATION_INTERVAL = 30;
+
 var DebugManager = function (core) {
 	this.core = core;
 	this.dom = null; // debug menu area
@@ -11,8 +14,16 @@ var DebugManager = function (core) {
 	this._is_showing_collision_area = false; // default: false
 
 	this._variables = {};
-};
 
+	// Time when FPS was calculated last time(millisecond)
+	this._before_time = 0;
+
+	// 計測したFPS
+	this._fps = 0;
+};
+DebugManager.prototype.init = function () {
+	// nothing to do
+};
 DebugManager.prototype.setOn = function (dom) {
 	this.is_debug_mode = true;
 	this.dom = dom;
@@ -33,7 +44,28 @@ DebugManager.prototype.get = function (name) {
 	return this._variables[name];
 };
 
+DebugManager.prototype.beforeRun = function () {
+	// TODO:
+	// render dom
+	// flag control
+	console.log(this._fps);
 
+	// calculate fps
+
+	if((this.core.frame_count % FPS_CALCULATION_INTERVAL) !== 0) return;
+
+	var newTime = Date.now();
+
+	if(this._before_time) {
+		this._fps = Math.floor(1000 * FPS_CALCULATION_INTERVAL / (newTime - this._before_time));
+	}
+
+	this._before_time = newTime;
+};
+
+DebugManager.prototype.afterRun = function () {
+	// nothing to do
+};
 
 // add text menu
 DebugManager.prototype.addMenuText = function (text) {

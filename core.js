@@ -93,9 +93,10 @@ Core.prototype.init = function () {
 
 	this.request_id = null;
 
-	// TODO:
-	//this.debug_manager.init();
+	this.debug_manager.init();
 	this.time_manager.init();
+	// TODO:
+	//this.save_manager.init();
 	this.input_manager.init();
 
 	this.image_loader.init();
@@ -125,6 +126,9 @@ Core.prototype.stopRun = function () {
 	this.request_id = null;
 };
 Core.prototype.run = function(){
+	// update fps
+	this.debug_manager.beforeRun();
+
 	// get gamepad input
 	// get pressed key time
 	this.input_manager.beforeRun();
@@ -158,6 +162,7 @@ Core.prototype.run = function(){
 
 	this.frame_count++;
 
+	this.debug_manager.afterRun();
 	this.input_manager.afterRun();
 
 	// tick
