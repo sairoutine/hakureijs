@@ -46,9 +46,7 @@ DebugManager.prototype.get = function (name) {
 
 DebugManager.prototype.beforeRun = function () {
 	// TODO:
-	// render dom
 	// flag control
-	console.log(this._fps);
 
 	// calculate fps
 
@@ -64,7 +62,14 @@ DebugManager.prototype.beforeRun = function () {
 };
 
 DebugManager.prototype.afterRun = function () {
-	// nothing to do
+	// draw fps
+	var ctx = this.core.ctx;
+	ctx.save();
+	ctx.fillStyle = 'red';
+	ctx.textAlign = 'left';
+	ctx.font = "16px 'sans-serif'";
+	ctx.fillText("FPS: " + this._fps, this.core.width - 70, this.core.height - 10);
+	ctx.restore();
 };
 
 // add text menu
