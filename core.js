@@ -57,11 +57,8 @@ var Core = function(canvas, options) {
 	}
 
 	this.debug_manager = new DebugManager(this);
-
 	this.time_manager = new TimeManager(this);
-
 	this.save_manager = new SaveManager();
-
 	this.input_manager = new InputManager();
 
 	this.width = Number(canvas.getAttribute('width'));
@@ -158,16 +155,6 @@ Core.prototype.run = function(){
 		// overwrite cursor image on scene
 		this._renderCursorImage();
 	}
-
-	/*
-
-	if(Config.DEBUG) {
-		this._renderFPS();
-	}
-
-	// play sound effects
-	this.runPlaySound();
-	*/
 
 	this.frame_count++;
 
