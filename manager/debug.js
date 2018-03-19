@@ -2,7 +2,7 @@
 var Util = require("../util");
 
 // per frame
-var FPS_CALCULATION_INTERVAL = 30;
+var FPS_CALCULATION_INTERVAL = 60;
 
 var DebugManager = function (core) {
 	this.core = core;
@@ -13,16 +13,19 @@ var DebugManager = function (core) {
 
 	this._is_showing_collision_area = false; // default: false
 
+	this._is_showing_fps = false; // default: false
+
 	this._variables = {};
 
 	// Time when FPS was calculated last time(millisecond)
 	this._before_time = 0;
 
-	// 計測したFPS
+	// calculated current fps
 	this._fps = 0;
 };
 DebugManager.prototype.init = function () {
-	// nothing to do
+	this._before_time = 0;
+	this._fps = 0;
 };
 DebugManager.prototype.setOn = function (dom) {
 	this.is_debug_mode = true;
@@ -45,11 +48,12 @@ DebugManager.prototype.get = function (name) {
 };
 
 DebugManager.prototype.beforeRun = function () {
-	// TODO:
-	// flag control
+	if(this.isShowingFps()) {
+		this._calculateFps();
+	}
+};
 
-	// calculate fps
-
+DebugManager.prototype._calculateFps = function () {
 	if((this.core.frame_count % FPS_CALCULATION_INTERVAL) !== 0) return;
 
 	var newTime = Date.now();
@@ -62,7 +66,12 @@ DebugManager.prototype.beforeRun = function () {
 };
 
 DebugManager.prototype.afterRun = function () {
-	// draw fps
+	if(this.isShowingFps()) {
+		this._renderFps();
+	}
+};
+
+DebugManager.prototype._renderFps = function () {
 	var ctx = this.core.ctx;
 	ctx.save();
 	ctx.fillStyle = 'red';
@@ -312,6 +321,20 @@ DebugManager.prototype.setShowingCollisionAreaOff = function () {
 DebugManager.prototype.isShowingCollisionArea = function () {
 	if(!this.is_debug_mode) return false;
 	return this._is_showing_collision_area;
+};
+
+// show fps
+DebugManager.prototype.setShowingFpsOn = function () {
+	if(!this.is_debug_mode) return null;
+	this._is_showing_fps = true;
+};
+DebugManager.prototype.setShowingFpsOff = function () {
+	if(!this.is_debug_mode) return null;
+	this._is_showing_fps = false;
+};
+DebugManager.prototype.isShowingFps = function () {
+	if(!this.is_debug_mode) return false;
+	return this._is_showing_fps;
 };
 
 module.exports = DebugManager;
