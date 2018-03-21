@@ -269,7 +269,7 @@ DebugManager.prototype.addUploadFileButton = function (value, func, read_type) {
 
 	// add text
 	var dom = window.document.createElement('pre');
-	dom.style ="display:inline"; // unable to insert br
+	dom.style.display = "inline"; // unable to insert br
 	dom.textContent = value;
 	this.dom.appendChild(dom);
 
