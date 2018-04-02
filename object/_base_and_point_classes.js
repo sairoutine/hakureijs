@@ -269,28 +269,35 @@ ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
 ObjectBase.prototype.intersect = function(obj) {
 	if (!this.isCollision(obj) || !obj.isCollision(this)) return false;
 
-	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
-		Math.abs(this.y() - obj.y()) < this.collisionHeight(obj)/2 + obj.collisionHeight(this)/2) {
+	if(Math.abs(this.collisionX() - obj.collisionX()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
+		Math.abs(this.collisionY() - obj.collisionY()) < this.collisionHeight(obj)/2 + obj.collisionHeight(this)/2) {
 		return true;
 	}
 
 	return false;
 };
 
+ObjectBase.prototype.collisionX = function() {
+	return this.x();
+};
+ObjectBase.prototype.collisionY = function() {
+	return this.y();
+};
+
 ObjectBase.prototype.getCollisionLeftX = function(obj) {
-	return this.x() - this.collisionWidth(obj) / 2;
+	return this.collisionX() - this.collisionWidth(obj) / 2;
 };
 
 ObjectBase.prototype.getCollisionRightX = function(obj) {
-	return this.x() + this.collisionWidth(obj) / 2;
+	return this.collisionX() + this.collisionWidth(obj) / 2;
 };
 
 ObjectBase.prototype.getCollisionUpY = function(obj) {
-	return this.y() - this.collisionHeight(obj) / 2;
+	return this.collisionY() - this.collisionHeight(obj) / 2;
 };
 
 ObjectBase.prototype.getCollisionDownY = function(obj) {
-	return this.y() + this.collisionHeight(obj) / 2;
+	return this.collisionY() + this.collisionHeight(obj) / 2;
 };
 
 ObjectBase.prototype._drawCollisionArea = function(color) {
