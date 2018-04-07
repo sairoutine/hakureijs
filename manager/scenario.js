@@ -48,6 +48,7 @@ var ScenarioManager = function (core, option) {
 	// letter data to print
 	this._current_message_letter_list = [];
 	this._current_message_sentenses_num = null;
+	this._current_message_max_length_letters = null;
 
 	// current printed sentences
 	this._letter_idx = 0;
@@ -83,6 +84,7 @@ ScenarioManager.prototype.init = function (script) {
 	// letter data to print
 	this._current_message_letter_list = [];
 	this._current_message_sentenses_num = null;
+	this._current_message_max_length_letters = null;
 
 	// current printed sentences
 	this._letter_idx = 0;
@@ -255,11 +257,18 @@ ScenarioManager.prototype._setupSerif = function (script) {
 	// setup letter data to print
 	this._current_message_letter_list = message.split("");
 
-	// count newline of current message
-	this._current_message_sentenses_num = 1;
-	for (var i = 0, len = this._current_message_letter_list.length; i < len; i++) {
-		if (this._current_message_letter_list[i] === "\n") this._current_message_sentenses_num++;
+	var sentences = message.split("\n");
+
+	// count max length of sentence
+	this._current_message_max_length_letters = 0;
+	for (var i = 0, len = sentences.length; i < len; i++) {
+		if(this._current_message_max_length_letters < sentences[i].length) {
+			this._current_message_max_length_letters = sentences[i].length;
+		}
 	}
+
+	// count newline of current message
+	this._current_message_sentenses_num = sentences.length;
 
 	// clear current printed sentences
 	this._letter_idx = 0;
@@ -326,6 +335,10 @@ ScenarioManager.prototype.getCurrentPrintedSentences = function () {
 
 ScenarioManager.prototype.getCurrentSentenceNum = function () {
 	return this._current_message_sentenses_num;
+};
+
+ScenarioManager.prototype.getCurrentMaxLengthLetters = function () {
+	return this._current_message_max_length_letters;
 };
 
 ScenarioManager.prototype.isBackgroundChanged = function () {

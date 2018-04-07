@@ -164,6 +164,7 @@ describe('ScenarioManager', function() {
 			scenario.next();
 
 			assert(scenario.getCurrentSentenceNum() === 1);
+			assert(scenario.getCurrentMaxLengthLetters() === 22);
 		});
 	});
 
