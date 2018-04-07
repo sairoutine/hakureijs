@@ -110,6 +110,8 @@ ScenarioManager.prototype.start = function (progress) {
 
 	this._progress = progress || 0;
 
+	if (this.isEnd()) return;
+
 	this._setupCurrentSerifScript();
 };
 
