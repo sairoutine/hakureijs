@@ -1,5 +1,7 @@
 'use strict';
 
+var ID = 0;
+
 var TimeManager = function (core) {
 	this.core = core;
 
@@ -12,15 +14,32 @@ TimeManager.prototype.init = function () {
 TimeManager.prototype.setTimeout = function (callback, frame_count) {
 	var current_frame_count = this.core.frame_count;
 	var execute_timing = current_frame_count + frame_count;
+	var id = ++ID;
 
 	if(!this.events[execute_timing]) {
-		this.events[execute_timing] = [];
+		this.events[execute_timing] = {};
 	}
 
-	this.events[execute_timing].push({
+	this.events[execute_timing][id] = {
 		callback: callback,
-	});
+	};
+
+	return id;
 };
+
+TimeManager.prototype.clearTimeout = function (id) {
+	for (var frame_count in this.events) {
+		var current_events = this.events[frame_count];
+		if(id in current_events) {
+			delete current_events[id];
+			return true;
+		}
+	}
+
+	return false;
+};
+
+
 
 TimeManager.prototype.executeEvents = function () {
 	var current_frame_count = this.core.frame_count;
@@ -28,8 +47,8 @@ TimeManager.prototype.executeEvents = function () {
 
 	if(!current_events) return;
 
-	for (var i = 0, len = current_events.length; i < len; i++) {
-		var event = current_events[i];
+	for (var id in current_events) {
+		var event = current_events[id];
 		event.callback();
 	}
 
