@@ -9,12 +9,11 @@ var PoolManager = function(scene, Class) {
 	base_object.apply(this, arguments);
 
 	this.Class = Class;
-	this.objects = {};
 };
 util.inherit(PoolManager, base_object);
 
-PoolManager.prototype.init = function() {
-	base_object.prototype.init.apply(this, arguments);
+PoolManager.prototype.initialize = function() {
+	base_object.prototype.initialize.apply(this, arguments);
 
 	this.objects = {};
 };

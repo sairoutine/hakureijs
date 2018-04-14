@@ -1,6 +1,20 @@
 'use strict';
 
 var AudioLoader = function() {
+	this.audio_context = null;
+	if (window && window.AudioContext) {
+		this.audio_context = new window.AudioContext();
+
+		// for legacy browser
+		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
+	}
+
+	this.initialize();
+};
+AudioLoader.prototype.initialize = function() {
+	// cancel already playing bgms if initialize method is called by re-initialize
+	this.stopAllBGM();
+
 	this.sounds = {};
 	this.bgms = {};
 
@@ -11,32 +25,7 @@ var AudioLoader = function() {
 	// which determine what sound is played.
 	this._reserved_play_sound_name_map = {};
 
-	this.audio_context = null;
-	if (window && window.AudioContext) {
-		this.audio_context = new window.AudioContext();
-
-		// for legacy browser
-		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
-	}
-
 	// key: bgm name, value: playing AudioBufferSourceNode instance
-	this._audio_source_map = {};
-};
-AudioLoader.prototype.init = function() {
-	// cancel already playing bgms if init method is called by re-init
-	this.stopAllBGM();
-
-	// TODO: cancel already playing sound?
-	// TODO: cancel already loading bgms and sounds
-
-	this.sounds = {};
-	this.bgms = {};
-
-	this.loading_audio_num = 0;
-	this.loaded_audio_num = 0;
-
-	this._reserved_play_sound_name_map = {};
-
 	this._audio_source_map = {};
 };
 

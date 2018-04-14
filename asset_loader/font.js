@@ -7,12 +7,10 @@
 // - add comment
 
 var FontLoader = function() {
-	this._isLoadedDone = false;
-	this._loadedFonts  = null;
-	this._fontStatues  = {};
 	this._hiddenCanvas = null;
+	this.initialize();
 };
-FontLoader.prototype.init = function() {
+FontLoader.prototype.initialize = function() {
 	this._isLoadedDone = false;
 	this._loadedFonts  = null;
 	this._fontStatues  = {};
@@ -43,7 +41,7 @@ FontLoader.prototype.progress = function() {
 FontLoader.prototype.setupEvents = function() {
 	var self = this;
 	if(self.canUseCssFontLoading()) {
-		// TODO: after all font loading, calling init method and adding same font loading can't fire ready event
+		// TODO: after all font loading, calling initialize method and adding same font loading can't fire ready event
 		window.document.fonts.ready.then(function(fonts){
 			self._isLoadedDone = true;
 			self._loadedFonts = fonts;

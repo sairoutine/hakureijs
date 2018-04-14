@@ -5,9 +5,9 @@ var ID = 0;
 var TimeManager = function (core) {
 	this.core = core;
 
-	this.events = {};
+	this.initialize();
 };
-TimeManager.prototype.init = function () {
+TimeManager.prototype.initialize = function () {
 	this.events = {};
 };
 

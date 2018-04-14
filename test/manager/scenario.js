@@ -15,7 +15,7 @@ describe('ScenarioManager', function() {
 		canvasMockify(canvas);
 
 		core = new Core(canvas);
-		core.init();
+		core.initialize();
 		scenario = new ScenarioManager(core);
 	});
 	after(function () {
@@ -23,10 +23,10 @@ describe('ScenarioManager', function() {
 		scenario._stopPrintLetter();
 	});
 
-    describe('#init()', function() {
+    describe('#setScript()', function() {
 		var script = [];
         it('does not occur error', function(done) {
-			scenario.init(script);
+			scenario.setScript(script);
 			done();
 		});
 	});
@@ -38,7 +38,8 @@ describe('ScenarioManager', function() {
 		];
 
 		beforeEach(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 		});
 
         it('should start at first serif script', function() {
@@ -60,7 +61,8 @@ describe('ScenarioManager', function() {
 		];
 
 		before(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 		});
 
         it('check whether is start and end correctly', function() {
@@ -87,7 +89,8 @@ describe('ScenarioManager', function() {
 		];
 
 		beforeEach(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 			scenario.removeEvent("printend");
 		});
 
@@ -139,7 +142,8 @@ describe('ScenarioManager', function() {
 		];
 
 		beforeEach(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 			scenario.removeEvent("printend");
 		});
 
@@ -177,7 +181,8 @@ describe('ScenarioManager', function() {
 		];
 
 		before(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 		});
 
         it('returns background flag correctly', function() {
@@ -209,7 +214,8 @@ describe('ScenarioManager', function() {
 		];
 
 		before(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 		});
 
         it('change serif correctly', function() {
@@ -276,7 +282,7 @@ describe('ScenarioManager', function() {
 			canvasMockify(canvas);
 
 			core = new Core(canvas);
-			core.init();
+			core.initialize();
 			scenario = new ScenarioManager(core, {
 				criteria: {
 					criteria1: function (core, num) {
@@ -287,7 +293,8 @@ describe('ScenarioManager', function() {
 					},
 				},
 			});
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 		});
 		after(function () {
 			// TODO: fix not call private method
@@ -316,7 +323,8 @@ describe('ScenarioManager', function() {
 		];
 
 		before(function() {
-			scenario.init(script);
+			scenario.setScript(script);
+			scenario.initialize();
 		});
 
         it('saves correct flag', function() {

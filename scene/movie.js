@@ -7,11 +7,11 @@ var util = require('../util');
 
 var SceneMovie = function(core) {
 	base_scene.apply(this, arguments);
+};
+util.inherit(SceneMovie, base_scene);
 
-	this.video = null;
-
-	// go if the movie is done.
-	this.next_scene_name = null;
+SceneMovie.prototype.initialize = function() {
+	base_scene.prototype.initialize.apply(this, arguments);
 
 	this.is_playing = false;
 
@@ -20,27 +20,24 @@ var SceneMovie = function(core) {
 	this._top    = null;
 	this._left   = null;
 
+	// go if the movie is done.
+	this.next_scene_name = null;
+
+	this.video = null;
+
 	this.is_mute = false;
 };
-util.inherit(SceneMovie, base_scene);
 
-SceneMovie.prototype.init = function(movie_path, next_scene_name) {
-	base_scene.prototype.init.apply(this, arguments);
+SceneMovie.prototype.onChanged = function(movie_path, next_scene_name) {
+	base_scene.prototype.onChanged.apply(this, arguments);
 
 	var self = this;
-
-	self.is_playing = false;
-
-	self._height = null;
-	self._width  = null;
-	self._top    = null;
-	self._left   = null;
 
 	// go if the movie is done.
 	self.next_scene_name = next_scene_name;
 
 	// stop bgm if it is played.
-	this.core.audio_loader.stopBGM();
+	self.core.audio_loader.stopBGM();
 
 	var video = document.createElement("video");
 	video.src = movie_path;
@@ -54,15 +51,16 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 		self.is_playing = true;
 	};
 
-	if (this.is_mute) {
+	if (self.is_mute) {
 		video.muted = true;
 	}
 
 	video.load();
 
-
 	self.video = video;
 };
+
+
 
 SceneMovie.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);

@@ -17,12 +17,21 @@ var ObjectBase = function(scene) {
 	this.parent = null; // parent object if this is sub object
 	this.id = ++id;
 
-	this.frame_count = 0;
-
 	this._x = 0; // local center x
 	this._y = 0; // local center y
 
-	// manage flags that disappears in frame elapsed
+	// sub object
+	this.objects = [];
+
+	this.initialize();
+};
+
+Util.defineProperty(ObjectBase, "x");
+Util.defineProperty(ObjectBase, "y");
+
+ObjectBase.prototype.initialize = function(){
+	this.frame_count = 0;
+
 	this._auto_disable_times_map = {};
 
 	this._velocity = null;
@@ -31,30 +40,8 @@ var ObjectBase = function(scene) {
 	this._previous_x = null;
 	this._previous_y = null;
 
-	// sub object
-	this.objects = [];
-
-};
-
-Util.defineProperty(ObjectBase, "x");
-Util.defineProperty(ObjectBase, "y");
-
-ObjectBase.prototype.init = function(){
-	this.frame_count = 0;
-
-	// NOTE: abolished
-	//this._x = 0;
-	//this._y = 0;
-
-	this._auto_disable_times_map = {};
-
-	this.resetVelocity();
-
-	this._previous_x = null;
-	this._previous_y = null;
-
 	for(var i = 0, len = this.objects.length; i < len; i++) {
-		this.objects[i].init();
+		this.objects[i].initialize();
 	}
 };
 
@@ -259,7 +246,6 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 // check Collision Detect with (x, y) and execute onCollision method if detect
 ObjectBase.prototype.checkCollisionWithPosition = function(x, y) {
 	var point = new ObjectPoint(this.scene);
-	point.init();
 	point.setPosition(x, y);
 
 	return this.checkCollisionWithObject(point);
@@ -336,7 +322,7 @@ ObjectBase.prototype.checkCollisionByObject = function(obj) {
 
 // set flags that disappears in frame elapsed
 // TODO: enable to set flag which becomes false -> true
-// TODO: reset flag if the object calls init method
+// TODO: reset flag if the object calls initialize method
 ObjectBase.prototype.setAutoDisableFlag = function(flag_name, count) {
 	var self = this;
 

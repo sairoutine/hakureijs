@@ -10,10 +10,7 @@ var glmat = require('gl-matrix');
 var CONSTANT_3D = require('../constant/webgl').SPRITE3D;
 
 var PoolManager3D = function(scene, Class) {
-	base_object.apply(this, arguments);
-
 	this.Class = Class;
-	this.objects = {};
 
 	this.vertices = [];
 	this.coordinates = [];
@@ -28,11 +25,13 @@ var PoolManager3D = function(scene, Class) {
 
 	this.mvMatrix = glmat.mat4.create();
 	this.pMatrix = glmat.mat4.create();
+
+	base_object.apply(this, arguments);
 };
 util.inherit(PoolManager3D, base_object);
 
-PoolManager3D.prototype.init = function() {
-	base_object.prototype.init.apply(this, arguments);
+PoolManager3D.prototype.initialize = function() {
+	base_object.prototype.initialize.apply(this, arguments);
 
 	this.objects = {};
 

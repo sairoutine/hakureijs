@@ -7,14 +7,16 @@ var util = require('../util');
 
 var SceneLoading = function(core) {
 	base_scene.apply(this, arguments);
-
-	// go if the all assets loading is done.
-	this.next_scene_name = null;
 };
 util.inherit(SceneLoading, base_scene);
 
-SceneLoading.prototype.init = function(assets, next_scene_name) {
-	base_scene.prototype.init.apply(this, arguments);
+SceneLoading.prototype.initialize = function() {
+	// go if the all assets loading is done.
+	this.next_scene_name = null;
+};
+
+SceneLoading.prototype.onChanged = function(assets, next_scene_name) {
+	base_scene.prototype.onChanged.apply(this, arguments);
 
 	// assets
 	var images = assets.images || [];

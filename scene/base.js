@@ -9,42 +9,19 @@ var SceneBase = function(core) {
 	this.width = this.core.width; // default
 	this.height = this.core.height; // default
 
-	this._x = 0;
-	this._y = 0;
-
-	this.frame_count = 0;
 
 	this.objects = [];
-
-	// sub scenes
-	this.current_scene = null;
-	this._reserved_next_scene = null; // next scene which changes next frame run
-	this.scenes = {};
-
-	// property for fade in
-	this._fade_in_duration = null;
-	this._fade_in_color = null;
-	this._fade_in_start_frame_count = null;
-
-	// property for fade out
-	this._fade_out_duration = null;
-	this._fade_out_color = null;
-	this._fade_out_start_frame_count = null;
-
-	// property for wait to start bgm
-	this._wait_to_start_bgm_name = null;
-	this._wait_to_start_bgm_duration = null;
-	this._wait_to_start_bgm_start_frame_count = null;
-
-	// property for background
-	this._background_color = null;
 
 	// UI view
 	this.ui = new UI(this);
 	this.addObject(this.ui); // TODO: draw after all objects drawed
+
+	this.scenes = {};
+
+	this.initialize();
 };
 
-SceneBase.prototype.init = function(){
+SceneBase.prototype.initialize = function() {
 	// sub scenes
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
@@ -70,8 +47,12 @@ SceneBase.prototype.init = function(){
 	this._wait_to_start_bgm_start_frame_count = null;
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
-		this.objects[i].init();
+		this.objects[i].initialize();
 	}
+};
+// this method is called if you call core's changeScene method
+SceneBase.prototype.onChanged = function(argument_list){
+	this.initialize();
 };
 
 SceneBase.prototype.beforeDraw = function(){

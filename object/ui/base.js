@@ -4,8 +4,6 @@ var BaseObject = require('../base');
 var Util = require('../../util');
 
 var ObjectUIBase = function(scene, option) {
-	BaseObject.apply(this, arguments);
-
 	option = option || {};
 
 	this._default_property = {
@@ -19,18 +17,15 @@ var ObjectUIBase = function(scene, option) {
 		beforedraw: function () {},
 	};
 
-	// children
-	this.objects = this._default_property.children;
-
-	this._show_call_count = 0;
+	BaseObject.apply(this, arguments);
 };
 Util.inherit(ObjectUIBase, BaseObject);
 
-ObjectUIBase.prototype.init = function() {
+ObjectUIBase.prototype.initialize = function() {
 	// reset children
 	this.objects = this._default_property.children;
 
-	BaseObject.prototype.init.apply(this, arguments);
+	BaseObject.prototype.initialize.apply(this, arguments);
 
 	this._show_call_count = 0;
 

@@ -13,9 +13,11 @@ var DEFAULT_BUTTON_ID_TO_BIT_CODE = {
 };
 
 var InputManager = function () {
+	this.initialize();
+};
+InputManager.prototype.initialize = function () {
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
-	this._key_bit_code_to_down_time = {};
 
 	// gamepad button_id to bit code of key input
 	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
@@ -31,28 +33,10 @@ var InputManager = function () {
 	this.mouse_scroll = 0;
 
 	this.is_connect_gamepad = false;
+
+	this._initPressedKeyTime();
 };
 
-InputManager.prototype.init = function () {
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
-	this.initPressedKeyTime();
-
-	// gamepad button_id to bit code of key input
-	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
-
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
-
-	this.is_connect_gamepad = false;
-};
 InputManager.prototype.enableGamePad = function () {
 	this.is_connect_gamepad = true;
 };
@@ -155,7 +139,6 @@ InputManager.prototype.mousePositionPoint = function (scene) {
 	var y = this.mousePositionY();
 
 	var point = new ObjectPoint(scene);
-	point.init();
 	point.setPosition(x, y);
 
 
@@ -255,7 +238,7 @@ InputManager.prototype.handleGamePad = function() {
 			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
 	}
 };
-InputManager.prototype.initPressedKeyTime = function() {
+InputManager.prototype._initPressedKeyTime = function() {
 	this._key_bit_code_to_down_time = {};
 
 	for (var button_id in CONSTANT) {
