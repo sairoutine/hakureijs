@@ -5,10 +5,6 @@ var CONSTANT_3D = require('../constant/webgl').SPRITE3D;
 var glmat = require('gl-matrix');
 
 var Sprite3d = function(scene) {
-	base_object.apply(this, arguments);
-
-	this.current_sprite_index = 0;
-
 	this._z = 0;
 
 	this.vertices = [];
@@ -31,11 +27,13 @@ var Sprite3d = function(scene) {
 
 	this.mvMatrix = glmat.mat4.create();
 	this.pMatrix = glmat.mat4.create();
+
+	base_object.apply(this, arguments);
 };
 util.inherit(Sprite3d, base_object);
 
-Sprite3d.prototype.init = function(){
-	base_object.prototype.init.apply(this, arguments);
+Sprite3d.prototype.initialize = function(){
+	base_object.prototype.initialize.apply(this, arguments);
 
 	this.current_sprite_index = 0;
 

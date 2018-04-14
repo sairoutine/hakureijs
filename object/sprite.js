@@ -4,13 +4,11 @@ var util = require('../util');
 
 var Sprite = function(scene) {
 	base_object.apply(this, arguments);
-
-	this.current_sprite_index = 0;
 };
 util.inherit(Sprite, base_object);
 
-Sprite.prototype.init = function(){
-	base_object.prototype.init.apply(this, arguments);
+Sprite.prototype.initialize = function(){
+	base_object.prototype.initialize.apply(this, arguments);
 
 	this.current_sprite_index = 0;
 };

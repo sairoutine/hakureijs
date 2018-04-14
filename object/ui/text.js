@@ -3,8 +3,6 @@
 var BaseObjectUI = require('./base');
 var Util = require('../../util');
 var ObjectUIText = function(scene, option) {
-	BaseObjectUI.apply(this, arguments);
-
 	option = option || {};
 
 	this._default_property = Util.assign(this._default_property, {
@@ -13,6 +11,8 @@ var ObjectUIText = function(scene, option) {
 		textSize:  option.textSize  || "24px",
 		textAlign: option.textAlign || "left",
 	});
+
+	BaseObjectUI.apply(this, arguments);
 };
 Util.inherit(ObjectUIText, BaseObjectUI);
 
@@ -21,8 +21,8 @@ Util.defineProperty(ObjectUIText, "textColor");
 Util.defineProperty(ObjectUIText, "textSize");
 Util.defineProperty(ObjectUIText, "textAlign");
 
-ObjectUIText.prototype.init = function() {
-	BaseObjectUI.prototype.init.apply(this, arguments);
+ObjectUIText.prototype.initialize = function() {
+	BaseObjectUI.prototype.initialize.apply(this, arguments);
 
 	this.text(this._default_property.text);
 	this.textColor(this._default_property.textColor);

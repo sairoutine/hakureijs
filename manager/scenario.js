@@ -24,45 +24,13 @@ var ScenarioManager = function (core, option) {
 
 	this._timeoutID = null;
 
-	// serif scenario
-	this._script = null;
-
-	// where serif has progressed
-	this._progress = null;
-
-	// chara
-	this._current_talking_pos  = null; // which chara is talking
-	this._pos_to_chara_id_map = {};
-	this._pos_to_exp_id_map = {};
-
-	// background
-	this._is_background_changed = false;
-	this._current_bg_image_name  = null;
-
-	// junction
-	this._current_junction_list = [];
-
-	// option
-	this._current_option = {};
-
-	// letter data to print
-	this._current_message_letter_list = [];
-	this._current_message_sentenses_num = null;
-	this._current_message_max_length_letters = null;
-
-	// current printed sentences
-	this._letter_idx = 0;
-	this._sentences_line_num = 0;
-	this._current_printed_sentences = [];
+	this.initialize();
 };
+
 Util.inherit(ScenarioManager, BaseClass);
 
-ScenarioManager.prototype.init = function (script) {
-	if(!script) throw new Error("set script arguments to use scenario_manager class");
-
+ScenarioManager.prototype.initialize = function () {
 	if (this._timeoutID) this._stopPrintLetter();
-
-	this._script = script.slice(); // shallow copy
 
 	this._progress = -1;
 
@@ -91,6 +59,10 @@ ScenarioManager.prototype.init = function (script) {
 	this._sentences_line_num = 0;
 	this._current_printed_sentences = [];
 };
+ScenarioManager.prototype.setScript = function (script) {
+	this._script = script.slice(); // shallow copy
+};
+
 ScenarioManager.prototype.on = function (event, callback) {
 	this._event_to_callback[event] = callback;
 

@@ -61,9 +61,20 @@ var Core = function(canvas, options) {
 	this.save_manager = new SaveManager();
 	this.input_manager = new InputManager();
 
+	this.image_loader = new ImageLoader();
+	this.audio_loader = new AudioLoader();
+	this.font_loader = new FontLoader();
+
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
 
+	// add default save
+	this.save_manager.addClass("scenario", StorageScenario);
+
+	this.initialize();
+};
+
+Core.prototype.initialize = function () {
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
 	this.scenes = {};
@@ -75,39 +86,23 @@ var Core = function(canvas, options) {
 
 	this.request_id = null;
 
-	this.image_loader = new ImageLoader();
-	this.audio_loader = new AudioLoader();
-	this.font_loader = new FontLoader();
-
 	// add default scene
 	this.addScene("loading", new SceneLoading(this));
 
-	// add default save
-	this.save_manager.addClass("scenario", StorageScenario);
-};
-Core.prototype.init = function () {
-	this.current_scene = null;
-	this._reserved_next_scene = null; // next scene which changes next frame run
-
-	this.frame_count = 0;
-
-	this.request_id = null;
-
-	this.debug_manager.init();
-	this.time_manager.init();
+	this.debug_manager.initialize();
+	this.time_manager.initialize();
 	// TODO:
-	//this.save_manager.init();
-	this.input_manager.init();
+	//this.save_manager.initialize();
+	this.input_manager.initialize();
 
-	this.image_loader.init();
-	this.audio_loader.init();
-	this.font_loader.init();
+	this.image_loader.initialize();
+	this.audio_loader.initialize();
+	this.font_loader.initialize();
 
 	this.save_manager.initialLoad();
 };
-
 Core.prototype.reload = function () {
-	this.init();
+	this.initialize();
 };
 
 Core.prototype.isRunning = function () {
@@ -202,7 +197,9 @@ Core.prototype.changeNextSceneIfReserved = function() {
 			// change next scene
 			this.current_scene = this._reserved_next_scene.shift();
 			var current_scene = this.currentScene();
-			current_scene.init.apply(current_scene, this._reserved_next_scene);
+
+			// call changed method
+			current_scene.changed.apply(current_scene, this._reserved_next_scene);
 
 			this._reserved_next_scene = null;
 		}
@@ -350,7 +347,7 @@ Core.prototype._setupError = function() {
 		// or
 
 		// restart game at first point
-		//self.init();
+		//self.initialize();
 		//self.startRun();
 	};
 };

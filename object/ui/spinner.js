@@ -6,22 +6,22 @@ var BaseObjectUI = require('./base');
 var Util = require('../../util');
 
 var ObjectUISpinner = function(scene, option) {
-	BaseObjectUI.apply(this, arguments);
-
 	option = option || {};
 
 	this._default_property = Util.assign(this._default_property, {
 		size:  option.size  || "",
 		color: option.color || "black",
 	});
+
+	BaseObjectUI.apply(this, arguments);
 };
 Util.inherit(ObjectUISpinner, BaseObjectUI);
 
 Util.defineProperty(ObjectUISpinner, "size");
 Util.defineProperty(ObjectUISpinner, "color");
 
-ObjectUISpinner.prototype.init = function() {
-	BaseObjectUI.prototype.init.apply(this, arguments);
+ObjectUISpinner.prototype.initialize = function() {
+	BaseObjectUI.prototype.initialize.apply(this, arguments);
 
 	this.size(this._default_property.size);
 	this.color(this._default_property.color);

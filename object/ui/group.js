@@ -3,8 +3,6 @@
 var BaseObjectUI = require('./base');
 var Util = require('../../util');
 var ObjectUIGroup = function(scene, option) {
-	BaseObjectUI.apply(this, arguments);
-
 	option = option || {};
 
 	this._default_property = Util.assign(this._default_property, {
@@ -12,6 +10,8 @@ var ObjectUIGroup = function(scene, option) {
 		height:          option.height          || 0,
 		backgroundColor: option.backgroundColor || null,
 	});
+
+	BaseObjectUI.apply(this, arguments);
 };
 Util.inherit(ObjectUIGroup, BaseObjectUI);
 
@@ -19,8 +19,8 @@ Util.defineProperty(ObjectUIGroup, "width");
 Util.defineProperty(ObjectUIGroup, "height");
 Util.defineProperty(ObjectUIGroup, "backgroundColor");
 
-ObjectUIGroup.prototype.init = function() {
-	BaseObjectUI.prototype.init.apply(this, arguments);
+ObjectUIGroup.prototype.initialize = function() {
+	BaseObjectUI.prototype.initialize.apply(this, arguments);
 
 	this.width(this._default_property.width);
 	this.height(this._default_property.height);

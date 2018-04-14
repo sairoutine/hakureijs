@@ -3,8 +3,6 @@
 var BaseObjectUI = require('./base');
 var Util = require('../../util');
 var ObjectUIImage = function(scene, option) {
-	BaseObjectUI.apply(this, arguments);
-
 	option = option || {};
 
 	this._default_property = Util.assign(this._default_property, {
@@ -13,6 +11,8 @@ var ObjectUIImage = function(scene, option) {
 		width:      option.width      || null,
 		height:     option.height     || null,
 	});
+
+	BaseObjectUI.apply(this, arguments);
 };
 Util.inherit(ObjectUIImage, BaseObjectUI);
 
@@ -21,8 +21,8 @@ Util.defineProperty(ObjectUIImage, "scale");
 Util.defineProperty(ObjectUIImage, "width");
 Util.defineProperty(ObjectUIImage, "height");
 
-ObjectUIImage.prototype.init = function() {
-	BaseObjectUI.prototype.init.apply(this, arguments);
+ObjectUIImage.prototype.initialize = function() {
+	BaseObjectUI.prototype.initialize.apply(this, arguments);
 
 	this.image_name(this._default_property.image_name);
 	this.scale(this._default_property.scale);

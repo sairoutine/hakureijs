@@ -10,23 +10,22 @@ var DebugManager = function (core) {
 
 	this.is_debug_mode = false; // default: false
 
-
 	this._is_showing_collision_area = false; // default: false
 
 	this._is_showing_fps = false; // default: false
 
 	this._variables = {};
 
+	this.initialize();
+};
+DebugManager.prototype.initialize = function () {
 	// Time when FPS was calculated last time(millisecond)
 	this._before_time = 0;
 
 	// calculated current fps
 	this._fps = 0;
 };
-DebugManager.prototype.init = function () {
-	this._before_time = 0;
-	this._fps = 0;
-};
+
 DebugManager.prototype.setOn = function (dom) {
 	this.is_debug_mode = true;
 	this.dom = dom;

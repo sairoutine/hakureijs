@@ -1,17 +1,13 @@
 'use strict';
 
 var ImageLoader = function() {
-	this.images = {};
-
-	this.loading_image_num = 0;
-	this.loaded_image_num = 0;
+	this.initialize();
 };
-ImageLoader.prototype.init = function() {
+ImageLoader.prototype.initialize = function() {
 	// cancel already loading images
 	for(var name in this.images){
 		this.images[name].image.src = "";
 	}
-
 	this.images = {};
 
 	this.loading_image_num = 0;
