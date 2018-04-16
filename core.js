@@ -5,13 +5,13 @@
 var WebGLDebugUtils = require("webgl-debug");
 var Util = require("./util");
 var DebugManager = require("./manager/debug");
+var SceneManager = require("./manager/scene");
 var TimeManager = require("./manager/time");
 var SaveManager = require("./manager/save");
 var InputManager = require("./manager/input");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
-var SceneLoading = require('./scene/loading');
 var StorageScenario = require('./storage/scenario');
 
 var ShaderProgram = require('./shader_program');
@@ -57,16 +57,13 @@ var Core = function(canvas, options) {
 	}
 
 	this.debug_manager = new DebugManager(this);
+	this.scene_manager = new SceneManager(this);
 	this.time_manager = new TimeManager(this);
 	this.save_manager = new SaveManager();
 	this.input_manager = new InputManager();
 
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
-
-	this.current_scene = null;
-	this._reserved_next_scene = null; // next scene which changes next frame run
-	this.scenes = {};
 
 	this._cursor_image_name = null;
 	this._default_cursor_image_name = null;
@@ -79,21 +76,16 @@ var Core = function(canvas, options) {
 	this.audio_loader = new AudioLoader();
 	this.font_loader = new FontLoader();
 
-	// add default scene
-	this.addScene("loading", new SceneLoading(this));
-
 	// add default save
 	this.save_manager.addClass("scenario", StorageScenario);
 };
 Core.prototype.init = function () {
-	this.current_scene = null;
-	this._reserved_next_scene = null; // next scene which changes next frame run
-
 	this.frame_count = 0;
 
 	this.request_id = null;
 
 	this.debug_manager.init();
+	this.scene_manager.init();
 	this.time_manager.init();
 	// TODO:
 	//this.save_manager.init();
@@ -129,12 +121,10 @@ Core.prototype.run = function(){
 	// update fps
 	this.debug_manager.beforeRun();
 
+	this.scene_manager.beforeRun();
 	// get gamepad input
 	// get pressed key time
 	this.input_manager.beforeRun();
-
-	// go to next scene if next scene is set
-	this.changeNextSceneIfReserved();
 
 	// play sound which already set to play
 	this.time_manager.executeEvents();
@@ -145,7 +135,7 @@ Core.prototype.run = function(){
 	// change default cursor image
 	this.changeDefaultCursorImage();
 
-	var current_scene = this.currentScene();
+	var current_scene = this.scene_manager.currentScene();
 	if(current_scene) {
 		current_scene.beforeDraw();
 
@@ -168,51 +158,6 @@ Core.prototype.run = function(){
 	// tick
 	this.request_id = requestAnimationFrame(Util.bind(this.run, this));
 };
-Core.prototype.currentScene = function() {
-	if(this.current_scene === null) {
-		return;
-	}
-
-	return this.scenes[this.current_scene];
-};
-
-Core.prototype.addScene = function(name, scene) {
-	this.scenes[name] = scene;
-};
-Core.prototype.changeScene = function(scene_name, varArgs) {
-	if(!(scene_name in this.scenes)) throw new Error (scene_name + " scene doesn't exists.");
-
-	var args = Array.prototype.slice.call(arguments); // to convert array object
-	this._reserved_next_scene = args;
-
-	// immediately if no scene is set
-	if (!this.current_scene) {
-		this.changeNextSceneIfReserved();
-	}
-};
-Core.prototype.changeNextSceneIfReserved = function() {
-	if(this._reserved_next_scene) {
-		if (this.currentScene() && this.currentScene().isSetFadeOut() && !this.currentScene().isInFadeOut()) {
-			this.currentScene().startFadeOut();
-		}
-		else if (this.currentScene() && this.currentScene().isSetFadeOut() && this.currentScene().isInFadeOut()) {
-			// waiting for quiting fade out
-		}
-		else {
-			// change next scene
-			this.current_scene = this._reserved_next_scene.shift();
-			var current_scene = this.currentScene();
-			current_scene.init.apply(current_scene, this._reserved_next_scene);
-
-			this._reserved_next_scene = null;
-		}
-	}
-};
-Core.prototype.changeSceneWithLoading = function(scene, assets) {
-	if(!assets) assets = {};
-	this.changeScene("loading", assets, scene);
-};
-
 Core.prototype.clearCanvas = function() {
 	if (this.is2D()) {
 		// 2D
@@ -477,7 +422,28 @@ Core.prototype._renderCursorImage = function () {
 };
 
 Core.prototype.setTimeout = function (callback, frame_count) {
+	console.error("core's setTimeout method is deprecated.");
 	this.time_manager.setTimeout(callback, frame_count);
+};
+Core.prototype.currentScene = function() {
+	console.error("core's currentScene method is deprecated.");
+	return this.scene_manager.currentScene.apply(this.scene_manager, arguments);
+}
+Core.prototype.addScene = function(name, scene) {
+	console.error("core's addScene method is deprecated.");
+	return this.scene_manager.addScene.apply(this.scene_manager, arguments);
+};
+Core.prototype.changeScene = function(scene_name, varArgs) {
+	console.error("core's changeScene method is deprecated.");
+	return this.scene_manager.changeScene.apply(this.scene_manager, arguments);
+};
+Core.prototype.changeNextSceneIfReserved = function() {
+	console.error("core's changeNextSceneIfReserved method is deprecated.");
+	return this.scene_manager.changeNextSceneIfReserved.apply(this.scene_manager, arguments);
+};
+Core.prototype.changeSceneWithLoading = function(scene, assets) {
+	console.error("core's changeSceneWithLoading method is deprecated.");
+	return this.scene_manager.changeSceneWithLoading.apply(this.scene_manager, arguments);
 };
 
 module.exports = Core;
