@@ -3,10 +3,22 @@
 var SceneLoading = require('../scene/loading');
 
 var SceneManager = function (core) {
+	this.core = core;
+
 	this._current_scene = null;
 	// next scene which changes next frame run
 	this._reserved_next_scene_name_and_arguments = null;
 	this._scenes = {};
+
+	// property for fade in
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+
+	// property for fade out
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
 
 	// add default scene
 	this.addScene("loading", new SceneLoading(core));
@@ -15,6 +27,16 @@ SceneManager.prototype.init = function () {
 	this._current_scene = null;
 	// next scene which changes next frame run
 	this._reserved_next_scene_name_and_arguments = null;
+
+	// property for fade in
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+
+	// property for fade out
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
 };
 
 SceneManager.prototype.beforeRun = function () {
@@ -48,10 +70,10 @@ SceneManager.prototype.changeScene = function(scene_name, varArgs) {
 SceneManager.prototype._changeNextSceneIfReserved = function() {
 	if(this._reserved_next_scene_name_and_arguments) {
 		// TODO: exec in scene manager
-		if (this.currentScene() && this.currentScene().isSetFadeOut() && !this.currentScene().isInFadeOut()) {
-			this.currentScene().startFadeOut();
+		if (this.isSetFadeOut() && !this.isInFadeOut()) {
+			this.startFadeOut();
 		}
-		else if (this.currentScene() && this.currentScene().isSetFadeOut() && this.currentScene().isInFadeOut()) {
+		else if (this.isSetFadeOut() && this.isInFadeOut()) {
 			// waiting for quiting fade out
 		}
 		else {
@@ -68,4 +90,105 @@ SceneManager.prototype.changeSceneWithLoading = function(scene, assets) {
 	if(!assets) assets = {};
 	this.changeScene("loading", assets, scene);
 };
+
+
+SceneManager.prototype.setFadeIn = function(duration, color) {
+	this._fade_in_duration = duration || 30;
+	this._fade_in_color = color || 'white';
+
+	// start fade in immediately
+	this._startFadeIn();
+};
+SceneManager.prototype._startFadeIn = function() {
+	this._quitFadeOut();
+	this._fade_in_start_frame_count = this.core.frame_count;
+};
+
+SceneManager.prototype._quitFadeIn = function() {
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+};
+SceneManager.prototype.isInFadeIn = function() {
+	return this._fade_in_start_frame_count !== null ? true : false;
+};
+
+
+SceneManager.prototype.setFadeOut = function(duration, color) {
+	duration = typeof duration !== "undefined" ? duration : 30;
+	this._fade_out_duration = duration;
+	this._fade_out_color = color || 'black';
+};
+SceneManager.prototype.startFadeOut = function() {
+	if(!this.isSetFadeOut()) return;
+
+	this._quitFadeIn();
+	this._fade_out_start_frame_count = this.core.frame_count;
+};
+
+SceneManager.prototype._quitFadeOut = function() {
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
+};
+SceneManager.prototype.isInFadeOut = function() {
+	return this._fade_out_start_frame_count !== null ? true : false;
+};
+SceneManager.prototype.isSetFadeOut = function() {
+	return this._fade_out_duration && this._fade_out_color ? true : false;
+};
+
+SceneManager.prototype.drawTransition = function() {
+	var ctx = this.core.ctx;
+
+	var alpha;
+	// fade in
+	if (this.isInFadeIn()) {
+		ctx.save();
+		// tranparent settings
+		if(this.core.frame_count - this._fade_in_start_frame_count < this._fade_in_duration) {
+			alpha = 1.0 - (this.core.frame_count - this._fade_in_start_frame_count) / this._fade_in_duration;
+		}
+		else {
+			alpha = 0.0;
+		}
+
+		ctx.globalAlpha = alpha;
+
+		// transition color
+		ctx.fillStyle = this._fade_in_color;
+		ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+		ctx.restore();
+
+		// alpha === 0.0 by transparent settings so quit fade in
+		// why there? because alpha === 0, _fade_in_color === null by quitFadeIn method
+		if(alpha === 0) this._quitFadeIn();
+
+	}
+	// fade out
+	else if (this.isInFadeOut()) {
+		ctx.save();
+		// tranparent settings
+		if(this.core.frame_count - this._fade_out_start_frame_count < this._fade_out_duration) {
+			alpha = (this.core.frame_count - this._fade_out_start_frame_count) / this._fade_out_duration;
+		}
+		else {
+			alpha = 1.0;
+		}
+
+		ctx.globalAlpha = alpha;
+
+		// transition color
+		ctx.fillStyle = this._fade_out_color;
+		ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+		ctx.restore();
+
+		// alpha === 1.0 by transparent settings so quit fade out
+		// why there? because alpha === 1, _fade_out_color === null by quitFadeOut method
+		if(alpha === 1) this._quitFadeOut();
+	}
+};
+
 module.exports = SceneManager;

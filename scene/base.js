@@ -21,16 +21,6 @@ var SceneBase = function(core) {
 	this._reserved_next_scene = null; // next scene which changes next frame run
 	this.scenes = {};
 
-	// property for fade in
-	this._fade_in_duration = null;
-	this._fade_in_color = null;
-	this._fade_in_start_frame_count = null;
-
-	// property for fade out
-	this._fade_out_duration = null;
-	this._fade_out_color = null;
-	this._fade_out_start_frame_count = null;
-
 	// property for wait to start bgm
 	this._wait_to_start_bgm_name = null;
 	this._wait_to_start_bgm_duration = null;
@@ -53,16 +43,6 @@ SceneBase.prototype.init = function(){
 	this._y = 0;
 
 	this.frame_count = 0;
-
-	// property for fade in
-	this._fade_in_duration = null;
-	this._fade_in_color = null;
-	this._fade_in_start_frame_count = null;
-
-	// property for fade out
-	this._fade_out_duration = null;
-	this._fade_out_color = null;
-	this._fade_out_start_frame_count = null;
 
 	// property for wait to start bgm
 	this._wait_to_start_bgm_name = null;
@@ -121,59 +101,7 @@ SceneBase.prototype._drawBackground = function() {
 
 };
 
-SceneBase.prototype.afterDraw = function(){
-	var ctx = this.core.ctx;
-
-	var alpha;
-	// fade in
-	if (this.isInFadeIn()) {
-		ctx.save();
-
-		// tranparent settings
-		if(this.frame_count - this._fade_in_start_frame_count < this._fade_in_duration) {
-			alpha = 1.0 - (this.frame_count - this._fade_in_start_frame_count) / this._fade_in_duration;
-		}
-		else {
-			alpha = 0.0;
-		}
-
-		ctx.globalAlpha = alpha;
-
-		// transition color
-		ctx.fillStyle = this._fade_in_color;
-		ctx.fillRect(0, 0, this.width, this.height);
-
-		ctx.restore();
-
-		// alpha === 0.0 by transparent settings so quit fade in
-		// why there? because alpha === 0, _fade_in_color === null by quitFadeIn method
-		if(alpha === 1) this._quitFadeIn();
-
-	}
-	// fade out
-	else if (this.isInFadeOut()) {
-		ctx.save();
-		// tranparent settings
-		if(this.frame_count - this._fade_out_start_frame_count < this._fade_out_duration) {
-			alpha = (this.frame_count - this._fade_out_start_frame_count) / this._fade_out_duration;
-		}
-		else {
-			alpha = 1.0;
-		}
-
-		ctx.globalAlpha = alpha;
-
-		// transition color
-		ctx.fillStyle = this._fade_out_color;
-		ctx.fillRect(0, 0, this.width, this.height);
-
-		ctx.restore();
-
-		// alpha === 1.0 by transparent settings so quit fade out
-		// why there? because alpha === 1, _fade_out_color === null by quitFadeOut method
-		if(alpha === 1) this._quitFadeOut();
-	}
-
+SceneBase.prototype.afterDraw = function() {
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].afterDraw();
 	}
@@ -249,52 +177,6 @@ SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 
 };
 
-SceneBase.prototype.setFadeIn = function(duration, color) {
-	this._fade_in_duration = duration || 30;
-	this._fade_in_color = color || 'white';
-
-	// start fade in immediately
-	this._startFadeIn();
-};
-SceneBase.prototype._startFadeIn = function() {
-	this._quitFadeOut();
-	this._fade_in_start_frame_count = this.frame_count;
-};
-
-SceneBase.prototype._quitFadeIn = function() {
-	this._fade_in_duration = null;
-	this._fade_in_color = null;
-	this._fade_in_start_frame_count = null;
-};
-SceneBase.prototype.isInFadeIn = function() {
-	return this._fade_in_start_frame_count !== null ? true : false;
-};
-
-
-SceneBase.prototype.setFadeOut = function(duration, color) {
-	duration = typeof duration !== "undefined" ? duration : 30;
-	this._fade_out_duration = duration;
-	this._fade_out_color = color || 'black';
-};
-SceneBase.prototype.startFadeOut = function() {
-	if(!this.isSetFadeOut()) return;
-
-	this._quitFadeIn();
-	this._fade_out_start_frame_count = this.frame_count;
-};
-
-SceneBase.prototype._quitFadeOut = function() {
-	this._fade_out_duration = null;
-	this._fade_out_color = null;
-	this._fade_out_start_frame_count = null;
-};
-SceneBase.prototype.isInFadeOut = function() {
-	return this._fade_out_start_frame_count !== null ? true : false;
-};
-SceneBase.prototype.isSetFadeOut = function() {
-	return this._fade_out_duration && this._fade_out_color ? true : false;
-};
-
 // play bgm after some wait counts
 SceneBase.prototype.setWaitToStartBGM = function(bgm_name, wait_count) {
 	if(!wait_count) wait_count = 0;
@@ -324,6 +206,31 @@ SceneBase.prototype.root = function() {
 };
 SceneBase.prototype.setBackgroundColor = function(color) {
 	this._background_color = color;
+};
+
+SceneBase.prototype.setFadeIn = function(duration, color) {
+	console.error("scene's setFadeIn method is deprecated.");
+	return this.core.scene_manager.setFadeIn.apply(this.core.scene_manager, arguments);
+};
+SceneBase.prototype.isInFadeIn = function() {
+	console.error("scene's isInFadeIn method is deprecated.");
+	return this.core.scene_manager.isInFadeIn.apply(this.core.scene_manager, arguments);
+};
+SceneBase.prototype.setFadeOut = function(duration, color) {
+	console.error("scene's setFadeOut method is deprecated.");
+	return this.core.scene_manager.setFadeOut.apply(this.core.scene_manager, arguments);
+};
+SceneBase.prototype.startFadeOut = function() {
+	console.error("scene's startFadeOut method is deprecated.");
+	return this.core.scene_manager.startFadeOut.apply(this.core.scene_manager, arguments);
+};
+SceneBase.prototype.isInFadeOut = function() {
+	console.error("scene's isInFadeOut method is deprecated.");
+	return this.core.scene_manager.isInFadeOut.apply(this.core.scene_manager, arguments);
+};
+SceneBase.prototype.isSetFadeOut = function() {
+	console.error("scene's isSetFadeOut method is deprecated.");
+	return this.core.scene_manager.isSetFadeOut.apply(this.core.scene_manager, arguments);
 };
 
 /*

@@ -146,6 +146,9 @@ Core.prototype.run = function(){
 
 		current_scene.afterDraw();
 
+		// draw transtion
+		this.scene_manager.drawTransition();
+
 		// overwrite cursor image on scene
 		this._renderCursorImage();
 	}
