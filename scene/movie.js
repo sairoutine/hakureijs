@@ -11,7 +11,7 @@ var SceneMovie = function(core) {
 	this.video = null;
 
 	// go if the movie is done.
-	this.next_scene_name = null;
+	this.next_scene_name_and_args = null;
 
 	this.is_playing = false;
 
@@ -24,10 +24,15 @@ var SceneMovie = function(core) {
 };
 util.inherit(SceneMovie, base_scene);
 
-SceneMovie.prototype.init = function(movie_path, next_scene_name) {
+SceneMovie.prototype.init = function(movie_path, next_scene_name, varArgs) {
 	base_scene.prototype.init.apply(this, arguments);
 
 	var self = this;
+
+	// parse arguments
+	var args = Array.prototype.slice.call(arguments); // to convert array object
+	movie_path      = args.shift();
+	varArgs         = args;
 
 	self.is_playing = false;
 
@@ -37,7 +42,10 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name) {
 	self._left   = null;
 
 	// go if the movie is done.
-	self.next_scene_name = next_scene_name;
+	self.next_scene_name_and_args = null;
+	if (varArgs.length > 0) {
+		self.next_scene_name_and_args = varArgs;
+	}
 
 	// stop bgm if it is played.
 	this.core.audio_loader.stopBGM();
@@ -120,8 +128,8 @@ SceneMovie.prototype.notifyEnd = function(){
 
 	this.is_playing = false;
 
-	if (this.next_scene_name) {
-		this.core.changeScene(this.next_scene_name);
+	if (this.next_scene_name_and_args) {
+		this.core.changeScene.apply(this.core, this.next_scene_name_and_args);
 	}
 };
 
