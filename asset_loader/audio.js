@@ -231,6 +231,7 @@ AudioLoader.prototype.fadeOutBGM = function (fadeout_time, bgm_name) {
 
 	var gain = audio_gain.gain;
 	var startTime = this.audio_context.currentTime;
+	gain.cancelScheduledValues(startTime);
 	gain.setValueAtTime(gain.value, startTime); // for old browser
 	var endTime = startTime + fadeout_time;
 	gain.linearRampToValueAtTime(0, endTime);
