@@ -194,7 +194,7 @@ describe('ScenarioManager', function() {
 
     describe('junction', function() {
 		var script = [
-			{"type": "serif","chara": "chara", "serif": "セリフ"},
+			{"type": "serif","chara": "chara", "serif": "セリフ", "junction": ["分岐0へ", "分岐1へ"]},
 			{"type": "junction_serif", "serifs": [
 				[
 					{"chara": "0-1-chara", "serif": "セリフ"},
