@@ -141,6 +141,8 @@ ScenarioManager.prototype._chooseNextSerifScript = function (choice) {
 	}
 	else if (type === "junction_serif") {
 		chosen_serifs = script.serifs[choice];
+		if(!chosen_serifs) throw new Error("chosen junction index '" + choice + "' does not exists in next serifs array");
+
 		// delete current script and insert new chosen serif list
 		Array.prototype.splice.apply(this._script, [this._progress, 1].concat(chosen_serifs));
 	}
