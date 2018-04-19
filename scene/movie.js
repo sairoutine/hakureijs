@@ -129,7 +129,7 @@ SceneMovie.prototype.notifyEnd = function(){
 	this.is_playing = false;
 
 	if (this.next_scene_name_and_args) {
-		this.core.changeScene.apply(this.core, this.next_scene_name_and_args);
+		this.core.scene_manager.changeScene.apply(this.core, this.next_scene_name_and_args);
 	}
 };
 

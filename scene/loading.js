@@ -65,7 +65,7 @@ SceneLoading.prototype.draw = function(){
 };
 SceneLoading.prototype.notifyAllLoaded = function(){
 	if (this.next_scene_name) {
-		this.core.changeScene(this.next_scene_name);
+		this.core.scene_manager.changeScene(this.next_scene_name);
 	}
 };
 
