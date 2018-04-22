@@ -30,7 +30,7 @@ var InputManager = function () {
 	this.mouse_y = 0;
 	this.mouse_scroll = 0;
 
-	this.is_connect_gamepad = false;
+	this._is_gamepad_usable = false;
 };
 
 InputManager.prototype.init = function () {
@@ -50,11 +50,6 @@ InputManager.prototype.init = function () {
 	this.mouse_x = 0;
 	this.mouse_y = 0;
 	this.mouse_scroll = 0;
-
-	this.is_connect_gamepad = false;
-};
-InputManager.prototype.enableGamePad = function () {
-	this.is_connect_gamepad = true;
 };
 InputManager.prototype.beforeRun = function(){
 	// get gamepad input
@@ -212,7 +207,7 @@ InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 	return flag;
 };
 InputManager.prototype.handleGamePad = function() {
-	if(!this.is_connect_gamepad) return;
+	if(!this._is_gamepad_usable) return;
 	var pads = window.navigator.getGamepads();
 	var pad = pads[0]; // 1Pコン
 
@@ -303,7 +298,7 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
 
 	// bind gamepad
 	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
-		self.enableGamePad();
+		self._is_gamepad_usable = true;
 	}
 };
 
@@ -316,7 +311,7 @@ InputManager.prototype.getKeyByButtonId = function(button_id) {
 
 // get one of the pressed button id
 InputManager.prototype.getAnyButtonId = function(){
-	if(!this.is_connect_gamepad) return;
+	if(!this._is_gamepad_usable) return;
 
 	var pads = window.navigator.getGamepads();
 	var pad = pads[0]; // 1Pコン
