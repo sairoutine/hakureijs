@@ -304,6 +304,9 @@ ObjectBase.prototype._drawCollisionArea = function(color) {
 	// make dummy object to decide collision width and height
 	var dummy_object = new ObjectBase(this.scene);
 
+	// check whether does collide with
+	if (!this.isCollision(dummy_object)) return;
+
 	color = color || 'rgb( 255, 255, 255 )' ;
 	var ctx = this.core.ctx;
 	ctx.save();
