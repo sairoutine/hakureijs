@@ -112,6 +112,8 @@ ScenarioManager.prototype.start = function (progress) {
 
 	this._progress = progress || 0;
 
+	this._chooseNextSerifScript();
+
 	this._setupCurrentSerifScript();
 };
 
