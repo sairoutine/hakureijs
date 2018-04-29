@@ -80,9 +80,11 @@ SceneManager.prototype._changeNextSceneIfReserved = function() {
 			// change next scene
 			this._current_scene = this._reserved_next_scene_name_and_arguments.shift();
 			var current_scene = this.currentScene();
-			current_scene.init.apply(current_scene, this._reserved_next_scene_name_and_arguments);
 
+			var argument_list = this._reserved_next_scene_name_and_arguments;
 			this._reserved_next_scene_name_and_arguments = null;
+
+			current_scene.init.apply(current_scene, argument_list);
 		}
 	}
 };

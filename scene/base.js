@@ -168,11 +168,12 @@ SceneBase.prototype.changeSubScene = function() {
 SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
 		this.current_scene = this._reserved_next_scene.shift();
-
 		var current_sub_scene = this.currentSubScene();
-		current_sub_scene.init.apply(current_sub_scene, this._reserved_next_scene);
 
+		var argument_list = this._reserved_next_scene;
 		this._reserved_next_scene = null;
+
+		current_sub_scene.init.apply(current_sub_scene, argument_list);
 	}
 
 };
