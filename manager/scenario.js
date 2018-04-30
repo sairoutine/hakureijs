@@ -200,7 +200,7 @@ ScenarioManager.prototype._setupCurrentSerifScript = function () {
 
 	this._saveSerifPlayed(script);
 
-	if(script.serif) {
+	if(typeof script.serif === "string") {
 		this._setupSerif(script);
 	}
 	else {
