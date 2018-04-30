@@ -310,8 +310,8 @@ Core.prototype.showError = function(msg, file, line, column, err) {
 	if (this.is2D()) {
 		// TODO: create html dom and overlay it on canvas
 		var ctx = this.ctx;
-		var x = 30;
-		var y = 100;
+		var x = 24;
+		var y = 80;
 
 		ctx.save();
 		ctx.fillStyle = 'black';
@@ -320,28 +320,30 @@ Core.prototype.showError = function(msg, file, line, column, err) {
 
 		ctx.save();
 		ctx.fillStyle = "red";
-		ctx.font = "60px 'sans-serif'";
+		ctx.font = "48px 'sans-serif'";
 		ctx.fillText('Error', x, y);
 
-		y+= 60;
+		y+= 48;
 
 		ctx.fillStyle = "white";
-		ctx.font = "30px 'sans-serif'";
+		ctx.font = "24px 'sans-serif'";
 
 		ctx.fillText(msg, x, y);
-		y+= 30 + 5;
+		y+= 24 + 5;
+		ctx.fillText("Time: " + (new Date()).toString(), x, y);
+		y+= 24 + 5;
 		ctx.fillText("File: " + file, x, y);
-		y+= 30 + 5;
-		ctx.fillText("Line: " + line + ":" + column, x, y);
-		y+= 30 + 5;
+		y+= 24 + 5;
+		ctx.fillText("Line: " + line + ", Column:" + column, x, y);
+		y+= 24 + 5;
 		ctx.fillText("Stack Trace: ", x, y);
-		y+= 30 + 5;
-		x+= 30 + 5;
+		y+= 24 + 5;
+		x+= 24 + 5;
 		var stack = err.stack.split("\n");
 		for (var i = 0, len = stack.length; i < len; i++) {
 			var text = stack[i];
 			ctx.fillText(text, x, y);
-			y += 30 + 5;
+			y += 24 + 5;
 		}
 		ctx.restore();
 	}
