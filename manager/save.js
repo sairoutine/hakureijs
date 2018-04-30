@@ -38,6 +38,12 @@ SaveManager.prototype.save = function(){
 	}
 };
 
+SaveManager.prototype.reload = function(){
+	for (var name in this._name_to_class) {
+		this[name].reload();
+	}
+};
+
 
 
 SaveManager.prototype.del = function(){

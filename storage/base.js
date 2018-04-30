@@ -118,6 +118,19 @@ StorageBase.prototype._saveToWebStorage = function() {
 	}
 };
 
+StorageBase.prototype.reload = function() {
+	var Klass = this.constructor;
+	var data;
+	if (Klass.isLocalMode()) {
+		data = Klass._loadFromLocalFile();
+	}
+	else {
+		data = Klass._loadFromWebStorage();
+	}
+
+	this._data = data;
+};
+
 StorageBase.load = function() {
 	var data;
 	if (this.isLocalMode()) {
