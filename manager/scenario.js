@@ -154,6 +154,8 @@ ScenarioManager.prototype._chooseNextSerifScript = function (choice) {
 		choice = this._execCriteriaFunction(criteria_name, argument_list);
 		chosen_serifs = script.serifs[choice];
 
+		if (!chosen_serifs) throw new Error ("choisen criteria index '" + choice + "' does not exists");
+
 		// delete current script and insert new chosen serif list
 		Array.prototype.splice.apply(this._script, [this._progress, 1].concat(chosen_serifs));
 
