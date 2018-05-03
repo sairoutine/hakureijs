@@ -8,6 +8,8 @@ var SceneManager = function (core) {
 	this._current_scene = null;
 	// next scene which changes next frame run
 	this._reserved_next_scene_name_and_arguments = null;
+	this._is_reserved_next_scene_init = true; // is scene will inited?
+
 	this._scenes = {};
 
 	// property for fade in
@@ -27,6 +29,7 @@ SceneManager.prototype.init = function () {
 	this._current_scene = null;
 	// next scene which changes next frame run
 	this._reserved_next_scene_name_and_arguments = null;
+	this._is_reserved_next_scene_init = true; // is scene will inited?
 
 	// property for fade in
 	this._fade_in_duration = null;
@@ -61,15 +64,23 @@ SceneManager.prototype.changeScene = function(scene_name, varArgs) {
 
 	var args = Array.prototype.slice.call(arguments); // to convert array object
 	this._reserved_next_scene_name_and_arguments = args;
+	this._is_reserved_next_scene_init = true; // scene will inited
 
 	// immediately if no scene is set
 	if (!this._current_scene) {
 		this._changeNextSceneIfReserved();
 	}
 };
+SceneManager.prototype.returnScene = function(scene_name) {
+	if(!(scene_name in this._scenes)) throw new Error (scene_name + " scene doesn't exists.");
+
+	this._reserved_next_scene_name_and_arguments = [scene_name];
+	this._is_reserved_next_scene_init = false; // scene will NOT inited
+};
+
 SceneManager.prototype._changeNextSceneIfReserved = function() {
 	if(this._reserved_next_scene_name_and_arguments) {
-		// TODO: exec in scene manager
+
 		if (this.isSetFadeOut() && !this.isInFadeOut()) {
 			this.startFadeOut();
 		}
@@ -84,7 +95,10 @@ SceneManager.prototype._changeNextSceneIfReserved = function() {
 			var argument_list = this._reserved_next_scene_name_and_arguments;
 			this._reserved_next_scene_name_and_arguments = null;
 
-			current_scene.init.apply(current_scene, argument_list);
+			// if returnScene method is called, scene is not inited.
+			if(this._is_reserved_next_scene_init) {
+				current_scene.init.apply(current_scene, argument_list);
+			}
 		}
 	}
 };
