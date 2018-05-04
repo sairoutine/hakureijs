@@ -19,6 +19,8 @@ var SceneBase = function(core) {
 	// sub scenes
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
+	this._is_reserved_next_scene_init = true; // is scene will inited?
+
 	this.scenes = {};
 
 	// property for wait to start bgm
@@ -38,6 +40,7 @@ SceneBase.prototype.init = function(){
 	// sub scenes
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
+	this._is_reserved_next_scene_init = true; // is scene will inited?
 
 	this._x = 0;
 	this._y = 0;
@@ -159,12 +162,18 @@ SceneBase.prototype.addSubScene = function(name, scene) {
 SceneBase.prototype.changeSubScene = function() {
 	var args = Array.prototype.slice.call(arguments); // to convert array object
 	this._reserved_next_scene = args;
+	this._is_reserved_next_scene_init = true; // scene will inited
 
 	// immediately if no sub scene is set
 	if (!this.current_scene) {
 		this.changeNextSubSceneIfReserved();
 	}
 };
+SceneBase.prototype.returnSubScene = function(scene_name) {
+	this._reserved_next_scene = [scene_name];
+	this._is_reserved_next_scene_init = false; // scene will NOT inited
+};
+
 SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
 		this.current_scene = this._reserved_next_scene.shift();
@@ -173,7 +182,10 @@ SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 		var argument_list = this._reserved_next_scene;
 		this._reserved_next_scene = null;
 
-		current_sub_scene.init.apply(current_sub_scene, argument_list);
+		// if returnSubScene method is called, scene will not be inited.
+		if(this._is_reserved_next_scene_init) {
+			current_sub_scene.init.apply(current_sub_scene, argument_list);
+		}
 	}
 
 };
