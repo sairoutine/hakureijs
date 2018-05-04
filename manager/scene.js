@@ -95,7 +95,7 @@ SceneManager.prototype._changeNextSceneIfReserved = function() {
 			var argument_list = this._reserved_next_scene_name_and_arguments;
 			this._reserved_next_scene_name_and_arguments = null;
 
-			// if returnScene method is called, scene is not inited.
+			// if returnScene method is called, scene will not be inited.
 			if(this._is_reserved_next_scene_init) {
 				current_scene.init.apply(current_scene, argument_list);
 			}
