@@ -78,5 +78,9 @@ var Hakurei = {
 		Base: require("./storage/base"),
 		Save: require("./storage/save"),
 	},
+	Master: {
+		RepositoryGenerator: require("./master/repository_generator"),
+	},
+
 };
 module.exports = Hakurei;
