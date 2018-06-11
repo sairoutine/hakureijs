@@ -312,15 +312,15 @@ ScenarioManager.prototype._printLetter = function () {
 	// get A letter to add
 	var letter = current_message_letter_list[this._letter_idx++];
 
+	// initialize if needed
+	if(!this._current_printed_sentences[this._sentences_line_num]) {
+		this._current_printed_sentences[this._sentences_line_num] = "";
+	}
+
 	if (letter === "\n") {
 		this._sentences_line_num++;
 	}
 	else {
-		// initialize if needed
-		if(!this._current_printed_sentences[this._sentences_line_num]) {
-			this._current_printed_sentences[this._sentences_line_num] = "";
-		}
-
 		// print A letter
 		this._current_printed_sentences[this._sentences_line_num] += letter;
 	}
