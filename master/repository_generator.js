@@ -17,8 +17,9 @@ MasterRepositoryGenerator.exec = function (type_info, option, data_list) {
 	// create DAO class
 	var DAOClass = MasterDAOGenerator.exec(type_info, option);
 
-	// convert array => hash
-	var data_hash = {};
+	// convert hash array => instance hash and list
+	var instance_hash = {};
+	var instance_list = [];
 	for (var i = 0, len = data_list.length; i < len; i++) {
 		var data = data_list[i];
 
@@ -27,7 +28,9 @@ MasterRepositoryGenerator.exec = function (type_info, option, data_list) {
 		var pk_value = data[option.pk];
 
 		// create instance
-		data_hash[pk_value] = new DAOClass(data);
+		var instance = new DAOClass(data);
+		instance_hash[pk_value] = instance;
+		instance_list[i] = instance;
 	}
 
 	// repository is static class.
@@ -39,8 +42,13 @@ MasterRepositoryGenerator.exec = function (type_info, option, data_list) {
 
 	// methods
 	RepositoryClass.find = function (pk) {
-		return data_hash[pk];
+		return instance_hash[pk];
 	};
+
+	RepositoryClass.all = function () {
+		return instance_list;
+	};
+
 
 	return RepositoryClass;
 };
