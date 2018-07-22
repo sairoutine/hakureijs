@@ -176,6 +176,30 @@ InputManager.prototype.handleMouseWheel = function (event) {
 InputManager.prototype.mouseScroll = function () {
 	return this.mouse_scroll;
 };
+InputManager.prototype.handleTouchDown = function(event) {
+	// treat as mouse event
+	this.is_left_clicked = true;
+	event.preventDefault();
+};
+InputManager.prototype.handleTouchUp = function(event) {
+	// treat as mouse event
+	this.is_left_clicked = false;
+	event.preventDefault();
+};
+InputManager.prototype.handleTouchMove = function (event) {
+	event.preventDefault();
+
+	var x = event.touches[0].clientX;
+	var y = event.touches[0].clientY;
+
+	this.mouse_change_x = this.mouse_x - x;
+	this.mouse_change_y = this.mouse_y - y;
+	this.mouse_x = x;
+	this.mouse_y = y;
+};
+
+
+
 InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 	var flag;
 	switch(keyCode) {
@@ -283,6 +307,15 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
 
 	// bind mouse move
 	canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
+
+	// bind touch
+	canvas_dom.ontouchstart = function(e) { self.handleTouchDown(e); };
+	canvas_dom.ontouchend   = function(e) { self.handleTouchUp(e); };
+
+	// bind touch move
+	canvas_dom.ontouchmove = function(d) { self.handleTouchMove(d); };
+
+
 
 	// bind mouse wheel
 	var mousewheelevent = (window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
