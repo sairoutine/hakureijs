@@ -54,13 +54,18 @@ PoolManager.prototype.remove = function(id) {
 };
 
 PoolManager.prototype.checkCollisionWithObject = function(obj1) {
+	var is_collision = false;
 	for(var id in this.objects) {
 		var obj2 = this.objects[id];
-		if(obj1.checkCollision(obj2)) {
+		if(obj1.intersect(obj2)) {
 			obj1.onCollision(obj2);
 			obj2.onCollision(obj1);
+
+			is_collision = true;
 		}
 	}
+
+	return is_collision;
 };
 
 PoolManager.prototype.checkCollisionWithManager = function(manager) {
