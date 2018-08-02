@@ -6,13 +6,23 @@ var TimeManager = function (core) {
 	this.core = core;
 
 	this.events = {};
+
+	// フレーム数を取得する関数
+	this._frame_count_getter = function () {
+		return core.frame_count;
+	};
+
 };
 TimeManager.prototype.init = function () {
 	this.events = {};
 };
 
+TimeManager.prototype.setFrameCountFunction = function (func) {
+	this._frame_count_getter = func;
+};
+
 TimeManager.prototype.setTimeout = function (callback, frame_count) {
-	var current_frame_count = this.core.frame_count;
+	var current_frame_count = this._frame_count_getter();
 	var execute_timing = current_frame_count + frame_count;
 	var id = ++ID;
 
@@ -42,7 +52,7 @@ TimeManager.prototype.clearTimeout = function (id) {
 
 
 TimeManager.prototype.executeEvents = function () {
-	var current_frame_count = this.core.frame_count;
+	var current_frame_count = this._frame_count_getter();
 	var current_events = this.events[current_frame_count];
 
 	if(!current_events) return;

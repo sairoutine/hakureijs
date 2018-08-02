@@ -47,6 +47,7 @@ var Hakurei = {
 	Manager: {
 		Save: require("./manager/save"),
 		Scenario: require("./manager/scenario"),
+		Time: require("./manager/time"),
 	},
 	Scene: {
 		Base:    require("./scene/base"),
