@@ -24,15 +24,10 @@ var SceneMovie = function(core) {
 };
 util.inherit(SceneMovie, base_scene);
 
-SceneMovie.prototype.init = function(movie_path, next_scene_name, varArgs) {
+SceneMovie.prototype.init = function(movie_path, callback) {
 	base_scene.prototype.init.apply(this, arguments);
 
 	var self = this;
-
-	// parse arguments
-	var args = Array.prototype.slice.call(arguments); // to convert array object
-	movie_path      = args.shift();
-	varArgs         = args;
 
 	self.is_playing = false;
 
@@ -42,9 +37,9 @@ SceneMovie.prototype.init = function(movie_path, next_scene_name, varArgs) {
 	self._left   = null;
 
 	// go if the movie is done.
-	self.next_scene_name_and_args = null;
-	if (varArgs.length > 0) {
-		self.next_scene_name_and_args = varArgs;
+	self._callback = function(){};
+	if (callback) {
+		self._callback = callback;
 	}
 
 	// stop bgm if it is played.
@@ -128,9 +123,8 @@ SceneMovie.prototype.notifyEnd = function(){
 
 	this.is_playing = false;
 
-	if (this.next_scene_name_and_args) {
-		this.core.scene_manager.changeScene.apply(this.core.scene_manager, this.next_scene_name_and_args);
-	}
+
+	this._callback();
 };
 
 
