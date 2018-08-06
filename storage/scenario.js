@@ -43,4 +43,14 @@ StorageScenario.prototype.incrementPlayedCount = function(id){
 	this.set(id, status);
 };
 
+StorageScenario.prototype.resetPlayedCount = function(id){
+	var status = this.getSerifStatus(id);
+
+	status.played_count = 0;
+	this.set(id, status);
+};
+
+
+
+
 module.exports = StorageScenario;
