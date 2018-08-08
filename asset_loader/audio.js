@@ -58,7 +58,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 	audio.volume = volume;
 	audio.addEventListener('canplay', onload_function);
 	audio.addEventListener("error", function () {
-		throw new Error("Audio Element error. code: " + audio.error.code + ", message: " + audio.error.message);
+		throw new Error("Audio Element error. " + path + ", code: " + audio.error.code + ", message: " + audio.error.message);
 	});
 	audio.load();
 	self.sounds[name] = {
