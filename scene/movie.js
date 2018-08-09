@@ -43,7 +43,9 @@ SceneMovie.prototype.init = function(movie_path, callback) {
 	}
 
 	// stop bgm if it is played.
-	this.core.audio_loader.stopBGM();
+	if (this.isStopBGM()) {
+		this.core.audio_loader.stopBGM();
+	}
 
 	var video = document.createElement("video");
 	video.src = movie_path;
@@ -125,6 +127,9 @@ SceneMovie.prototype.notifyEnd = function(){
 
 
 	this._callback();
+};
+SceneMovie.prototype.isStopBGM = function(){
+	return true;
 };
 
 
