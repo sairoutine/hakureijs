@@ -41,6 +41,7 @@ var Hakurei = {
 	Util: require("./util"),
 	Core: require("./core"),
 	ShaderProgram: require("./shader_program"),
+	Log: require("./log"),
 	Constant: {
 		Button: require("./constant/button"),
 	},
