@@ -238,7 +238,7 @@ InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 InputManager.prototype.handleGamePad = function() {
 	if(!this._is_gamepad_usable) return;
 	var pads = window.navigator.getGamepads();
-	var pad = pads[0]; // 1Pコン
+	var pad = pads[0]; // 1P gamepad
 
 	if(!pad) return;
 
@@ -253,7 +253,7 @@ InputManager.prototype.handleGamePad = function() {
 		}
 	}
 
-	// arrow keys
+	// analog stick to arrow keys
 	if (pad.axes[1] < -0.5) {
 			this.current_keyflag |= CONSTANT.BUTTON_UP;
 	}
