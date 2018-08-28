@@ -75,12 +75,13 @@ StorageBase.prototype.save = function() {
 StorageBase.prototype._saveToLocalFile = function() {
 	var Klass = this.constructor;
 	var fs = window.require('fs');
+	var path = window.require('path');
 
 	var data = JSON.stringify(this._data);
 
 	var dir_path = Klass._localFileDirectoryPath();
 
-	var file_path = dir_path + Klass._localFileName(Klass.KEY());
+	var file_path = path.join(dir_path, Klass._localFileName(Klass.KEY()));
 
 	if (!fs.existsSync(dir_path)) {
 		fs.mkdirSync(dir_path);
