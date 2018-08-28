@@ -21,6 +21,7 @@ var SceneManager = function (core) {
 	this._fade_out_duration = null;
 	this._fade_out_color = null;
 	this._fade_out_start_frame_count = null;
+	this._is_fade_out_finished = false;
 
 	// add default scene
 	this.addScene("loading", new SceneLoading(core));
@@ -40,6 +41,7 @@ SceneManager.prototype.init = function () {
 	this._fade_out_duration = null;
 	this._fade_out_color = null;
 	this._fade_out_start_frame_count = null;
+	this._is_fade_out_finished = false;
 };
 
 SceneManager.prototype.beforeRun = function () {
@@ -81,10 +83,10 @@ SceneManager.prototype.returnScene = function(scene_name) {
 SceneManager.prototype._changeNextSceneIfReserved = function() {
 	if(!this._reserved_next_scene_name_and_arguments) return;
 
-	if (this.isSetFadeOut() && !this.isInFadeOut()) {
+	if (this.isSetFadeOut() && !this._is_fade_out_finished && !this.isInFadeOut()) {
 		this.startFadeOut();
 	}
-	else if (this.isSetFadeOut() && this.isInFadeOut()) {
+	else if (this.isSetFadeOut() && !this._is_fade_out_finished && this.isInFadeOut()) {
 		// waiting for quiting fade out
 	}
 	else {
@@ -99,6 +101,8 @@ SceneManager.prototype._changeNextSceneIfReserved = function() {
 		if(this._is_reserved_next_scene_init) {
 			current_scene.init.apply(current_scene, argument_list);
 		}
+
+		this._is_fade_out_finished = false;
 	}
 };
 SceneManager.prototype.changeSceneWithLoading = function(scene, assets) {
@@ -120,15 +124,11 @@ SceneManager.prototype._startFadeIn = function() {
 };
 
 SceneManager.prototype._quitFadeIn = function() {
-	this._fade_in_duration = null;
-	this._fade_in_color = null;
 	this._fade_in_start_frame_count = null;
 };
 SceneManager.prototype.isInFadeIn = function() {
 	return this._fade_in_start_frame_count !== null ? true : false;
 };
-
-
 SceneManager.prototype.setFadeOut = function(duration, color) {
 	duration = typeof duration !== "undefined" ? duration : 30;
 	this._fade_out_duration = duration;
@@ -142,8 +142,6 @@ SceneManager.prototype.startFadeOut = function() {
 };
 
 SceneManager.prototype._quitFadeOut = function() {
-	this._fade_out_duration = null;
-	this._fade_out_color = null;
 	this._fade_out_start_frame_count = null;
 };
 SceneManager.prototype.isInFadeOut = function() {
@@ -202,7 +200,11 @@ SceneManager.prototype.drawTransition = function() {
 
 		// alpha === 1.0 by transparent settings so quit fade out
 		// why there? because alpha === 1, _fade_out_color === null by quitFadeOut method
-		if(alpha === 1) this._quitFadeOut();
+		if(alpha === 1) {
+			this._quitFadeOut();
+
+			this._is_fade_out_finished = true;
+		}
 	}
 };
 
