@@ -79,26 +79,25 @@ SceneManager.prototype.returnScene = function(scene_name) {
 };
 
 SceneManager.prototype._changeNextSceneIfReserved = function() {
-	if(this._reserved_next_scene_name_and_arguments) {
+	if(!this._reserved_next_scene_name_and_arguments) return;
 
-		if (this.isSetFadeOut() && !this.isInFadeOut()) {
-			this.startFadeOut();
-		}
-		else if (this.isSetFadeOut() && this.isInFadeOut()) {
-			// waiting for quiting fade out
-		}
-		else {
-			// change next scene
-			this._current_scene = this._reserved_next_scene_name_and_arguments.shift();
-			var current_scene = this.currentScene();
+	if (this.isSetFadeOut() && !this.isInFadeOut()) {
+		this.startFadeOut();
+	}
+	else if (this.isSetFadeOut() && this.isInFadeOut()) {
+		// waiting for quiting fade out
+	}
+	else {
+		// change next scene
+		this._current_scene = this._reserved_next_scene_name_and_arguments.shift();
+		var current_scene = this.currentScene();
 
-			var argument_list = this._reserved_next_scene_name_and_arguments;
-			this._reserved_next_scene_name_and_arguments = null;
+		var argument_list = this._reserved_next_scene_name_and_arguments;
+		this._reserved_next_scene_name_and_arguments = null;
 
-			// if returnScene method is called, scene will not be inited.
-			if(this._is_reserved_next_scene_init) {
-				current_scene.init.apply(current_scene, argument_list);
-			}
+		// if returnScene method is called, scene will not be inited.
+		if(this._is_reserved_next_scene_init) {
+			current_scene.init.apply(current_scene, argument_list);
 		}
 	}
 };
