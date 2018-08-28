@@ -2,27 +2,17 @@
 
 var ID = 0;
 
-var TimeManager = function (core) {
-	this.core = core;
-
+var TimeManager = function () {
 	this.events = {};
-
-	// フレーム数を取得する関数
-	this._frame_count_getter = function () {
-		return core.frame_count;
-	};
-
+	this.frame_count = 0;
 };
 TimeManager.prototype.init = function () {
 	this.events = {};
-};
-
-TimeManager.prototype.setFrameCountFunction = function (func) {
-	this._frame_count_getter = func;
+	this.frame_count = 0;
 };
 
 TimeManager.prototype.setTimeout = function (callback, frame_count) {
-	var current_frame_count = this._frame_count_getter();
+	var current_frame_count = this.frame_count;
 	var execute_timing = current_frame_count + frame_count;
 	var id = ++ID;
 
@@ -52,17 +42,19 @@ TimeManager.prototype.clearTimeout = function (id) {
 
 
 TimeManager.prototype.executeEvents = function () {
-	var current_frame_count = this._frame_count_getter();
+	var current_frame_count = this.frame_count;
 	var current_events = this.events[current_frame_count];
 
-	if(!current_events) return;
+	if(current_events) {
+		for (var id in current_events) {
+			var event = current_events[id];
+			event.callback();
+		}
 
-	for (var id in current_events) {
-		var event = current_events[id];
-		event.callback();
+		delete this.events[current_frame_count];
 	}
 
-	delete this.events[current_frame_count];
+	this.frame_count++;
 };
 
 

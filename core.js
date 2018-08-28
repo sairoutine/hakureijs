@@ -58,7 +58,7 @@ var Core = function(canvas, options) {
 
 	this.debug_manager = new DebugManager(this);
 	this.scene_manager = new SceneManager(this);
-	this.time_manager = new TimeManager(this);
+	this.time_manager = new TimeManager();
 	this.save_manager = new SaveManager();
 	this.input_manager = new InputManager();
 
