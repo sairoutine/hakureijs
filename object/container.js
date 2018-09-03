@@ -48,11 +48,13 @@ Container.prototype.removeAllObject = function() {
 Container.prototype.removeObject = function(object){
 	throw new Error("not implemented yet."); // TODO:
 };
+Container.prototype.existsObject = function(object) {
+	return object.id in this.objects;
+};
 
 Container.prototype.remove = function(id) {
 	delete this.objects[id];
 };
-
 Container.prototype.checkCollisionWithObject = function(obj1) {
 	var is_collision = false;
 	for(var id in this.objects) {
