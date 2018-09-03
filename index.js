@@ -23,7 +23,7 @@ var Hakurei = {
 		point: require("./object/point"),
 		sprite: require("./object/sprite"),
 		sprite3d: require("./object/sprite3d"),
-		pool_manager: require("./object/pool_manager"),
+		pool_manager: require("./object/pool_container"),
 		pool_manager3d: require("./object/pool_manager3d"),
 		ui_parts: require("./object/ui_parts"),
 	},
@@ -60,8 +60,10 @@ var Hakurei = {
 		Point: require("./object/point"),
 		Sprite: require("./object/sprite"),
 		Sprite3d: require("./object/sprite3d"),
-		PoolManager: require("./object/pool_manager"),
+		Container: require("./object/container"),
+		PoolManager: require("./object/pool_container"), // deprecated
 		PoolManager3d: require("./object/pool_manager3d"),
+		PoolContainer: require("./object/pool_container"),
 		UIParts: require("./object/ui_parts"),
 		UI: {
 			Base:            require("./object/ui/base"),
