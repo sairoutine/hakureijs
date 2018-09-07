@@ -26,7 +26,7 @@ PoolContainer.prototype.afterDraw = function(){
 	base_object.prototype.afterDraw.apply(this, arguments);
 };
 
-PoolContainer.prototype.create = function() {
+PoolContainer.prototype.create = function(args) {
 	var object = new this.Class(this.scene);
 	object.init.apply(object, arguments);
 
