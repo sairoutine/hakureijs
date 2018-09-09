@@ -43,7 +43,7 @@ Container.prototype.addObjects = function(object_list){
 	throw new Error("not implemented yet."); // TODO:
 };
 Container.prototype.removeAllObject = function() {
-	throw new Error("not implemented yet."); // TODO:
+	this.objects = {};
 };
 Container.prototype.removeObject = function(object){
 	throw new Error("not implemented yet."); // TODO:
@@ -53,8 +53,22 @@ Container.prototype.existsObject = function(object) {
 };
 
 Container.prototype.remove = function(id) {
+	var ret = this.objects[id];
 	delete this.objects[id];
+	return ret;
 };
+Container.prototype.forEach = function(f){
+	for (var id in this.objects) {
+		f(this.objects[id]);
+	}
+};
+
+Container.prototype.count = function(){
+	return Object.keys(this.objects).length;
+};
+
+
+
 Container.prototype.checkCollisionWithObject = function(obj1) {
 	var is_collision = false;
 	for(var id in this.objects) {
