@@ -46,7 +46,7 @@ Container.prototype.removeAllObject = function() {
 	this.objects = {};
 };
 Container.prototype.removeObject = function(object){
-	throw new Error("not implemented yet."); // TODO:
+	return this.remove(object.id);
 };
 Container.prototype.existsObject = function(object) {
 	return object.id in this.objects;
@@ -57,6 +57,11 @@ Container.prototype.remove = function(id) {
 	delete this.objects[id];
 	return ret;
 };
+
+Container.prototype.get = function(id) {
+	return this.objects[id];
+};
+
 Container.prototype.forEach = function(f){
 	for (var id in this.objects) {
 		f(this.objects[id]);
