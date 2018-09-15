@@ -99,6 +99,7 @@ SceneManager.prototype._changeNextSceneIfReserved = function() {
 
 		// if returnScene method is called, scene will not be inited.
 		if(this._is_reserved_next_scene_init) {
+			this._resetFadeOut();
 			current_scene.init.apply(current_scene, argument_list);
 		}
 
@@ -134,6 +135,11 @@ SceneManager.prototype.setFadeOut = function(duration, color) {
 	this._fade_out_duration = duration;
 	this._fade_out_color = color || 'black';
 };
+SceneManager.prototype._resetFadeOut = function() {
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+};
+
 SceneManager.prototype.startFadeOut = function() {
 	if(!this.isSetFadeOut()) return;
 
