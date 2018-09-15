@@ -108,6 +108,7 @@ ScenarioManager.prototype.removeEvent = function (event) {
 ScenarioManager.prototype.start = function (progress) {
 	if(!this._script) throw new Error("start method must be called after instance was initialized.");
 
+	// TODO: merge next method
 	if (this.isEnd()) return;
 
 	this._progress = progress || 0;
