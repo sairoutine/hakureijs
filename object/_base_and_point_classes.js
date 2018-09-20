@@ -75,7 +75,7 @@ ObjectBase.prototype.beforeDraw = function(){
 ObjectBase.prototype.draw = function() {
 	// If is in DEBUG mode, show collision area
 	if(this.core.debug_manager.isShowingCollisionArea()) {
-		this._drawCollisionArea("white");
+		this._drawCollisionArea(this.core.debug_manager.collisionAreaColor());
 	}
 
 

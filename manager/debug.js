@@ -10,8 +10,7 @@ var DebugManager = function (core) {
 
 	this.is_debug_mode = false; // default: false
 
-
-	this._is_showing_collision_area = false; // default: false
+	this._collision_area_color = null;
 
 	this._is_showing_fps = false; // default: false
 
@@ -310,17 +309,22 @@ DebugManager.prototype.addUploadFileButton = function (value, func, read_type) {
 
 
 // show collision area of object instance
-DebugManager.prototype.setShowingCollisionAreaOn = function () {
+DebugManager.prototype.setShowingCollisionAreaOn = function (color) {
 	if(!this.is_debug_mode) return null;
-	this._is_showing_collision_area = true;
+	color = color || "white";
+	this._collision_area_color = color;
 };
 DebugManager.prototype.setShowingCollisionAreaOff = function () {
 	if(!this.is_debug_mode) return null;
-	this._is_showing_collision_area = false;
+	this._collision_area_color = null;
 };
 DebugManager.prototype.isShowingCollisionArea = function () {
 	if(!this.is_debug_mode) return false;
-	return this._is_showing_collision_area;
+	return this._collision_area_color ? true : false;
+};
+DebugManager.prototype.collisionAreaColor = function () {
+	if(!this.is_debug_mode) return null;
+	return this._collision_area_color;
 };
 
 // show fps
