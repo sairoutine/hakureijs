@@ -312,9 +312,10 @@ ObjectBase.prototype._drawCollisionArea = function(color) {
 	ctx.save();
 	ctx.fillStyle = color;
 	ctx.globalAlpha = 0.4;
+	ctx.translate(this.globalCenterX(),this.globalCenterY());
 	ctx.fillRect(
-		this.getCollisionLeftX(dummy_object),
-		this.getCollisionUpY(dummy_object),
+		-this.collisionWidth(dummy_object)/2,
+		-this.collisionHeight(dummy_object)/2,
 		this.collisionWidth(dummy_object),
 		this.collisionHeight(dummy_object)
 	);
