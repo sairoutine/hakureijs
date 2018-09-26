@@ -62,6 +62,13 @@ Container.prototype.get = function(id) {
 	return this.objects[id];
 };
 
+Container.prototype.getRandom = function() {
+	var ids = Object.keys(this.objects);
+	var id = ids[Math.floor(Math.random() * ids.length)];
+
+	return this.objects[id];
+};
+
 Container.prototype.forEach = function(f){
 	for (var id in this.objects) {
 		f(this.objects[id]);
