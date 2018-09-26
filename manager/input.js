@@ -61,27 +61,11 @@ InputManager.prototype.beforeRun = function(){
 	// get gamepad input
 	this._handleGamePad();
 
-	// get pressed key time
-	this._handlePressedKeyTime();
+	// count pressed key time
+	this._setPressedKeyTime();
 
 	// treat as mouse event
-	this._treatTouchAsMouse();
-};
-
-InputManager.prototype._treatTouchAsMouse = function(){
-	if (this._first_touch_id !== null) {
-		this._is_left_clicked = true;
-
-		// update mouse info
-		var touch_info = this._touch_infos[this._first_touch_id];
-		this._mouse_change_x = touch_info.change_x;
-		this._mouse_change_y = touch_info.change_y;
-		this._mouse_x = touch_info.x;
-		this._mouse_y = touch_info.y;
-	}
-	else {
-		this._is_left_clicked = false;
-	}
+	this._setTouchAsMouse();
 };
 
 InputManager.prototype.afterRun = function(){
@@ -169,7 +153,7 @@ InputManager.prototype._initPressedKeyTime = function() {
 	}
 };
 
-InputManager.prototype._handlePressedKeyTime = function() {
+InputManager.prototype._setPressedKeyTime = function() {
 	for (var button_id in CONSTANT) {
 		var bit_code = CONSTANT[button_id];
 		if (this.isKeyDown(bit_code)) {
@@ -396,6 +380,22 @@ InputManager.prototype._handleTouchMove = function (ev) {
 	}
 
 	event.preventDefault();
+};
+
+InputManager.prototype._setTouchAsMouse = function(){
+	if (this._first_touch_id !== null) {
+		this._is_left_clicked = true;
+
+		// update mouse info
+		var touch_info = this._touch_infos[this._first_touch_id];
+		this._mouse_change_x = touch_info.change_x;
+		this._mouse_change_y = touch_info.change_y;
+		this._mouse_x = touch_info.x;
+		this._mouse_y = touch_info.y;
+	}
+	else {
+		this._is_left_clicked = false;
+	}
 };
 
 /********************************************
