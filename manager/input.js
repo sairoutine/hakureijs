@@ -71,6 +71,50 @@ InputManager.prototype.afterRun = function(){
 	this.mouse_change_y = 0;
 };
 
+InputManager.prototype.setupEvents = function(canvas_dom) {
+	var self = this;
+
+	// bind keyboard
+	window.onkeydown = function(e) { self.handleKeyDown(e); };
+	window.onkeyup   = function(e) { self.handleKeyUp(e); };
+
+	// bind mouse click
+	canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
+	canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
+
+	// bind mouse move
+	canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
+
+	// bind touch
+	canvas_dom.ontouchstart = function(e) { self.handleTouchDown(e); };
+	canvas_dom.ontouchend   = function(e) { self.handleTouchUp(e); };
+
+	// bind touch move
+	canvas_dom.ontouchmove = function(d) { self.handleTouchMove(d); };
+
+
+
+	// bind mouse wheel
+	var mousewheelevent = (window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+	if (canvas_dom.addEventListener) { //WC3 browsers
+		canvas_dom.addEventListener(mousewheelevent, function(e) {
+			var event = window.event || e;
+			self.handleMouseWheel(event);
+		}, false);
+	}
+
+	// unable to use right click menu.
+	canvas_dom.oncontextmenu = function() { return false; };
+
+	// bind gamepad
+	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
+		self._is_gamepad_usable = true;
+	}
+};
+
+/********************************************
+ * keyboard
+ ********************************************/
 
 InputManager.prototype.handleKeyDown = function(e) {
 	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
@@ -128,82 +172,6 @@ InputManager.prototype.isRightClickPush = function() {
 	// not true if is pressed in previous frame
 	return this.is_right_clicked && !this.before_is_right_clicked;
 };
-InputManager.prototype.handleMouseMove = function (d) {
-	d = d ? d : window.event;
-	d.preventDefault();
-
-	// get absolute coordinate position of canvas and adjust click position
-	// because clientX and clientY return the position from the document.
-	var rect = d.target.getBoundingClientRect();
-
-	var x = d.clientX - rect.left;
-	var y = d.clientY - rect.top;
-
-	this.mouse_change_x = this.mouse_x - x;
-	this.mouse_change_y = this.mouse_y - y;
-	this.mouse_x = x;
-	this.mouse_y = y;
-};
-
-InputManager.prototype.mousePositionPoint = function (scene) {
-	var x = this.mousePositionX();
-	var y = this.mousePositionY();
-
-	var point = new ObjectPoint(scene);
-	point.init();
-	point.setPosition(x, y);
-
-
-	return point;
-};
-
-
-InputManager.prototype.mousePositionX = function () {
-	return this.mouse_x;
-};
-InputManager.prototype.mousePositionY = function () {
-	return this.mouse_y;
-};
-InputManager.prototype.mouseMoveX = function () {
-	return this.mouse_change_x;
-};
-InputManager.prototype.mouseMoveY = function () {
-	return this.mouse_change_y;
-};
-InputManager.prototype.handleMouseWheel = function (event) {
-	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
-};
-InputManager.prototype.mouseScroll = function () {
-	return this.mouse_scroll;
-};
-InputManager.prototype.handleTouchDown = function(event) {
-	// treat as mouse event
-	this.is_left_clicked = true;
-	this.handleTouchMove(event);
-	event.preventDefault();
-};
-InputManager.prototype.handleTouchUp = function(event) {
-	// treat as mouse event
-	this.is_left_clicked = false;
-	event.preventDefault();
-};
-InputManager.prototype.handleTouchMove = function (event) {
-	event.preventDefault();
-
-	// get absolute coordinate position of canvas and adjust click position
-	// because clientX and clientY return the position from the document.
-	var rect = event.target.getBoundingClientRect();
-
-	var x = event.changedTouches[0].clientX - rect.left;
-	var y = event.changedTouches[0].clientY - rect.top;
-
-	this.mouse_change_x = this.mouse_x - x;
-	this.mouse_change_y = this.mouse_y - y;
-	this.mouse_x = x;
-	this.mouse_y = y;
-};
-
-
 
 InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 	var flag;
@@ -235,6 +203,117 @@ InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 	}
 	return flag;
 };
+
+InputManager.prototype.initPressedKeyTime = function() {
+	this._key_bit_code_to_down_time = {};
+
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		this._key_bit_code_to_down_time[bit_code] = 0;
+	}
+};
+
+InputManager.prototype.handlePressedKeyTime = function() {
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		if (this.isKeyDown(bit_code)) {
+			this._key_bit_code_to_down_time[bit_code]++;
+		}
+		else {
+			this._key_bit_code_to_down_time[bit_code] = 0;
+		}
+	}
+};
+
+
+/********************************************
+ * mouse
+ ********************************************/
+
+InputManager.prototype.handleMouseMove = function (d) {
+	d = d ? d : window.event;
+	d.preventDefault();
+
+	// get absolute coordinate position of canvas and adjust click position
+	// because clientX and clientY return the position from the document.
+	var rect = d.target.getBoundingClientRect();
+
+	var x = d.clientX - rect.left;
+	var y = d.clientY - rect.top;
+
+	this.mouse_change_x = this.mouse_x - x;
+	this.mouse_change_y = this.mouse_y - y;
+	this.mouse_x = x;
+	this.mouse_y = y;
+};
+
+InputManager.prototype.mousePositionPoint = function (scene) {
+	var x = this.mousePositionX();
+	var y = this.mousePositionY();
+
+	var point = new ObjectPoint(scene);
+	point.init();
+	point.setPosition(x, y);
+
+
+	return point;
+};
+
+InputManager.prototype.mousePositionX = function () {
+	return this.mouse_x;
+};
+InputManager.prototype.mousePositionY = function () {
+	return this.mouse_y;
+};
+InputManager.prototype.mouseMoveX = function () {
+	return this.mouse_change_x;
+};
+InputManager.prototype.mouseMoveY = function () {
+	return this.mouse_change_y;
+};
+InputManager.prototype.handleMouseWheel = function (event) {
+	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
+};
+InputManager.prototype.mouseScroll = function () {
+	return this.mouse_scroll;
+};
+
+
+/********************************************
+ * touch
+ ********************************************/
+
+InputManager.prototype.handleTouchDown = function(event) {
+	// treat as mouse event
+	this.is_left_clicked = true;
+	this.handleTouchMove(event);
+	event.preventDefault();
+};
+InputManager.prototype.handleTouchUp = function(event) {
+	// treat as mouse event
+	this.is_left_clicked = false;
+	event.preventDefault();
+};
+InputManager.prototype.handleTouchMove = function (event) {
+	event.preventDefault();
+
+	// get absolute coordinate position of canvas and adjust click position
+	// because clientX and clientY return the position from the document.
+	var rect = event.target.getBoundingClientRect();
+
+	var x = event.changedTouches[0].clientX - rect.left;
+	var y = event.changedTouches[0].clientY - rect.top;
+
+	this.mouse_change_x = this.mouse_x - x;
+	this.mouse_change_y = this.mouse_y - y;
+	this.mouse_x = x;
+	this.mouse_y = y;
+};
+
+/********************************************
+ * gamepad
+ ********************************************/
+
 InputManager.prototype.handleGamePad = function() {
 	if(!this._is_gamepad_usable) return;
 	var pads = window.navigator.getGamepads();
@@ -279,67 +358,6 @@ InputManager.prototype.handleGamePad = function() {
 			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
 	}
 };
-InputManager.prototype.initPressedKeyTime = function() {
-	this._key_bit_code_to_down_time = {};
-
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		this._key_bit_code_to_down_time[bit_code] = 0;
-	}
-};
-
-InputManager.prototype.handlePressedKeyTime = function() {
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		if (this.isKeyDown(bit_code)) {
-			this._key_bit_code_to_down_time[bit_code]++;
-		}
-		else {
-			this._key_bit_code_to_down_time[bit_code] = 0;
-		}
-	}
-};
-InputManager.prototype.setupEvents = function(canvas_dom) {
-	var self = this;
-
-	// bind keyboard
-	window.onkeydown = function(e) { self.handleKeyDown(e); };
-	window.onkeyup   = function(e) { self.handleKeyUp(e); };
-
-	// bind mouse click
-	canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
-	canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
-
-	// bind mouse move
-	canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
-
-	// bind touch
-	canvas_dom.ontouchstart = function(e) { self.handleTouchDown(e); };
-	canvas_dom.ontouchend   = function(e) { self.handleTouchUp(e); };
-
-	// bind touch move
-	canvas_dom.ontouchmove = function(d) { self.handleTouchMove(d); };
-
-
-
-	// bind mouse wheel
-	var mousewheelevent = (window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
-	if (canvas_dom.addEventListener) { //WC3 browsers
-		canvas_dom.addEventListener(mousewheelevent, function(e) {
-			var event = window.event || e;
-			self.handleMouseWheel(event);
-		}, false);
-	}
-
-	// unable to use right click menu.
-	canvas_dom.oncontextmenu = function() { return false; };
-
-	// bind gamepad
-	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
-		self._is_gamepad_usable = true;
-	}
-};
-
 InputManager.prototype.getKeyByButtonId = function(button_id) {
 	var keys = this._button_id_to_key_bit_code[button_id];
 	if(!keys) keys = 0x00;
