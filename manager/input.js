@@ -268,7 +268,6 @@ InputManager.prototype._handleMouseUp = function(event) {
 
 InputManager.prototype._handleMouseMove = function (d) {
 	d = d ? d : window.event;
-	d.preventDefault();
 
 	// get absolute coordinate position of canvas and adjust click position
 	// because clientX and clientY return the position from the document.
@@ -281,6 +280,8 @@ InputManager.prototype._handleMouseMove = function (d) {
 	this._mouse_change_y = this._mouse_y - y;
 	this._mouse_x = x;
 	this._mouse_y = y;
+
+	d.preventDefault();
 };
 
 InputManager.prototype._handleMouseWheel = function (event) {
@@ -303,8 +304,6 @@ InputManager.prototype._handleTouchUp = function(event) {
 	event.preventDefault();
 };
 InputManager.prototype._handleTouchMove = function (event) {
-	event.preventDefault();
-
 	// get absolute coordinate position of canvas and adjust click position
 	// because clientX and clientY return the position from the document.
 	var rect = event.target.getBoundingClientRect();
@@ -316,6 +315,8 @@ InputManager.prototype._handleTouchMove = function (event) {
 	this._mouse_change_y = this._mouse_y - y;
 	this._mouse_x = x;
 	this._mouse_y = y;
+
+	event.preventDefault();
 };
 
 /********************************************
