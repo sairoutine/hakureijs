@@ -329,9 +329,12 @@ InputManager.prototype._handleTouchDown = function(ev) {
 			change_y: 0,
 		};
 
-		// used by treating touch event as mouse event
 		if(this._first_touch_id === null) {
+			// treat only first touch as mouse click
 			this._first_touch_id = id;
+
+			// treat touch as mouse click
+			this._is_left_clicked = true;
 		}
 	}
 
@@ -350,6 +353,9 @@ InputManager.prototype._handleTouchUp = function(ev) {
 
 			if(this._first_touch_id === id) {
 				this._first_touch_id = null;
+
+				// treat touch as mouse click
+				this._is_left_clicked = false;
 			}
 		}
 	}
@@ -384,17 +390,12 @@ InputManager.prototype._handleTouchMove = function (ev) {
 
 InputManager.prototype._setTouchAsMouse = function(){
 	if (this._first_touch_id !== null) {
-		this._is_left_clicked = true;
-
 		// update mouse info
 		var touch_info = this._touch_infos[this._first_touch_id];
 		this._mouse_change_x = touch_info.change_x;
 		this._mouse_change_y = touch_info.change_y;
 		this._mouse_x = touch_info.x;
 		this._mouse_y = touch_info.y;
-	}
-	else {
-		this._is_left_clicked = false;
 	}
 };
 
