@@ -69,7 +69,7 @@ InputManager.prototype.beforeRun = function(){
 };
 
 InputManager.prototype._treatTouchAsMouse = function(){
-	if (this._first_touch_id) {
+	if (this._first_touch_id !== null) {
 		this._is_left_clicked = true;
 
 		// update mouse info
