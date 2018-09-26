@@ -30,6 +30,9 @@ var InputManager = function () {
 	this._mouse_y = 0;
 	this._mouse_scroll = 0;
 
+	this._touch_infos = {};
+	this._first_touch_id = null;
+
 	this._is_gamepad_usable = false;
 };
 
@@ -50,6 +53,9 @@ InputManager.prototype.init = function () {
 	this._mouse_x = 0;
 	this._mouse_y = 0;
 	this._mouse_scroll = 0;
+
+	this._touch_infos = {};
+	this._first_touch_id = null;
 };
 InputManager.prototype.beforeRun = function(){
 	// get gamepad input
@@ -57,6 +63,25 @@ InputManager.prototype.beforeRun = function(){
 
 	// get pressed key time
 	this._handlePressedKeyTime();
+
+	// treat as mouse event
+	this._treatTouchAsMouse();
+};
+
+InputManager.prototype._treatTouchAsMouse = function(){
+	if (this._first_touch_id) {
+		this._is_left_clicked = true;
+
+		// update mouse info
+		var touch_info = this._touch_infos[this._first_touch_id];
+		this._mouse_change_x = touch_info.change_x;
+		this._mouse_change_y = touch_info.change_y;
+		this._mouse_x = touch_info.x;
+		this._mouse_y = touch_info.y;
+	}
+	else {
+		this._is_left_clicked = false;
+	}
 };
 
 InputManager.prototype.afterRun = function(){
@@ -69,6 +94,13 @@ InputManager.prototype.afterRun = function(){
 	this._mouse_scroll = 0;
 	this._mouse_change_x = 0;
 	this._mouse_change_y = 0;
+
+	// reset touch move
+	for(var id in this._touch_infos) {
+		var touch_info = this._touch_infos[id];
+		touch_info.change_x = 0;
+		touch_info.change_y = 0;
+	}
 };
 
 InputManager.prototype.setupEvents = function(canvas_dom) {
@@ -292,29 +324,76 @@ InputManager.prototype._handleMouseWheel = function (event) {
  * touch
  ********************************************/
 
-InputManager.prototype._handleTouchDown = function(event) {
-	// treat as mouse event
-	this._is_left_clicked = true;
-	this._handleTouchMove(event);
-	event.preventDefault();
-};
-InputManager.prototype._handleTouchUp = function(event) {
-	// treat as mouse event
-	this._is_left_clicked = false;
-	event.preventDefault();
-};
-InputManager.prototype._handleTouchMove = function (event) {
+InputManager.prototype._handleTouchDown = function(ev) {
 	// get absolute coordinate position of canvas and adjust click position
 	// because clientX and clientY return the position from the document.
 	var rect = event.target.getBoundingClientRect();
 
-	var x = event.changedTouches[0].clientX - rect.left;
-	var y = event.changedTouches[0].clientY - rect.top;
+	var touches = ev.changedTouches;
+	for (var i = 0, len = touches.length; i < len; i++) {
+		var touch = touches[i];
+		var id = touch.identifier;
 
-	this._mouse_change_x = this._mouse_x - x;
-	this._mouse_change_y = this._mouse_y - y;
-	this._mouse_x = x;
-	this._mouse_y = y;
+		var x = touch.clientX - rect.left;
+		var y = touch.clientY - rect.top;
+
+		// add touch info
+		this._touch_infos[id] = {
+			x: x,
+			y: y,
+			change_x: 0,
+			change_y: 0,
+		};
+
+		// used by treating touch event as mouse event
+		if(this._first_touch_id === null) {
+			this._first_touch_id = id;
+		}
+	}
+
+	event.preventDefault();
+};
+InputManager.prototype._handleTouchUp = function(ev) {
+	var touches = ev.changedTouches;
+
+	for (var i = 0, len = touches.length; i < len; i++) {
+		var touch = touches[i];
+		var id = touch.identifier;
+
+		// delete touch info
+		if(id in this._touch_infos) {
+			delete this._touch_infos[id];
+
+			if(this._first_touch_id === id) {
+				this._first_touch_id = null;
+			}
+		}
+	}
+
+	event.preventDefault();
+};
+InputManager.prototype._handleTouchMove = function (ev) {
+	// get absolute coordinate position of canvas and adjust click position
+	// because clientX and clientY return the position from the document.
+	var rect = event.target.getBoundingClientRect();
+
+	var touches = ev.changedTouches;
+	for (var i = 0, len = touches.length; i < len; i++) {
+		var touch = touches[i];
+		var id = touch.identifier;
+
+		// update touch info
+		if(id in this._touch_infos) {
+			var x = touch.clientX - rect.left;
+			var y = touch.clientY - rect.top;
+			var touch_info = this._touch_infos[id];
+
+			touch_info.change_x = touch_info.x - x;
+			touch_info.change_y = touch_info.y - y;
+			touch_info.x = x;
+			touch_info.y = y;
+		}
+	}
 
 	event.preventDefault();
 };
