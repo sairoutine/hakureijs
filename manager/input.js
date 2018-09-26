@@ -31,6 +31,7 @@ var InputManager = function () {
 	this._mouse_scroll = 0;
 
 	this._touch_infos = {};
+	this._before_is_touch_map = {};
 	this._first_touch_id = null;
 
 	this._is_gamepad_usable = false;
@@ -55,6 +56,7 @@ InputManager.prototype.init = function () {
 	this._mouse_scroll = 0;
 
 	this._touch_infos = {};
+	this._before_is_touch_map = {};
 	this._first_touch_id = null;
 };
 InputManager.prototype.beforeRun = function(){
@@ -79,11 +81,18 @@ InputManager.prototype.afterRun = function(){
 	this._mouse_change_x = 0;
 	this._mouse_change_y = 0;
 
-	// reset touch move
+
+	this._before_is_touch_map = {};
+
 	for(var id in this._touch_infos) {
 		var touch_info = this._touch_infos[id];
+
+		// reset touch move
 		touch_info.change_x = 0;
 		touch_info.change_y = 0;
+
+		// save current touched
+		this._before_is_touch_map[id] = true;
 	}
 };
 
@@ -307,6 +316,67 @@ InputManager.prototype._handleMouseWheel = function (event) {
 /********************************************
  * touch
  ********************************************/
+
+var Touch = function(input_manager, id) {
+	this._input_manager = input_manager;
+	this._id = id;
+};
+
+Touch.prototype.isTouching = function() {
+	return(this._id in this._input_manager._touch_infos);
+};
+
+Touch.prototype.isTap = function() {
+	// not true if is pressed in previous frame
+	return this.isTouching() && !this._input_manager._before_is_touch_map[this._id];
+};
+
+Touch.prototype.positionPoint = function (scene) {
+	var x = this.x();
+	var y = this.y();
+
+	var point = new ObjectPoint(scene);
+	point.init();
+	point.setPosition(x, y);
+
+	return point;
+};
+
+Touch.prototype.x = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].x;
+};
+
+Touch.prototype.y = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].y;
+};
+
+Touch.prototype.moveX = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].change_x;
+};
+
+Touch.prototype.moveY = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].change_y;
+};
+
+InputManager.prototype.getAnyTouch = function() {
+	if(this._first_touch_id === null) {
+		return new Touch(this, -1);
+	}
+
+	return new Touch(this, this._first_touch_id);
+};
+InputManager.prototype.getTouchList = function() {
+	var touches = [];
+	for(var id in this._touch_infos) {
+		touches.push(new Touch(this, id));
+	}
+
+	return touches;
+};
 
 InputManager.prototype._handleTouchDown = function(ev) {
 	// get absolute coordinate position of canvas and adjust click position
