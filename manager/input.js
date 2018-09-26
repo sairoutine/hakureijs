@@ -36,7 +36,7 @@ var InputManager = function () {
 InputManager.prototype.init = function () {
 	this._current_keyflag = 0x0;
 	this._before_keyflag = 0x0;
-	this.initPressedKeyTime();
+	this._initPressedKeyTime();
 
 	// gamepad button_id to bit code of key input
 	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
@@ -53,10 +53,10 @@ InputManager.prototype.init = function () {
 };
 InputManager.prototype.beforeRun = function(){
 	// get gamepad input
-	this.handleGamePad();
+	this._handleGamePad();
 
 	// get pressed key time
-	this.handlePressedKeyTime();
+	this._handlePressedKeyTime();
 };
 
 InputManager.prototype.afterRun = function(){
@@ -75,22 +75,22 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
 	var self = this;
 
 	// bind keyboard
-	window.onkeydown = function(e) { self.handleKeyDown(e); };
-	window.onkeyup   = function(e) { self.handleKeyUp(e); };
+	window.onkeydown = function(e) { self._handleKeyDown(e); };
+	window.onkeyup   = function(e) { self._handleKeyUp(e); };
 
 	// bind mouse click
-	canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
-	canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
+	canvas_dom.onmousedown = function(e) { self._handleMouseDown(e); };
+	canvas_dom.onmouseup   = function(e) { self._handleMouseUp(e); };
 
 	// bind mouse move
-	canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
+	canvas_dom.onmousemove = function(d) { self._handleMouseMove(d); };
 
 	// bind touch
-	canvas_dom.ontouchstart = function(e) { self.handleTouchDown(e); };
-	canvas_dom.ontouchend   = function(e) { self.handleTouchUp(e); };
+	canvas_dom.ontouchstart = function(e) { self._handleTouchDown(e); };
+	canvas_dom.ontouchend   = function(e) { self._handleTouchUp(e); };
 
 	// bind touch move
-	canvas_dom.ontouchmove = function(d) { self.handleTouchMove(d); };
+	canvas_dom.ontouchmove = function(d) { self._handleTouchMove(d); };
 
 
 
@@ -99,7 +99,7 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
 	if (canvas_dom.addEventListener) { //WC3 browsers
 		canvas_dom.addEventListener(mousewheelevent, function(e) {
 			var event = window.event || e;
-			self.handleMouseWheel(event);
+			self._handleMouseWheel(event);
 		}, false);
 	}
 
@@ -116,61 +116,37 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
  * keyboard
  ********************************************/
 
-InputManager.prototype.handleKeyDown = function(e) {
-	this._current_keyflag |= this._keyCodeToBitCode(e.keyCode);
-	e.preventDefault();
-};
-InputManager.prototype.handleKeyUp = function(e) {
-	this._current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
-	e.preventDefault();
-};
 InputManager.prototype.isKeyDown = function(flag) {
 	return((this._current_keyflag & flag) ? true : false);
 };
+
 InputManager.prototype.isKeyPush = function(flag) {
 	return !(this._before_keyflag & flag) && this._current_keyflag & flag;
 };
-
 
 InputManager.prototype.getKeyDownTime = function(bit_code) {
 	return this._key_bit_code_to_down_time[bit_code];
 };
 
-InputManager.prototype.handleMouseDown = function(event) {
-	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this._is_left_clicked  = event.which === 1;
-		this._is_right_clicked = event.which === 3;
+InputManager.prototype._initPressedKeyTime = function() {
+	this._key_bit_code_to_down_time = {};
+
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		this._key_bit_code_to_down_time[bit_code] = 0;
 	}
-	else if ("button" in event) {  // IE, Opera
-		this._is_left_clicked  = event.button === 1;
-		this._is_right_clicked = event.button === 2;
+};
+
+InputManager.prototype._handlePressedKeyTime = function() {
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		if (this.isKeyDown(bit_code)) {
+			this._key_bit_code_to_down_time[bit_code]++;
+		}
+		else {
+			this._key_bit_code_to_down_time[bit_code] = 0;
+		}
 	}
-	event.preventDefault();
-};
-InputManager.prototype.handleMouseUp = function(event) {
-	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this._is_left_clicked  = event.which === 1 ? false : this._is_left_clicked;
-		this._is_right_clicked = event.which === 3 ? false : this._is_right_clicked;
-	}
-	else if ("button" in event) {  // IE, Opera
-		this._is_left_clicked  = event.button === 1 ? false : this._is_left_clicked;
-		this._is_right_clicked = event.button === 2 ? false : this._is_right_clicked;
-	}
-	event.preventDefault();
-};
-InputManager.prototype.isLeftClickDown = function() {
-	return this._is_left_clicked;
-};
-InputManager.prototype.isLeftClickPush = function() {
-	// not true if is pressed in previous frame
-	return this._is_left_clicked && !this._before_is_left_clicked;
-};
-InputManager.prototype.isRightClickDown = function() {
-	return this._is_right_clicked;
-};
-InputManager.prototype.isRightClickPush = function() {
-	// not true if is pressed in previous frame
-	return this._is_right_clicked && !this._before_is_right_clicked;
 };
 
 InputManager.prototype._keyCodeToBitCode = function(keyCode) {
@@ -204,33 +180,92 @@ InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 	return flag;
 };
 
-InputManager.prototype.initPressedKeyTime = function() {
-	this._key_bit_code_to_down_time = {};
-
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		this._key_bit_code_to_down_time[bit_code] = 0;
-	}
+InputManager.prototype._handleKeyDown = function(e) {
+	this._current_keyflag |= this._keyCodeToBitCode(e.keyCode);
+	e.preventDefault();
 };
-
-InputManager.prototype.handlePressedKeyTime = function() {
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		if (this.isKeyDown(bit_code)) {
-			this._key_bit_code_to_down_time[bit_code]++;
-		}
-		else {
-			this._key_bit_code_to_down_time[bit_code] = 0;
-		}
-	}
+InputManager.prototype._handleKeyUp = function(e) {
+	this._current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
+	e.preventDefault();
 };
-
 
 /********************************************
  * mouse
  ********************************************/
+InputManager.prototype.isLeftClickDown = function() {
+	return this._is_left_clicked;
+};
 
-InputManager.prototype.handleMouseMove = function (d) {
+InputManager.prototype.isLeftClickPush = function() {
+	// not true if is pressed in previous frame
+	return this._is_left_clicked && !this._before_is_left_clicked;
+};
+
+InputManager.prototype.isRightClickDown = function() {
+	return this._is_right_clicked;
+};
+
+InputManager.prototype.isRightClickPush = function() {
+	// not true if is pressed in previous frame
+	return this._is_right_clicked && !this._before_is_right_clicked;
+};
+
+InputManager.prototype.mousePositionPoint = function (scene) {
+	var x = this.mousePositionX();
+	var y = this.mousePositionY();
+
+	var point = new ObjectPoint(scene);
+	point.init();
+	point.setPosition(x, y);
+
+
+	return point;
+};
+
+InputManager.prototype.mouseScroll = function () {
+	return this._mouse_scroll;
+};
+
+InputManager.prototype.mousePositionX = function () {
+	return this._mouse_x;
+};
+
+InputManager.prototype.mousePositionY = function () {
+	return this._mouse_y;
+};
+
+InputManager.prototype.mouseMoveX = function () {
+	return this._mouse_change_x;
+};
+
+InputManager.prototype.mouseMoveY = function () {
+	return this._mouse_change_y;
+};
+
+InputManager.prototype._handleMouseDown = function(event) {
+	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+		this._is_left_clicked  = event.which === 1;
+		this._is_right_clicked = event.which === 3;
+	}
+	else if ("button" in event) {  // IE, Opera
+		this._is_left_clicked  = event.button === 1;
+		this._is_right_clicked = event.button === 2;
+	}
+	event.preventDefault();
+};
+InputManager.prototype._handleMouseUp = function(event) {
+	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+		this._is_left_clicked  = event.which === 1 ? false : this._is_left_clicked;
+		this._is_right_clicked = event.which === 3 ? false : this._is_right_clicked;
+	}
+	else if ("button" in event) {  // IE, Opera
+		this._is_left_clicked  = event.button === 1 ? false : this._is_left_clicked;
+		this._is_right_clicked = event.button === 2 ? false : this._is_right_clicked;
+	}
+	event.preventDefault();
+};
+
+InputManager.prototype._handleMouseMove = function (d) {
 	d = d ? d : window.event;
 	d.preventDefault();
 
@@ -247,54 +282,26 @@ InputManager.prototype.handleMouseMove = function (d) {
 	this._mouse_y = y;
 };
 
-InputManager.prototype.mousePositionPoint = function (scene) {
-	var x = this.mousePositionX();
-	var y = this.mousePositionY();
-
-	var point = new ObjectPoint(scene);
-	point.init();
-	point.setPosition(x, y);
-
-
-	return point;
-};
-
-InputManager.prototype.mousePositionX = function () {
-	return this._mouse_x;
-};
-InputManager.prototype.mousePositionY = function () {
-	return this._mouse_y;
-};
-InputManager.prototype.mouseMoveX = function () {
-	return this._mouse_change_x;
-};
-InputManager.prototype.mouseMoveY = function () {
-	return this._mouse_change_y;
-};
-InputManager.prototype.handleMouseWheel = function (event) {
+InputManager.prototype._handleMouseWheel = function (event) {
 	this._mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
 };
-InputManager.prototype.mouseScroll = function () {
-	return this._mouse_scroll;
-};
-
 
 /********************************************
  * touch
  ********************************************/
 
-InputManager.prototype.handleTouchDown = function(event) {
+InputManager.prototype._handleTouchDown = function(event) {
 	// treat as mouse event
 	this._is_left_clicked = true;
 	this.handleTouchMove(event);
 	event.preventDefault();
 };
-InputManager.prototype.handleTouchUp = function(event) {
+InputManager.prototype._handleTouchUp = function(event) {
 	// treat as mouse event
 	this._is_left_clicked = false;
 	event.preventDefault();
 };
-InputManager.prototype.handleTouchMove = function (event) {
+InputManager.prototype._handleTouchMove = function (event) {
 	event.preventDefault();
 
 	// get absolute coordinate position of canvas and adjust click position
@@ -314,7 +321,30 @@ InputManager.prototype.handleTouchMove = function (event) {
  * gamepad
  ********************************************/
 
-InputManager.prototype.handleGamePad = function() {
+// get one of the pressed button id
+InputManager.prototype.getAnyButtonId = function(){
+	if(!this._is_gamepad_usable) return;
+
+	var pads = window.navigator.getGamepads();
+	var pad = pads[0]; // 1Pコン
+
+	if(!pad) return;
+
+	for (var i = 0; i < pad.buttons.length; i++) {
+		if(pad.buttons[i].pressed) {
+			return i;
+		}
+	}
+};
+
+InputManager.prototype._getKeyByButtonId = function(button_id) {
+	var keys = this._button_id_to_key_bit_code[button_id];
+	if(!keys) keys = 0x00;
+
+	return keys;
+};
+
+InputManager.prototype._handleGamePad = function() {
 	if(!this._is_gamepad_usable) return;
 	var pads = window.navigator.getGamepads();
 	var pad = pads[0]; // 1P gamepad
@@ -325,10 +355,10 @@ InputManager.prototype.handleGamePad = function() {
 	for (var i = 0, len = pad.buttons.length; i < len; i++) {
 		if(!(i in this._button_id_to_key_bit_code)) continue; // ignore if I don't know its button
 		if(pad.buttons[i].pressed) { // pressed
-			this._current_keyflag |= this.getKeyByButtonId(i);
+			this._current_keyflag |= this._getKeyByButtonId(i);
 		}
 		else { // not pressed
-			this._current_keyflag &= ~this.getKeyByButtonId(i);
+			this._current_keyflag &= ~this._getKeyByButtonId(i);
 		}
 	}
 
@@ -356,28 +386,6 @@ InputManager.prototype.handleGamePad = function() {
 	}
 	else {
 			this._current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
-	}
-};
-InputManager.prototype.getKeyByButtonId = function(button_id) {
-	var keys = this._button_id_to_key_bit_code[button_id];
-	if(!keys) keys = 0x00;
-
-	return keys;
-};
-
-// get one of the pressed button id
-InputManager.prototype.getAnyButtonId = function(){
-	if(!this._is_gamepad_usable) return;
-
-	var pads = window.navigator.getGamepads();
-	var pad = pads[0]; // 1Pコン
-
-	if(!pad) return;
-
-	for (var i = 0; i < pad.buttons.length; i++) {
-		if(pad.buttons[i].pressed) {
-			return i;
-		}
 	}
 };
 /*
@@ -460,9 +468,5 @@ InputManager.prototype.dumpGamePadKey = function() {
 	console.log(dump);
 };
 */
-
-
-
-
 
 module.exports = InputManager;
