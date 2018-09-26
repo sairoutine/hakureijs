@@ -222,6 +222,7 @@ InputManager.prototype.mousePositionPoint = function (scene) {
 	return point;
 };
 
+// get values which the mouse wheel rolled
 InputManager.prototype.mouseScroll = function () {
 	return this._mouse_scroll;
 };
