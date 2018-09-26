@@ -294,7 +294,7 @@ InputManager.prototype._handleMouseWheel = function (event) {
 InputManager.prototype._handleTouchDown = function(event) {
 	// treat as mouse event
 	this._is_left_clicked = true;
-	this.handleTouchMove(event);
+	this._handleTouchMove(event);
 	event.preventDefault();
 };
 InputManager.prototype._handleTouchUp = function(event) {
