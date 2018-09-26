@@ -326,7 +326,7 @@ InputManager.prototype.getAnyButtonId = function(){
 	if(!this._is_gamepad_usable) return;
 
 	var pads = window.navigator.getGamepads();
-	var pad = pads[0]; // 1Pコン
+	var pad = pads[0]; // 1P controller
 
 	if(!pad) return;
 

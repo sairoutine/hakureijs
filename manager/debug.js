@@ -224,7 +224,7 @@ var base64toBlob = function(base64) {
 	for (var i = 0; i < data.length; i++) {
 		buf[i] = data.charCodeAt(i);
 	}
-	// blobデータを作成
+	// generate blob data
 	var blob = new Blob([buf], { type: mime });
 	return blob;
 };
