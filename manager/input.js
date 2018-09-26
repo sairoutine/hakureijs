@@ -13,43 +13,43 @@ var DEFAULT_BUTTON_ID_TO_BIT_CODE = {
 };
 
 var InputManager = function () {
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
+	this._current_keyflag = 0x0;
+	this._before_keyflag = 0x0;
 	this._key_bit_code_to_down_time = {};
 
 	// gamepad button_id to bit code of key input
 	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
 
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
+	this._is_left_clicked  = false;
+	this._is_right_clicked = false;
+	this._before_is_left_clicked  = false;
+	this._before_is_right_clicked = false;
+	this._mouse_change_x = 0;
+	this._mouse_change_y = 0;
+	this._mouse_x = 0;
+	this._mouse_y = 0;
+	this._mouse_scroll = 0;
 
 	this._is_gamepad_usable = false;
 };
 
 InputManager.prototype.init = function () {
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
+	this._current_keyflag = 0x0;
+	this._before_keyflag = 0x0;
 	this.initPressedKeyTime();
 
 	// gamepad button_id to bit code of key input
 	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
 
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
+	this._is_left_clicked  = false;
+	this._is_right_clicked = false;
+	this._before_is_left_clicked  = false;
+	this._before_is_right_clicked = false;
+	this._mouse_change_x = 0;
+	this._mouse_change_y = 0;
+	this._mouse_x = 0;
+	this._mouse_y = 0;
+	this._mouse_scroll = 0;
 };
 InputManager.prototype.beforeRun = function(){
 	// get gamepad input
@@ -61,14 +61,14 @@ InputManager.prototype.beforeRun = function(){
 
 InputManager.prototype.afterRun = function(){
 	// save key current pressed keys
-	this.before_keyflag = this.current_keyflag;
-	this.before_is_left_clicked = this.is_left_clicked;
-	this.before_is_right_clicked = this.is_right_clicked;
+	this._before_keyflag = this._current_keyflag;
+	this._before_is_left_clicked = this._is_left_clicked;
+	this._before_is_right_clicked = this._is_right_clicked;
 
 	// reset mouse wheel and mouse move
-	this.mouse_scroll = 0;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
+	this._mouse_scroll = 0;
+	this._mouse_change_x = 0;
+	this._mouse_change_y = 0;
 };
 
 InputManager.prototype.setupEvents = function(canvas_dom) {
@@ -117,18 +117,18 @@ InputManager.prototype.setupEvents = function(canvas_dom) {
  ********************************************/
 
 InputManager.prototype.handleKeyDown = function(e) {
-	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
+	this._current_keyflag |= this._keyCodeToBitCode(e.keyCode);
 	e.preventDefault();
 };
 InputManager.prototype.handleKeyUp = function(e) {
-	this.current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
+	this._current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
 	e.preventDefault();
 };
 InputManager.prototype.isKeyDown = function(flag) {
-	return((this.current_keyflag & flag) ? true : false);
+	return((this._current_keyflag & flag) ? true : false);
 };
 InputManager.prototype.isKeyPush = function(flag) {
-	return !(this.before_keyflag & flag) && this.current_keyflag & flag;
+	return !(this._before_keyflag & flag) && this._current_keyflag & flag;
 };
 
 
@@ -138,39 +138,39 @@ InputManager.prototype.getKeyDownTime = function(bit_code) {
 
 InputManager.prototype.handleMouseDown = function(event) {
 	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this.is_left_clicked  = event.which === 1;
-		this.is_right_clicked = event.which === 3;
+		this._is_left_clicked  = event.which === 1;
+		this._is_right_clicked = event.which === 3;
 	}
 	else if ("button" in event) {  // IE, Opera
-		this.is_left_clicked  = event.button === 1;
-		this.is_right_clicked = event.button === 2;
+		this._is_left_clicked  = event.button === 1;
+		this._is_right_clicked = event.button === 2;
 	}
 	event.preventDefault();
 };
 InputManager.prototype.handleMouseUp = function(event) {
 	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this.is_left_clicked  = event.which === 1 ? false : this.is_left_clicked;
-		this.is_right_clicked = event.which === 3 ? false : this.is_right_clicked;
+		this._is_left_clicked  = event.which === 1 ? false : this._is_left_clicked;
+		this._is_right_clicked = event.which === 3 ? false : this._is_right_clicked;
 	}
 	else if ("button" in event) {  // IE, Opera
-		this.is_left_clicked  = event.button === 1 ? false : this.is_left_clicked;
-		this.is_right_clicked = event.button === 2 ? false : this.is_right_clicked;
+		this._is_left_clicked  = event.button === 1 ? false : this._is_left_clicked;
+		this._is_right_clicked = event.button === 2 ? false : this._is_right_clicked;
 	}
 	event.preventDefault();
 };
 InputManager.prototype.isLeftClickDown = function() {
-	return this.is_left_clicked;
+	return this._is_left_clicked;
 };
 InputManager.prototype.isLeftClickPush = function() {
 	// not true if is pressed in previous frame
-	return this.is_left_clicked && !this.before_is_left_clicked;
+	return this._is_left_clicked && !this._before_is_left_clicked;
 };
 InputManager.prototype.isRightClickDown = function() {
-	return this.is_right_clicked;
+	return this._is_right_clicked;
 };
 InputManager.prototype.isRightClickPush = function() {
 	// not true if is pressed in previous frame
-	return this.is_right_clicked && !this.before_is_right_clicked;
+	return this._is_right_clicked && !this._before_is_right_clicked;
 };
 
 InputManager.prototype._keyCodeToBitCode = function(keyCode) {
@@ -241,10 +241,10 @@ InputManager.prototype.handleMouseMove = function (d) {
 	var x = d.clientX - rect.left;
 	var y = d.clientY - rect.top;
 
-	this.mouse_change_x = this.mouse_x - x;
-	this.mouse_change_y = this.mouse_y - y;
-	this.mouse_x = x;
-	this.mouse_y = y;
+	this._mouse_change_x = this._mouse_x - x;
+	this._mouse_change_y = this._mouse_y - y;
+	this._mouse_x = x;
+	this._mouse_y = y;
 };
 
 InputManager.prototype.mousePositionPoint = function (scene) {
@@ -260,22 +260,22 @@ InputManager.prototype.mousePositionPoint = function (scene) {
 };
 
 InputManager.prototype.mousePositionX = function () {
-	return this.mouse_x;
+	return this._mouse_x;
 };
 InputManager.prototype.mousePositionY = function () {
-	return this.mouse_y;
+	return this._mouse_y;
 };
 InputManager.prototype.mouseMoveX = function () {
-	return this.mouse_change_x;
+	return this._mouse_change_x;
 };
 InputManager.prototype.mouseMoveY = function () {
-	return this.mouse_change_y;
+	return this._mouse_change_y;
 };
 InputManager.prototype.handleMouseWheel = function (event) {
-	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
+	this._mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
 };
 InputManager.prototype.mouseScroll = function () {
-	return this.mouse_scroll;
+	return this._mouse_scroll;
 };
 
 
@@ -285,13 +285,13 @@ InputManager.prototype.mouseScroll = function () {
 
 InputManager.prototype.handleTouchDown = function(event) {
 	// treat as mouse event
-	this.is_left_clicked = true;
+	this._is_left_clicked = true;
 	this.handleTouchMove(event);
 	event.preventDefault();
 };
 InputManager.prototype.handleTouchUp = function(event) {
 	// treat as mouse event
-	this.is_left_clicked = false;
+	this._is_left_clicked = false;
 	event.preventDefault();
 };
 InputManager.prototype.handleTouchMove = function (event) {
@@ -304,10 +304,10 @@ InputManager.prototype.handleTouchMove = function (event) {
 	var x = event.changedTouches[0].clientX - rect.left;
 	var y = event.changedTouches[0].clientY - rect.top;
 
-	this.mouse_change_x = this.mouse_x - x;
-	this.mouse_change_y = this.mouse_y - y;
-	this.mouse_x = x;
-	this.mouse_y = y;
+	this._mouse_change_x = this._mouse_x - x;
+	this._mouse_change_y = this._mouse_y - y;
+	this._mouse_x = x;
+	this._mouse_y = y;
 };
 
 /********************************************
@@ -325,37 +325,37 @@ InputManager.prototype.handleGamePad = function() {
 	for (var i = 0, len = pad.buttons.length; i < len; i++) {
 		if(!(i in this._button_id_to_key_bit_code)) continue; // ignore if I don't know its button
 		if(pad.buttons[i].pressed) { // pressed
-			this.current_keyflag |= this.getKeyByButtonId(i);
+			this._current_keyflag |= this.getKeyByButtonId(i);
 		}
 		else { // not pressed
-			this.current_keyflag &= ~this.getKeyByButtonId(i);
+			this._current_keyflag &= ~this.getKeyByButtonId(i);
 		}
 	}
 
 	// analog stick to arrow keys
 	if (pad.axes[1] < -0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_UP;
+			this._current_keyflag |= CONSTANT.BUTTON_UP;
 	}
 	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_UP;
+			this._current_keyflag &= ~CONSTANT.BUTTON_UP;
 	}
 	if (pad.axes[1] > 0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_DOWN;
+			this._current_keyflag |= CONSTANT.BUTTON_DOWN;
 	}
 	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_DOWN;
+			this._current_keyflag &= ~CONSTANT.BUTTON_DOWN;
 	}
 	if (pad.axes[0] < -0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_LEFT;
+			this._current_keyflag |= CONSTANT.BUTTON_LEFT;
 	}
 	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_LEFT;
+			this._current_keyflag &= ~CONSTANT.BUTTON_LEFT;
 	}
 	if (pad.axes[0] > 0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_RIGHT;
+			this._current_keyflag |= CONSTANT.BUTTON_RIGHT;
 	}
 	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
+			this._current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
 	}
 };
 InputManager.prototype.getKeyByButtonId = function(button_id) {
