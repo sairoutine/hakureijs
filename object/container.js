@@ -96,12 +96,12 @@ Container.prototype.checkCollisionWithObject = function(obj1) {
 	return is_collision;
 };
 
-Container.prototype.checkCollisionWithManager = function(manager) {
+Container.prototype.checkCollisionWithContainer = function(container) {
 	for(var obj1_id in this.objects) {
-		for(var obj2_id in manager.objects) {
-			if(this.objects[obj1_id].checkCollision(manager.objects[obj2_id])) {
+		for(var obj2_id in container.objects) {
+			if(this.objects[obj1_id].checkCollision(container.objects[obj2_id])) {
 				var obj1 = this.objects[obj1_id];
-				var obj2 = manager.objects[obj2_id];
+				var obj2 = container.objects[obj2_id];
 
 				obj1.onCollision(obj2);
 				obj2.onCollision(obj1);
