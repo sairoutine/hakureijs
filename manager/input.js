@@ -166,7 +166,7 @@ InputManager.prototype._setPressedKeyTime = function() {
 	for (var button_id in CONSTANT) {
 		var bit_code = CONSTANT[button_id];
 		if (this.isKeyDown(bit_code)) {
-			this._key_bit_code_to_down_time[bit_code]++;
+			++this._key_bit_code_to_down_time[bit_code];
 		}
 		else {
 			this._key_bit_code_to_down_time[bit_code] = 0;
