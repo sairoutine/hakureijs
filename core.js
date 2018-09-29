@@ -167,11 +167,7 @@ Core.prototype.clearCanvas = function() {
 
 		// This code equals `this.ctx.clearRect(0, 0, this.width, this.height);`
 		// NOTE: This hack has better performance.
-		this.canvas_dom.width = 0;
-		this.canvas_dom.height = 0;
-		this.canvas_dom.width = this.width;
-		this.canvas_dom.height = this.height;
-
+		this.canvas_dom.width = this.canvas_dom.width;
 	}
 	else if (this.is3D()) {
 		// 3D
