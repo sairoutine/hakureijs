@@ -420,8 +420,8 @@ ObjectBase.prototype.moveBack = function() {
 ObjectBase.prototype.isOutOfStage = function( ) {
 	if(this.x() + EXTRA_OUT_OF_SIZE < 0 ||
 	   this.y() + EXTRA_OUT_OF_SIZE < 0 ||
-	   this.x() > this.core.width  + EXTRA_OUT_OF_SIZE ||
-	   this.y() > this.core.height + EXTRA_OUT_OF_SIZE
+	   this.x() > this.scene.width  + EXTRA_OUT_OF_SIZE ||
+	   this.y() > this.scene.height + EXTRA_OUT_OF_SIZE
 	  ) {
 		return true;
 	}
