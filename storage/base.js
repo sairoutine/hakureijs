@@ -103,7 +103,8 @@ StorageBase._localFileName = function(key) {
 };
 
 StorageBase._localFilePath = function(key) {
-	return this._localFileDirectoryPath() + this._localFileName(key);
+	var path = window.require('path');
+	return path.join(this._localFileDirectoryPath(), this._localFileName(key));
 };
 
 StorageBase.prototype._saveToWebStorage = function() {
