@@ -130,7 +130,7 @@ StorageBase.prototype.reload = function() {
 		data = Klass._loadFromWebStorage();
 	}
 
-	this._data = data;
+	this._data = data || {};
 };
 
 StorageBase.load = function() {
