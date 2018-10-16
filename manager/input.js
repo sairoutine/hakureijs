@@ -34,6 +34,9 @@ var InputManager = function () {
 	this._before_is_touch_map = {};
 	this._first_touch_id = null;
 
+	this._click_position_width_ratio = 1;
+	this._click_position_height_ratio = 1;
+
 	this._is_gamepad_usable = false;
 };
 
@@ -58,6 +61,9 @@ InputManager.prototype.init = function () {
 	this._touch_infos = {};
 	this._before_is_touch_map = {};
 	this._first_touch_id = null;
+
+	this._click_position_width_ratio = 1;
+	this._click_position_height_ratio = 1;
 };
 InputManager.prototype.beforeRun = function(){
 	// get gamepad input
@@ -298,8 +304,8 @@ InputManager.prototype._handleMouseMove = function (d) {
 	// because clientX and clientY return the position from the document.
 	var rect = d.target.getBoundingClientRect();
 
-	var x = d.clientX - rect.left;
-	var y = d.clientY - rect.top;
+	var x = (d.clientX - rect.left) * this._click_position_width_ratio;
+	var y = (d.clientY - rect.top)  * this._click_position_height_ratio;
 
 	this._mouse_change_x = this._mouse_x - x;
 	this._mouse_change_y = this._mouse_y - y;
@@ -388,9 +394,8 @@ InputManager.prototype._handleTouchDown = function(ev) {
 		var touch = touches[i];
 		var id = touch.identifier;
 
-		var x = touch.clientX - rect.left;
-		var y = touch.clientY - rect.top;
-
+		var x = (touch.clientX - rect.left) * this._click_position_width_ratio;
+		var y = (touch.clientY - rect.top)  * this._click_position_height_ratio;
 		// add touch info
 		this._touch_infos[id] = {
 			x: x,
@@ -621,4 +626,9 @@ InputManager.prototype.dumpGamePadKey = function() {
 };
 */
 
+// called by core class
+InputManager.prototype.scaleClickPosition = function (width, height) {
+	this._click_position_width_ratio  = width;
+	this._click_position_height_ratio = height;
+};
 module.exports = InputManager;

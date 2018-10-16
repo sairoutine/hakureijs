@@ -68,6 +68,9 @@ var Core = function(canvas, options) {
 	this._cursor_image_name = null;
 	this._default_cursor_image_name = null;
 
+	// window.onresize is fired?
+	this._is_resize_fired = false;
+
 	this.frame_count = 0;
 
 	this.request_id = null;
@@ -80,6 +83,9 @@ var Core = function(canvas, options) {
 	this.save_manager.addClass("scenario", StorageScenario);
 };
 Core.prototype.init = function () {
+	// window.onresize is fired?
+	this._is_resize_fired = false;
+
 	this.frame_count = 0;
 
 	this.request_id = null;
@@ -157,6 +163,10 @@ Core.prototype.run = function(){
 
 	this.debug_manager.afterRun();
 	this.input_manager.afterRun();
+
+	if(this._is_resize_fired) {
+		this._fullsize();
+	}
 
 	// tick
 	this.request_id = requestAnimationFrame(Util.bind(this.run, this));
@@ -306,6 +316,44 @@ Core.prototype._setupError = function() {
 	};
 };
 
+
+Core.prototype.fullsize = function() {
+	var self = this;
+	window.onresize = function (e) {
+		self._is_resize_fired = true;
+	};
+
+	this._fullsize();
+};
+Core.prototype._fullsize = function() {
+
+	var window_aspect = window.innerWidth / window.innerHeight; // canvas aspect
+	var canvas_aspect = this.width / this.height; // video aspect
+	var left, top, width, height;
+
+	if(canvas_aspect >= window_aspect) { // video width is larger than it's height
+		width = window.innerWidth;
+		height = window.innerWidth / canvas_aspect;
+		top = (window.innerHeight - height) / 2;
+		left = 0;
+	}
+	else { // video height is larger than it's width
+		height = window.innerHeight;
+		width = window.innerHeight * canvas_aspect;
+		top = 0;
+		left = (window.innerWidth - width) / 2;
+	}
+
+	var width_ratio = this.width/width;
+	var height_ratio = this.height/height;
+
+	var mainCanvas = this.canvas_dom;
+	mainCanvas.style.left   = left   + "px";
+	mainCanvas.style.top    = top    + "px";
+	mainCanvas.style.width  = width  + "px";
+	mainCanvas.style.height = height + "px";
+	this.input_manager.scaleClickPosition(width_ratio, height_ratio);
+};
 
 Core.prototype.showError = function(msg, file, line, column, err) {
 	this.clearCanvas();
