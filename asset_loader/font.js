@@ -61,7 +61,7 @@ FontLoader.prototype.setupEvents = function() {
 		self._isLoadedDone = true;
 		self._loadedFonts  = null;
 	}
-	};
+};
 
 // check if it's enable to use document.fonts.ready
 var _canUseCssFontLoading = window.document && window.document.fonts && window.document.fonts.ready && document.fonts.ready.then;
@@ -96,21 +96,21 @@ FontLoader.prototype.isLoaded = function(name) {
 };
 
 FontLoader.prototype.checkFontLoaded = function(name) {
-    if (this.canUseCssFontLoading()) {
+	if (this.canUseCssFontLoading()) {
 		return window.document.fonts.check('10px "'+name+'"');
-    } else {
-        if (!this._hiddenCanvas) {
-            this._hiddenCanvas = window.document.createElement('canvas');
-        }
-        var context = this._hiddenCanvas.getContext('2d');
-        var text = 'abcdefghijklmnopqrstuvwxyz';
-        var width1, width2;
-        context.font = '40px ' + name + ', sans-serif';
-        width1 = context.measureText(text).width;
-        context.font = '40px sans-serif';
-        width2 = context.measureText(text).width;
-        return width1 !== width2;
-    }
+	} else {
+		if (!this._hiddenCanvas) {
+			this._hiddenCanvas = window.document.createElement('canvas');
+		}
+		var context = this._hiddenCanvas.getContext('2d');
+		var text = 'abcdefghijklmnopqrstuvwxyz';
+		var width1, width2;
+		context.font = '40px ' + name + ', sans-serif';
+		width1 = context.measureText(text).width;
+		context.font = '40px sans-serif';
+		width2 = context.measureText(text).width;
+		return width1 !== width2;
+	}
 };
 
 FontLoader.prototype.loadFont = function(name, url, format) {
@@ -127,13 +127,13 @@ FontLoader.prototype.loadFont = function(name, url, format) {
 };
 
 FontLoader.prototype._createFontFaceStyle = function(name, url, format) {
-    var head = window.document.getElementsByTagName('head');
+	var head = window.document.getElementsByTagName('head');
 
 	if (!head) {
 		throw new Error ("Fontloader class needs head tag in html file.");
 	}
 
-    var rule;
+	var rule;
 	if (typeof format !== "undefined") {
 		rule = '@font-face { font-family: "' + name + '"; src: url("' + url + '") format("' + format + '"); }';
 	}
@@ -141,27 +141,27 @@ FontLoader.prototype._createFontFaceStyle = function(name, url, format) {
 		rule = '@font-face { font-family: "' + name + '"; src: url("' + url + '"); }';
 	}
 
-    var style = window.document.createElement('style');
-    style.type = 'text/css';
-    head.item(0).appendChild(style);
-    style.sheet.insertRule(rule, 0);
+	var style = window.document.createElement('style');
+	style.type = 'text/css';
+	head.item(0).appendChild(style);
+	style.sheet.insertRule(rule, 0);
 };
 
 // fonts set by @font-face is loaded by while using it.
 FontLoader.prototype._createFontLoadingDOM = function(name) {
-    var div = window.document.createElement('div');
-    var text = window.document.createTextNode('.');
-    div.style.fontFamily = name;
-    div.style.fontSize = '0px';
-    div.style.color = 'transparent';
-    div.style.position = 'absolute';
-    div.style.margin = 'auto';
-    div.style.top = '0px';
-    div.style.left = '0px';
-    div.style.width = '1px';
-    div.style.height = '1px';
-    div.appendChild(text);
-    window.document.body.appendChild(div);
+	var div = window.document.createElement('div');
+	var text = window.document.createTextNode('.');
+	div.style.fontFamily = name;
+	div.style.fontSize = '0px';
+	div.style.color = 'transparent';
+	div.style.position = 'absolute';
+	div.style.margin = 'auto';
+	div.style.top = '0px';
+	div.style.left = '0px';
+	div.style.width = '1px';
+	div.style.height = '1px';
+	div.appendChild(text);
+	window.document.body.appendChild(div);
 };
 
 

@@ -183,30 +183,30 @@ InputManager.prototype._setPressedKeyTime = function() {
 InputManager.prototype._keyCodeToBitCode = function(keyCode) {
 	var flag;
 	switch(keyCode) {
-		case 16: // shift
-			flag = CONSTANT.BUTTON_SHIFT;
-			break;
-		case 32: // space
-			flag = CONSTANT.BUTTON_SPACE;
-			break;
-		case 37: // left
-			flag = CONSTANT.BUTTON_LEFT;
-			break;
-		case 38: // up
-			flag = CONSTANT.BUTTON_UP;
-			break;
-		case 39: // right
-			flag = CONSTANT.BUTTON_RIGHT;
-			break;
-		case 40: // down
-			flag = CONSTANT.BUTTON_DOWN;
-			break;
-		case 88: // x
-			flag = CONSTANT.BUTTON_X;
-			break;
-		case 90: // z
-			flag = CONSTANT.BUTTON_Z;
-			break;
+	case 16: // shift
+		flag = CONSTANT.BUTTON_SHIFT;
+		break;
+	case 32: // space
+		flag = CONSTANT.BUTTON_SPACE;
+		break;
+	case 37: // left
+		flag = CONSTANT.BUTTON_LEFT;
+		break;
+	case 38: // up
+		flag = CONSTANT.BUTTON_UP;
+		break;
+	case 39: // right
+		flag = CONSTANT.BUTTON_RIGHT;
+		break;
+	case 40: // down
+		flag = CONSTANT.BUTTON_DOWN;
+		break;
+	case 88: // x
+		flag = CONSTANT.BUTTON_X;
+		break;
+	case 90: // z
+		flag = CONSTANT.BUTTON_Z;
+		break;
 	}
 	return flag;
 };
@@ -521,28 +521,28 @@ InputManager.prototype._handleGamePad = function() {
 
 	// analog stick to arrow keys
 	if (pad.axes[1] < -0.5) {
-			this._current_keyflag |= CONSTANT.BUTTON_UP;
+		this._current_keyflag |= CONSTANT.BUTTON_UP;
 	}
 	else {
-			this._current_keyflag &= ~CONSTANT.BUTTON_UP;
+		this._current_keyflag &= ~CONSTANT.BUTTON_UP;
 	}
 	if (pad.axes[1] > 0.5) {
-			this._current_keyflag |= CONSTANT.BUTTON_DOWN;
+		this._current_keyflag |= CONSTANT.BUTTON_DOWN;
 	}
 	else {
-			this._current_keyflag &= ~CONSTANT.BUTTON_DOWN;
+		this._current_keyflag &= ~CONSTANT.BUTTON_DOWN;
 	}
 	if (pad.axes[0] < -0.5) {
-			this._current_keyflag |= CONSTANT.BUTTON_LEFT;
+		this._current_keyflag |= CONSTANT.BUTTON_LEFT;
 	}
 	else {
-			this._current_keyflag &= ~CONSTANT.BUTTON_LEFT;
+		this._current_keyflag &= ~CONSTANT.BUTTON_LEFT;
 	}
 	if (pad.axes[0] > 0.5) {
-			this._current_keyflag |= CONSTANT.BUTTON_RIGHT;
+		this._current_keyflag |= CONSTANT.BUTTON_RIGHT;
 	}
 	else {
-			this._current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
+		this._current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
 	}
 };
 /*

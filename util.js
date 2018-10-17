@@ -118,12 +118,12 @@ var Util = {
 		}
 
 		var aArgs   = Array.prototype.slice.call(arguments, 1),
-		fToBind = func,
-		FNOP    = function() {},
-		fBound  = function() {
-			return fToBind.apply(func instanceof FNOP ? func : oThis,
-				aArgs.concat(Array.prototype.slice.call(arguments)));
-		};
+			fToBind = func,
+			FNOP    = function() {},
+			fBound  = function() {
+				return fToBind.apply(func instanceof FNOP ? func : oThis,
+					aArgs.concat(Array.prototype.slice.call(arguments)));
+			};
 
 		if (func.prototype) {
 			// Function.prototype doesn't have a prototype property

@@ -31,7 +31,7 @@ MasterDAOGenerator.exec = function (type_info, option) {
 
 	// properties
 	for (var method_name in type_info) {
-		var type = type_info[method_name];
+		// var type = type_info[method_name];
 
 		// create property
 		(function (method_name) {

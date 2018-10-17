@@ -9,7 +9,7 @@ var ScenarioManager = require('../../manager/scenario');
 
 describe('ScenarioManager', function() {
 	var core, scenario;
-    before(function() {
+	before(function() {
 		// canvas mock
 		var canvas = dom.window.document.createElement("canvas");
 		canvasMockify(canvas);
@@ -23,15 +23,15 @@ describe('ScenarioManager', function() {
 		scenario._stopPrintLetter();
 	});
 
-    describe('#init()', function() {
+	describe('#init()', function() {
 		var script = [];
-        it('does not occur error', function(done) {
+		it('does not occur error', function(done) {
 			scenario.init(script);
 			done();
 		});
 	});
 
-    describe('#start()', function() {
+	describe('#start()', function() {
 		var script = [
 			{"chara": "chara1", "serif": "セリフ1"},
 			{"chara": "chara2", "serif": "セリフ2"}
@@ -41,19 +41,19 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('should start at first serif script', function() {
+		it('should start at first serif script', function() {
 			scenario.start();
 			assert(scenario.getCurrentCharaNameByPosition() === "chara1");
 		});
 
-        it('should start serif script by arguments', function() {
+		it('should start serif script by arguments', function() {
 			scenario.start(1);
 			assert(scenario.getCurrentCharaNameByPosition() === "chara2");
 		});
 
 	});
 
-    describe('#next(), isStart(), isEnd()', function() {
+	describe('#next(), isStart(), isEnd()', function() {
 		var script = [
 			{"chara": "chara1", "serif": "セリフ1"},
 			{"chara": "chara2", "serif": "セリフ2"}
@@ -63,7 +63,7 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('check whether is start and end correctly', function() {
+		it('check whether is start and end correctly', function() {
 			assert(scenario.isStart() === false);
 			assert(scenario.isEnd()   === false);
 			scenario.start();
@@ -71,7 +71,7 @@ describe('ScenarioManager', function() {
 			assert(scenario.isEnd()   === false);
 		});
 
-        it('should go next', function() {
+		it('should go next', function() {
 			scenario.next();
 			assert(scenario.getCurrentCharaNameByPosition() === "chara2");
 
@@ -80,7 +80,7 @@ describe('ScenarioManager', function() {
 		});
 	});
 
-    describe('printLetter', function() {
+	describe('printLetter', function() {
 		var script = [
 			{"chara": "chara1", "serif": "セリフ1"},
 			{"chara": "chara2", "serif": "セリフ2"}
@@ -91,7 +91,7 @@ describe('ScenarioManager', function() {
 			scenario.removeEvent("printend");
 		});
 
-        it('starts and finishes to print letter', function(done) {
+		it('starts and finishes to print letter', function(done) {
 			scenario.on("printend", function() {
 				assert(scenario.isPrintLetterEnd() === true);
 
@@ -102,7 +102,7 @@ describe('ScenarioManager', function() {
 			assert(scenario.isPrintLetterEnd() === false);
 		});
 
-        it('starts and finishes to print letter twice', function(done) {
+		it('starts and finishes to print letter twice', function(done) {
 			var count = 0;
 			scenario.on("printend", function() {
 				count++;
@@ -119,7 +119,7 @@ describe('ScenarioManager', function() {
 			scenario.start();
 		});
 
-        it('is enable to pause and resume to print letter', function(done) {
+		it('is enable to pause and resume to print letter', function(done) {
 			scenario.on("printend", function() {
 				done();
 			});
@@ -132,7 +132,7 @@ describe('ScenarioManager', function() {
 
 	});
 
-    describe('current serif status', function() {
+	describe('current serif status', function() {
 		var script = [
 			{"id": "epilogue-0", "type": "serif", "pos":"right","chara":"reimu","exp":"normal2", "serif":"ってあれ？　この辺に筆を落としたはずなんだけれど……"},
 			{"id": "epilogue-1", "type": "serif", "pos":"left","chara":"yukari","exp":"normal1","background":"epilogue3","save": false, "serif":"――ったく、貴女は昔から何も変わってないのね", "junction": ["そうね", "そんなことない"], "option": {"font_color": "#8b5fbf", "fukidashi": "normal"}}
@@ -143,7 +143,7 @@ describe('ScenarioManager', function() {
 			scenario.removeEvent("printend");
 		});
 
-        it('returns correct serif', function(done) {
+		it('returns correct serif', function(done) {
 			scenario.on("printend", function() {
 				assert.deepEqual(scenario.getCurrentPrintedSentences(), ["――ったく、貴女は昔から何も変わってないのね"]);
 				assert(scenario.getCurrentBackgroundImageName() === "epilogue3");
@@ -168,7 +168,7 @@ describe('ScenarioManager', function() {
 		});
 	});
 
-    describe('#isBackgroundChanged()', function() {
+	describe('#isBackgroundChanged()', function() {
 		var script = [
 			{"chara": "chara1", "serif": "セリフ", "background": "test1"},
 			{"chara": "chara1", "serif": "セリフ", "background": "test2"},
@@ -180,7 +180,7 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('returns background flag correctly', function() {
+		it('returns background flag correctly', function() {
 			scenario.start();
 			assert(scenario.isBackgroundChanged() === true);
 			scenario.next();
@@ -192,7 +192,7 @@ describe('ScenarioManager', function() {
 		});
 	});
 
-    describe('junction', function() {
+	describe('junction', function() {
 		var script = [
 			{"type": "serif","chara": "chara", "serif": "セリフ", "junction": ["分岐0へ", "分岐1へ"]},
 			{"type": "junction_serif", "serifs": [
@@ -212,7 +212,7 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('change serif correctly', function() {
+		it('change serif correctly', function() {
 			scenario.start();
 			scenario.next(1);
 			assert(scenario.getCurrentCharaNameByPosition() === "1-1-chara");
@@ -223,7 +223,7 @@ describe('ScenarioManager', function() {
 		});
 	});
 
-    describe('criteria', function() {
+	describe('criteria', function() {
 		var script = [
 			{"type": "serif","chara": "chara", "serif": "セリフ"},
 			{"type": "criteria_serif", "criteria": "criteria1", "arguments": [100], "serifs": [
@@ -294,7 +294,7 @@ describe('ScenarioManager', function() {
 			scenario._stopPrintLetter();
 		});
 
-        it('change serif correctly', function() {
+		it('change serif correctly', function() {
 			scenario.start();
 			scenario.next();
 			assert(scenario.getCurrentCharaNameByPosition() === "1-1-chara");
@@ -309,7 +309,7 @@ describe('ScenarioManager', function() {
 		});
 	});
 
-    describe('serif script save flag', function() {
+	describe('serif script save flag', function() {
 		var script = [
 			{"id": "test-1", "chara": "chara1", "serif": "セリフ", save: true},
 			{"id": "test-2", "chara": "chara1", "serif": "セリフ", save: false},
@@ -319,7 +319,7 @@ describe('ScenarioManager', function() {
 			scenario.init(script);
 		});
 
-        it('saves correct flag', function() {
+		it('saves correct flag', function() {
 			scenario.start();
 			scenario.next();
 

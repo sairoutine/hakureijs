@@ -39,22 +39,22 @@ ObjectUISpinner.prototype.draw = function() {
 
 	var ctx = this.core.ctx;
 
-    var rotation = Math.floor(this.frame_count / 60 * LINES) / LINES;
-    ctx.save();
-    ctx.translate(this.x(), this.y());
-    ctx.rotate(Math.PI * 2 * rotation);
-    for (var i = 0; i < LINES; i++) {
+	var rotation = Math.floor(this.frame_count / 60 * LINES) / LINES;
+	ctx.save();
+	ctx.translate(this.x(), this.y());
+	ctx.rotate(Math.PI * 2 * rotation);
+	for (var i = 0; i < LINES; i++) {
 
-        ctx.beginPath();
-        ctx.rotate(Math.PI * 2 / LINES);
-        ctx.moveTo(this.size() / 10, 0);
-        ctx.lineTo(this.size() / 4, 0);
-        ctx.lineWidth = this.size() / 30;
+		ctx.beginPath();
+		ctx.rotate(Math.PI * 2 / LINES);
+		ctx.moveTo(this.size() / 10, 0);
+		ctx.lineTo(this.size() / 4, 0);
+		ctx.lineWidth = this.size() / 30;
 		ctx.globalAlpha = i / LINES;
-        ctx.strokeStyle = this.color();
-        ctx.stroke();
-    }
-    ctx.restore();
+		ctx.strokeStyle = this.color();
+		ctx.stroke();
+	}
+	ctx.restore();
 	BaseObjectUI.prototype.draw.apply(this, arguments);
 };
 

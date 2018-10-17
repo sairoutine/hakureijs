@@ -1,5 +1,4 @@
 'use strict';
-var glmat = require("gl-matrix");
 
 var ShaderProgram = function(
 	gl,
