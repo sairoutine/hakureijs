@@ -416,7 +416,6 @@ ObjectBase.prototype.moveBack = function() {
 *******************************
 */
 
-// TODO: this.core -> this.scene
 ObjectBase.prototype.isOutOfStage = function( ) {
 	if(this.x() + EXTRA_OUT_OF_SIZE < 0 ||
 	   this.y() + EXTRA_OUT_OF_SIZE < 0 ||
