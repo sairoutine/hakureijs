@@ -69,7 +69,7 @@ ObjectBase.prototype.beforeDraw = function(){
 	}
 
 	// move if this object is set velocity
-	this._move();
+	this.moveByVelocity(this._velocity);
 };
 
 ObjectBase.prototype.draw = function() {
@@ -367,6 +367,22 @@ ObjectBase.prototype._checkAutoDisableFlags = function() {
 *******************************
 */
 
+ObjectBase.prototype.moveByVelocity = function(velocity) {
+	if (this._velocity.magnitude === 0) {
+		return;
+	}
+
+	var x = Util.calcMoveXByVelocity(velocity);
+	var y = Util.calcMoveYByVelocity(velocity);
+
+	// save previous (x,y)
+	this._previous_x = this._x;
+	this._previous_y = this._y;
+
+	this._x += x;
+	this._y += y;
+};
+
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this._velocity = velocity;
 };
@@ -381,20 +397,6 @@ ObjectBase.prototype.setVelocityMagnitude = function(magnitude) {
 
 ObjectBase.prototype.setVelocityTheta = function(theta) {
 	this._velocity.theta = theta;
-};
-
-// move if this object is set velocity
-// TODO: doesn't move if the object's velocity magnitude is 0
-ObjectBase.prototype._move = function() {
-	var x = Util.calcMoveXByVelocity(this._velocity);
-	var y = Util.calcMoveYByVelocity(this._velocity);
-
-	// save previous (x,y)
-	this._previous_x = this._x;
-	this._previous_y = this._y;
-
-	this._x += x;
-	this._y += y;
 };
 
 ObjectBase.prototype.moveBack = function() {
