@@ -15,6 +15,10 @@ InputManager.prototype.isLeftClickPush = function() {
 	return this._is_left_clicked && !this._before_is_left_clicked;
 };
 
+InputManager.prototype.isLeftClickRelease = function() {
+	return !this._is_left_clicked && this._before_is_left_clicked;
+};
+
 InputManager.prototype.isRightClickDown = function() {
 	return this._is_right_clicked;
 };
@@ -22,6 +26,10 @@ InputManager.prototype.isRightClickDown = function() {
 InputManager.prototype.isRightClickPush = function() {
 	// not true if is pressed in previous frame
 	return this._is_right_clicked && !this._before_is_right_clicked;
+};
+
+InputManager.prototype.isRightClickRelease = function() {
+	return !this._is_right_clicked && this._before_is_right_clicked;
 };
 
 InputManager.prototype.mousePositionPoint = function (scene) {

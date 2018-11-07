@@ -15,6 +15,10 @@ InputManager.prototype.isKeyPush = function(flag) {
 	return !(this._before_keyflag & flag) && this._current_keyflag & flag;
 };
 
+InputManager.prototype.isKeyRelease = function(flag) {
+	return (this._before_keyflag & flag) && !(this._current_keyflag & flag);
+};
+
 InputManager.prototype.getKeyDownTime = function(bit_code) {
 	return this._key_bit_code_to_down_time[bit_code];
 };

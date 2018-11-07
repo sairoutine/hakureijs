@@ -21,6 +21,10 @@ Touch.prototype.isTap = function() {
 	return this.isTouching() && !this._input_manager._before_is_touch_map[this._id];
 };
 
+Touch.prototype.isTouchRelease = function() {
+	return !this.isTouching() && this._input_manager._before_is_touch_map[this._id];
+};
+
 Touch.prototype.positionPoint = function (scene) {
 	var x = this.x();
 	var y = this.y();
