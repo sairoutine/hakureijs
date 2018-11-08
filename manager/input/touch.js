@@ -7,35 +7,85 @@ var InputManager = require("./_index");
  * touch
  ********************************************/
 
-InputManager.prototype.getAnyTouch = function() {
-	if(this._first_touch_id === null) {
-		return new Touch(this, -1);
+InputManager.prototype.getTouch = function(idx) {
+	if(idx > this._touch_ids.length - 1) {
+		// idx's touch has not been touched yet.
+		return this._nullTouch();
 	}
 
-	return new Touch(this, this._first_touch_id);
+	var id = this._touch_ids[idx];
+	return new Touch(this, id);
 };
+
 InputManager.prototype.getTouchList = function() {
 	var touches = [];
-	for(var id in this._touch_infos) {
+	for(var i = 0, len = this._touch_ids.length; i < len; i++) {
+		var id = this._touch_ids[i];
 		touches.push(new Touch(this, id));
+	}
+
+	return touches;
+
+};
+
+InputManager.prototype.getAllTouchList = function() {
+	var touches = [];
+	for(var i = 0, len = this._touch_ids.length; i < len; i++) {
+		var id = this._touch_ids[i];
+
+		// Currently touched only
+		if (id in this._is_touched_map) {
+			touches.push(new Touch(this, id));
+		}
 	}
 
 	return touches;
 };
 
+InputManager.prototype._nullTouch = function() {
+	return new Touch(this, -1);
+};
+
 InputManager.prototype._handleTouchDown = function(ev) {
-	// get absolute coordinate position of canvas and adjust click position
+	ev.preventDefault();
+
+	// Get absolute coordinate position of canvas and adjust click position
 	// because clientX and clientY return the position from the document.
-	var rect = event.target.getBoundingClientRect();
+	var rect = ev.target.getBoundingClientRect();
 
 	var touches = ev.changedTouches;
 	for (var i = 0, len = touches.length; i < len; i++) {
 		var touch = touches[i];
 		var id = touch.identifier;
 
+		// Replace released old id with new id
+		(function (_this, origin_id) {
+			var idx = null;
+			for(var i = 0, len = _this._touch_ids.length; i < len; i++) {
+				var id = _this._touch_ids[i];
+
+				if (!(id in _this._is_touched_map)) {
+					idx = i;
+					break;
+				}
+			}
+
+			if (idx === null) {
+				// Because there are no replacable id, so expand _touch_ids array.
+				idx = _this._touch_ids.length;
+			}
+			else {
+				// If succeeded to replace old id, also delete touch object.
+				delete _this._touch_infos[ _this._touch_ids[idx] ];
+			}
+
+			_this._touch_ids[idx] = origin_id;
+		})(this, id);
+
 		var x = (touch.clientX - rect.left) * this._click_position_width_ratio;
 		var y = (touch.clientY - rect.top)  * this._click_position_height_ratio;
-		// add touch info
+
+		// Add touch info
 		this._touch_infos[id] = {
 			x: x,
 			y: y,
@@ -43,65 +93,53 @@ InputManager.prototype._handleTouchDown = function(ev) {
 			change_y: 0,
 		};
 
-		if(this._first_touch_id === null) {
-			// treat only first touch as mouse click
-			this._first_touch_id = id;
-
-			// treat touch as mouse click
-			this._is_left_clicked = true;
-		}
+		// Set touch flag true
+		this._is_touched_map[id] = true;
 	}
-
-	event.preventDefault();
 };
 InputManager.prototype._handleTouchUp = function(ev) {
-	var touches = ev.changedTouches;
+	ev.preventDefault();
 
+	var touches = ev.changedTouches;
 	for (var i = 0, len = touches.length; i < len; i++) {
 		var touch = touches[i];
 		var id = touch.identifier;
 
-		// delete touch info
-		if(id in this._touch_infos) {
-			delete this._touch_infos[id];
-
-			if(this._first_touch_id === id) {
-				this._first_touch_id = null;
-
-				// treat touch as mouse click
-				this._is_left_clicked = false;
-			}
-		}
+		// Set touch flag false
+		delete this._is_touched_map[id];
 	}
 
-	event.preventDefault();
 };
 InputManager.prototype._handleTouchMove = function (ev) {
+	ev.preventDefault();
+
 	// get absolute coordinate position of canvas and adjust click position
 	// because clientX and clientY return the position from the document.
-	var rect = event.target.getBoundingClientRect();
+	var rect = ev.target.getBoundingClientRect();
 
 	var touches = ev.changedTouches;
 	for (var i = 0, len = touches.length; i < len; i++) {
 		var touch = touches[i];
 		var id = touch.identifier;
 
-		// update touch info
-		if(id in this._touch_infos) {
-			var x = touch.clientX - rect.left;
-			var y = touch.clientY - rect.top;
-			var touch_info = this._touch_infos[id];
-
-			touch_info.change_x = touch_info.x - x;
-			touch_info.change_y = touch_info.y - y;
-			touch_info.x = x;
-			touch_info.y = y;
+		if(!(id in this._touch_infos)) {
+			// Assumes that no one comes here.
+			continue;
 		}
-	}
 
-	event.preventDefault();
+		// Update touch info
+		var x = touch.clientX - rect.left;
+		var y = touch.clientY - rect.top;
+		var touch_info = this._touch_infos[id];
+
+		touch_info.change_x = touch_info.x - x;
+		touch_info.change_y = touch_info.y - y;
+		touch_info.x = x;
+		touch_info.y = y;
+	}
 };
 
+/*
 InputManager.prototype._setTouchAsMouse = function(){
 	if (this._first_touch_id !== null) {
 		// update mouse info
@@ -112,23 +150,28 @@ InputManager.prototype._setTouchAsMouse = function(){
 		this._mouse_y = touch_info.y;
 	}
 };
+*/
 
 var Touch = function(input_manager, id) {
 	this._input_manager = input_manager;
 	this._id = id;
 };
 
-Touch.prototype.isTouching = function() {
+Touch.prototype.isEnable = function() {
 	return(this._id in this._input_manager._touch_infos);
+};
+
+Touch.prototype.isTouching = function() {
+	return(this._id in this._input_manager._is_touched_map);
 };
 
 Touch.prototype.isTap = function() {
 	// not true if is pressed in previous frame
-	return this.isTouching() && !this._input_manager._before_is_touch_map[this._id];
+	return this.isTouching() && (this._id in this._input_manager._before_is_touched_map);
 };
 
 Touch.prototype.isTouchRelease = function() {
-	return !this.isTouching() && this._input_manager._before_is_touch_map[this._id];
+	return !this.isTouching() && (this._id in this._input_manager._before_is_touched_map);
 };
 
 Touch.prototype.positionPoint = function (scene) {
@@ -143,22 +186,22 @@ Touch.prototype.positionPoint = function (scene) {
 };
 
 Touch.prototype.x = function () {
-	if(!this.isTouching()) return 0;
+	if(!this.isEnable()) return 0;
 	return this._input_manager._touch_infos[this._id].x;
 };
 
 Touch.prototype.y = function () {
-	if(!this.isTouching()) return 0;
+	if(!this.isEnable()) return 0;
 	return this._input_manager._touch_infos[this._id].y;
 };
 
 Touch.prototype.moveX = function () {
-	if(!this.isTouching()) return 0;
+	if(!this.isEnable()) return 0;
 	return this._input_manager._touch_infos[this._id].change_x;
 };
 
 Touch.prototype.moveY = function () {
-	if(!this.isTouching()) return 0;
+	if(!this.isEnable()) return 0;
 	return this._input_manager._touch_infos[this._id].change_y;
 };
 

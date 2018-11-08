@@ -30,8 +30,9 @@ var InputManager = function () {
 	this._mouse_scroll = 0;
 
 	this._touch_infos = {};
-	this._before_is_touch_map = {};
-	this._first_touch_id = null;
+	this._before_is_touched_map = {};
+	this._is_touched_map = {};
+	this._touch_ids = [];
 
 	this._click_position_width_ratio = 1;
 	this._click_position_height_ratio = 1;
@@ -58,8 +59,9 @@ InputManager.prototype.init = function () {
 	this._mouse_scroll = 0;
 
 	this._touch_infos = {};
-	this._before_is_touch_map = {};
-	this._first_touch_id = null;
+	this._before_is_touched_map = {};
+	this._is_touched_map = {};
+	this._touch_ids = [];
 
 	this._click_position_width_ratio = 1;
 	this._click_position_height_ratio = 1;
@@ -72,7 +74,7 @@ InputManager.prototype.beforeRun = function(){
 	this._setPressedKeyTime();
 
 	// treat as mouse event
-	this._setTouchAsMouse();
+	// this._setTouchAsMouse();
 };
 
 InputManager.prototype.afterRun = function(){
@@ -86,8 +88,7 @@ InputManager.prototype.afterRun = function(){
 	this._mouse_change_x = 0;
 	this._mouse_change_y = 0;
 
-
-	this._before_is_touch_map = {};
+	this._before_is_touched_map = {};
 
 	for(var id in this._touch_infos) {
 		var touch_info = this._touch_infos[id];
@@ -97,7 +98,9 @@ InputManager.prototype.afterRun = function(){
 		touch_info.change_y = 0;
 
 		// save current touched
-		this._before_is_touch_map[id] = true;
+		if(id in this._is_touched_map) {
+			this._before_is_touched_map[id] = true;
+		}
 	}
 };
 
