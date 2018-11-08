@@ -7,55 +7,6 @@ var InputManager = require("./_index");
  * touch
  ********************************************/
 
-var Touch = function(input_manager, id) {
-	this._input_manager = input_manager;
-	this._id = id;
-};
-
-Touch.prototype.isTouching = function() {
-	return(this._id in this._input_manager._touch_infos);
-};
-
-Touch.prototype.isTap = function() {
-	// not true if is pressed in previous frame
-	return this.isTouching() && !this._input_manager._before_is_touch_map[this._id];
-};
-
-Touch.prototype.isTouchRelease = function() {
-	return !this.isTouching() && this._input_manager._before_is_touch_map[this._id];
-};
-
-Touch.prototype.positionPoint = function (scene) {
-	var x = this.x();
-	var y = this.y();
-
-	var point = new ObjectPoint(scene);
-	point.init();
-	point.setPosition(x, y);
-
-	return point;
-};
-
-Touch.prototype.x = function () {
-	if(!this.isTouching()) return 0;
-	return this._input_manager._touch_infos[this._id].x;
-};
-
-Touch.prototype.y = function () {
-	if(!this.isTouching()) return 0;
-	return this._input_manager._touch_infos[this._id].y;
-};
-
-Touch.prototype.moveX = function () {
-	if(!this.isTouching()) return 0;
-	return this._input_manager._touch_infos[this._id].change_x;
-};
-
-Touch.prototype.moveY = function () {
-	if(!this.isTouching()) return 0;
-	return this._input_manager._touch_infos[this._id].change_y;
-};
-
 InputManager.prototype.getAnyTouch = function() {
 	if(this._first_touch_id === null) {
 		return new Touch(this, -1);
@@ -161,5 +112,56 @@ InputManager.prototype._setTouchAsMouse = function(){
 		this._mouse_y = touch_info.y;
 	}
 };
+
+var Touch = function(input_manager, id) {
+	this._input_manager = input_manager;
+	this._id = id;
+};
+
+Touch.prototype.isTouching = function() {
+	return(this._id in this._input_manager._touch_infos);
+};
+
+Touch.prototype.isTap = function() {
+	// not true if is pressed in previous frame
+	return this.isTouching() && !this._input_manager._before_is_touch_map[this._id];
+};
+
+Touch.prototype.isTouchRelease = function() {
+	return !this.isTouching() && this._input_manager._before_is_touch_map[this._id];
+};
+
+Touch.prototype.positionPoint = function (scene) {
+	var x = this.x();
+	var y = this.y();
+
+	var point = new ObjectPoint(scene);
+	point.init();
+	point.setPosition(x, y);
+
+	return point;
+};
+
+Touch.prototype.x = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].x;
+};
+
+Touch.prototype.y = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].y;
+};
+
+Touch.prototype.moveX = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].change_x;
+};
+
+Touch.prototype.moveY = function () {
+	if(!this.isTouching()) return 0;
+	return this._input_manager._touch_infos[this._id].change_y;
+};
+
+
 
 module.exports = InputManager;
