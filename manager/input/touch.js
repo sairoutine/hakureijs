@@ -17,7 +17,7 @@ InputManager.prototype.getTouch = function(idx) {
 	return new Touch(this, id);
 };
 
-InputManager.prototype.getTouchList = function() {
+InputManager.prototype.getAllTouchList = function() {
 	var touches = [];
 	for(var i = 0, len = this._touch_ids.length; i < len; i++) {
 		var id = this._touch_ids[i];
@@ -28,7 +28,7 @@ InputManager.prototype.getTouchList = function() {
 
 };
 
-InputManager.prototype.getAllTouchList = function() {
+InputManager.prototype.getTouchList = function() {
 	var touches = [];
 	for(var i = 0, len = this._touch_ids.length; i < len; i++) {
 		var id = this._touch_ids[i];
