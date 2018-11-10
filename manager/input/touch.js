@@ -167,7 +167,7 @@ Touch.prototype.isTouching = function() {
 
 Touch.prototype.isTap = function() {
 	// not true if is pressed in previous frame
-	return this.isTouching() && (this._id in this._input_manager._before_is_touched_map);
+	return this.isTouching() && !(this._id in this._input_manager._before_is_touched_map);
 };
 
 Touch.prototype.isTouchRelease = function() {
