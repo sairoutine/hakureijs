@@ -318,8 +318,11 @@ AudioLoader.prototype.unMuteWithFadeInBGM = function (fadein_time, bgm_name) {
 // create AudioBufferSourceNode and GainNode instance
 AudioLoader.prototype._createSourceNodeAndGainNode = function(name) {
 	if (!this.audio_context) return;
+	if (!(name in this.bgms)) throw new Error("Can't find bgm name: " + name);
+
 	var self = this;
 	var data = self.bgms[name];
+
 
 	var source = self.audio_context.createBufferSource();
 	source.buffer = data.audio;
