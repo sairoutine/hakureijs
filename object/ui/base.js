@@ -16,7 +16,8 @@ var ObjectUIBase = function(scene, option) {
 
 	// event handler
 	this._event_to_callback = {
-		beforedraw: function () {},
+		beforedraw: null,
+		click: null,
 	};
 
 	// children
@@ -42,31 +43,12 @@ ObjectUIBase.prototype.init = function() {
 	this.show();
 };
 
-ObjectUIBase.prototype.on = function (event, callback) {
-	this._event_to_callback[event] = callback;
-
-	return this;
-};
-ObjectUIBase.prototype.removeEvent = function (event) {
-	this._event_to_callback[event] = function(){};
-
-	return this;
-};
-
-ObjectUIBase.prototype._callEvent = function (event) {
-	this._event_to_callback[event].apply(this);
-};
-
-ObjectUIBase.prototype.isEventSet = function (event) {
-	return this._event_to_callback[event] ? true : false;
-};
-
-
-
 ObjectUIBase.prototype.beforeDraw = function() {
 	BaseObject.prototype.beforeDraw.apply(this, arguments);
 
-	this._callEvent("beforedraw");
+	if(this.isEventSet("beforedraw")) {
+		this._callEvent("beforedraw");
+	}
 
 	if (this.isEventSet("click") && this.core.input_manager.isLeftClickPush()) {
 		var x = this.core.input_manager.mousePositionX();
@@ -82,6 +64,21 @@ ObjectUIBase.prototype.draw = function() {
 	BaseObject.prototype.draw.apply(this, arguments);
 };
 
+ObjectUIBase.prototype.on = function (event, callback) {
+	this._event_to_callback[event] = callback;
+
+	return this;
+};
+ObjectUIBase.prototype.removeEvent = function (event) {
+	this._event_to_callback[event] = null;
+
+	return this;
+};
+
+ObjectUIBase.prototype.isEventSet = function (event) {
+	return this._event_to_callback[event] ? true : false;
+};
+
 ObjectUIBase.prototype.isShow = function() {
 	return this._show_call_count > 0;
 };
@@ -94,13 +91,15 @@ ObjectUIBase.prototype.collisionHeight = function() {
 	return this.height();
 };
 
-
-
 ObjectUIBase.prototype.show = function() {
 	++this._show_call_count;
 };
 ObjectUIBase.prototype.hide = function() {
 	--this._show_call_count;
+};
+
+ObjectUIBase.prototype._callEvent = function (event) {
+	this._event_to_callback[event].apply(this);
 };
 
 module.exports = ObjectUIBase;
