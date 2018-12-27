@@ -18,12 +18,16 @@ var ObjectUIBase = function(scene, option) {
 	this._event_to_callback = {
 		beforedraw: null,
 		click: null,
+		draw: null,
+		touch: null,
 	};
 
 	// children
 	this.objects = this._default_property.children;
 
 	this._show_call_count = 0;
+
+	this._is_touched = false;
 };
 Util.inherit(ObjectUIBase, BaseObject);
 
@@ -34,6 +38,8 @@ ObjectUIBase.prototype.init = function() {
 	BaseObject.prototype.init.apply(this, arguments);
 
 	this._show_call_count = 0;
+
+	this._is_touched = false;
 
 	// postion
 	this.x(this._default_property.x);
@@ -50,18 +56,43 @@ ObjectUIBase.prototype.beforeDraw = function() {
 		this._callEvent("beforedraw");
 	}
 
+	var x, y;
 	if (this.isEventSet("click") && this.core.input_manager.isLeftClickPush()) {
-		var x = this.core.input_manager.mousePositionX();
-		var y = this.core.input_manager.mousePositionY();
+		x = this.core.input_manager.mousePositionX();
+		y = this.core.input_manager.mousePositionY();
 
 		if(this.checkCollisionWithPosition(x, y)) {
 			this._callEvent("click");
 		}
 	}
+
+	if (this.isEventSet("touch")) {
+		var touch = this.core.input_manager.getTouch(0);
+
+		x = touch.x();
+		y = touch.y();
+
+		if (touch.isTap()) {
+			this._is_touched = true;
+		}
+		else if (touch.isTouchRelease()) {
+			if(this.checkCollisionWithPosition(x, y)) {
+				this._callEvent("touch");
+			}
+
+			this._is_touched = false;
+		}
+	}
 };
 
 ObjectUIBase.prototype.draw = function() {
+	if(!this.isShow()) return;
+
 	BaseObject.prototype.draw.apply(this, arguments);
+
+	if(this.isEventSet("draw")) {
+		this._callEvent("draw");
+	}
 };
 
 ObjectUIBase.prototype.on = function (event, callback) {
@@ -92,10 +123,10 @@ ObjectUIBase.prototype.collisionHeight = function() {
 };
 
 ObjectUIBase.prototype.show = function() {
-	++this._show_call_count;
+	this._show_call_count = 1;
 };
 ObjectUIBase.prototype.hide = function() {
-	--this._show_call_count;
+	this._show_call_count = 0;
 };
 
 ObjectUIBase.prototype._callEvent = function (event) {
