@@ -17,6 +17,11 @@ var Util = {
 			child[func_name] = parent[func_name];
 		}
 	},
+	loop: function(num, func) {
+		for (var i = 0; i < num; i++) {
+			func(i);
+		}
+	},
 	radianToTheta: function(radian) {
 		return (radian * 180 / Math.PI) | 0;
 	},
