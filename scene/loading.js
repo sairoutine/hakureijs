@@ -27,7 +27,14 @@ SceneLoading.prototype.init = function(assets, next_scene_name) {
 
 	for (var key in images) {
 		var image_conf = images[key];
-		this.core.image_loader.loadImage(key, image_conf);
+
+		if (typeof image_conf === "string") {
+			this.core.image_loader.loadImage(key, image_conf);
+		}
+		else {
+			// load with scale settings
+			this.core.image_loader.loadImage(key, image_conf.path, image_conf.scale_width, image_conf.scale_height);
+		}
 	}
 
 	for (var key2 in sounds) {
