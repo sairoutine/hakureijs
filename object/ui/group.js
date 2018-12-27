@@ -11,6 +11,7 @@ var ObjectUIGroup = function(scene, option) {
 		width:           option.width           || 0,
 		height:          option.height          || 0,
 		backgroundColor: option.backgroundColor || null,
+		alpha:           option.alpha           || 1.0,
 	});
 };
 Util.inherit(ObjectUIGroup, BaseObjectUI);
@@ -18,6 +19,7 @@ Util.inherit(ObjectUIGroup, BaseObjectUI);
 Util.defineProperty(ObjectUIGroup, "width");
 Util.defineProperty(ObjectUIGroup, "height");
 Util.defineProperty(ObjectUIGroup, "backgroundColor");
+Util.defineProperty(ObjectUIGroup, "alpha");
 
 ObjectUIGroup.prototype.init = function() {
 	BaseObjectUI.prototype.init.apply(this, arguments);
@@ -25,6 +27,7 @@ ObjectUIGroup.prototype.init = function() {
 	this.width(this._default_property.width);
 	this.height(this._default_property.height);
 	this.backgroundColor(this._default_property.backgroundColor);
+	this.alpha(this._default_property.alpha);
 };
 
 ObjectUIGroup.prototype.beforeDraw = function() {
@@ -41,6 +44,7 @@ ObjectUIGroup.prototype.draw = function() {
 		ctx.save();
 		ctx.translate(this.x(), this.y());
 		ctx.fillStyle = this.backgroundColor();
+		ctx.globalAlpha = this.alpha();
 		ctx.fillRect(-this.width()/2, -this.height()/2, this.width(), this.height());
 		ctx.restore();
 	}
