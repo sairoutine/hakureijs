@@ -41,7 +41,7 @@ ObjectUIBase.prototype.init = function() {
 
 	this._is_touched = false;
 
-	// postion
+	// position
 	this.x(this._default_property.x);
 	this.y(this._default_property.y);
 

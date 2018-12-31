@@ -87,7 +87,7 @@ InputManager.prototype.setButtonIdMapping = function(button_id, key) {
 				this._button_id_to_key_bit_code[target_button_id] = defined_key;
 			}
 			else {
-				// the player presses target_button_id, no event has occured.
+				// the player presses target_button_id, no event has occurred.
 				delete this._button_id_to_key_bit_code[target_button_id];
 			}
 		}
