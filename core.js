@@ -1,7 +1,5 @@
 'use strict';
 
-/* TODO: create scene_manager class */
-
 var WebGLDebugUtils = require("webgl-debug");
 var Util = require("./util");
 var DebugManager = require("./manager/debug");
