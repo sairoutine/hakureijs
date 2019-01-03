@@ -3,9 +3,7 @@
 var ObjectPoint = require("../../object/point");
 var InputManager = require("./_index");
 
-/********************************************
- * touch
- ********************************************/
+var TOUCH_IDX_AS_MOUSE = 0;
 
 InputManager.prototype.getTouch = function(idx) {
 	if(idx > this._touch_ids.length - 1) {
@@ -80,6 +78,11 @@ InputManager.prototype._handleTouchDown = function(ev) {
 			}
 
 			_this._touch_ids[idx] = origin_id;
+
+			// treat as mouse event
+			if (idx === TOUCH_IDX_AS_MOUSE) {
+				_this._is_left_clicked = true;
+			}
 		})(this, id);
 
 		var x = (touch.clientX - rect.left) * this._click_position_width_ratio;
@@ -107,6 +110,11 @@ InputManager.prototype._handleTouchUp = function(ev) {
 
 		// Set touch flag false
 		delete this._is_touched_map[id];
+
+		// treat as mouse event
+		if (id === this._touch_ids[TOUCH_IDX_AS_MOUSE]) {
+			this._is_left_clicked = false;
+		}
 	}
 
 };
@@ -139,18 +147,21 @@ InputManager.prototype._handleTouchMove = function (ev) {
 	}
 };
 
-/*
+// treat as mouse event
 InputManager.prototype._setTouchAsMouse = function(){
-	if (this._first_touch_id !== null) {
+	var touch = this.getTouch(TOUCH_IDX_AS_MOUSE);
+	if (touch.isTouching()) {
 		// update mouse info
-		var touch_info = this._touch_infos[this._first_touch_id];
-		this._mouse_change_x = touch_info.change_x;
-		this._mouse_change_y = touch_info.change_y;
-		this._mouse_x = touch_info.x;
-		this._mouse_y = touch_info.y;
+		this._mouse_change_x = touch.moveX();
+		this._mouse_change_y = touch.moveY();
+		this._mouse_x = touch.x();
+		this._mouse_y = touch.y();
 	}
 };
-*/
+
+/********************************************
+ * touch
+ ********************************************/
 
 var Touch = function(input_manager, id) {
 	this._input_manager = input_manager;

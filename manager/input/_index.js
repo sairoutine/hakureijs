@@ -74,7 +74,7 @@ InputManager.prototype.beforeRun = function(){
 	this._setPressedKeyTime();
 
 	// treat as mouse event
-	// this._setTouchAsMouse();
+	this._setTouchAsMouse();
 };
 
 InputManager.prototype.afterRun = function(){
