@@ -325,17 +325,17 @@ Core.prototype.fullsize = function() {
 };
 Core.prototype._fullsize = function() {
 
-	var window_aspect = window.innerWidth / window.innerHeight; // canvas aspect
-	var canvas_aspect = this.width / this.height; // video aspect
+	var window_aspect = window.innerWidth / window.innerHeight;
+	var canvas_aspect = this.width / this.height;
 	var left, top, width, height;
 
-	if(canvas_aspect >= window_aspect) { // video width is larger than it's height
+	if(canvas_aspect >= window_aspect) {
 		width = window.innerWidth;
 		height = window.innerWidth / canvas_aspect;
 		top = (window.innerHeight - height) / 2;
 		left = 0;
 	}
-	else { // video height is larger than it's width
+	else {
 		height = window.innerHeight;
 		width = window.innerHeight * canvas_aspect;
 		top = 0;
