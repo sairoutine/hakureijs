@@ -269,11 +269,6 @@ Core.prototype.isAllLoaded = function() {
 Core.prototype.setupEvents = function() {
 	if(!window) return;
 
-	// setup WebAudio
-	window.AudioContext = (function(){
-		return window.AudioContext || window.webkitAudioContext;
-	})();
-
 	// setup requestAnimationFrame
 	window.requestAnimationFrame = (function(){
 		return window.requestAnimationFrame	||

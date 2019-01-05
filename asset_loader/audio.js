@@ -14,6 +14,7 @@ var AudioLoader = function() {
 	// key: bgm name, value: playing AudioBufferSourceNode instance
 	this._audio_source_map = {};
 
+	// setup WebAudio
 	this.audio_context = null;
 	if (window) {
 		var AudioContext = window.AudioContext || window.webkitAudioContext;
