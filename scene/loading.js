@@ -25,6 +25,13 @@ SceneLoading.prototype.init = function(assets, next_scene_name) {
 	// go if the all assets loading is done.
 	this.next_scene_name = next_scene_name;
 
+	this._loadImages(images);
+	this._loadSounds(sounds);
+	this._loadBGMs(bgms);
+	this._loadFonts(fonts);
+};
+
+SceneLoading.prototype._loadImages = function(images) {
 	for (var key in images) {
 		var image_conf = images[key];
 
@@ -36,23 +43,27 @@ SceneLoading.prototype.init = function(assets, next_scene_name) {
 			this.core.image_loader.loadImage(key, image_conf.path, image_conf.scale_width, image_conf.scale_height);
 		}
 	}
-
+};
+SceneLoading.prototype._loadSounds = function(sounds) {
 	for (var key2 in sounds) {
 		var conf2 = sounds[key2];
 		this.core.audio_loader.loadSound(key2, conf2.path, conf2.volume);
 	}
+};
 
+SceneLoading.prototype._loadBGMs = function(bgms) {
 	for (var key3 in bgms) {
 		var conf3 = bgms[key3];
 		var volume = "volume" in conf3 ? conf3.volume : 1.0;
 		this.core.audio_loader.loadBGM(key3, conf3.path, volume, conf3.loopStart, conf3.loopEnd);
 	}
+};
 
+SceneLoading.prototype._loadFonts = function(fonts) {
 	for (var key4 in fonts) {
 		var conf4 = fonts[key4];
 		this.core.font_loader.loadFont(key4, conf4.path, conf4.format);
 	}
-
 };
 
 SceneLoading.prototype.beforeDraw = function() {
