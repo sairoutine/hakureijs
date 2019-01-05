@@ -279,6 +279,7 @@ Core.prototype.setupEvents = function() {
 
 	this._setupError();
 
+	this.audio_loader.setupEvents();
 	this.font_loader.setupEvents();
 
 	this.input_manager.setupEvents(this.canvas_dom);

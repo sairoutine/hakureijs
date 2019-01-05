@@ -69,6 +69,22 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 	self.sounds[name] = {
 		audio: audio,
 	};
+
+};
+
+// enable to play sound in iOS Safari
+AudioLoader.prototype.setupEvents = function() {
+	var sounds = this.sounds;
+	var reload_sound_func = () => {
+		for (var name in sounds) {
+			sounds[name].audio.load();
+		}
+
+		window.document.removeEventListener('touchend', reload_sound_func);
+	};
+
+	// execute Audio's load function again after the user interacted with the page
+	window.document.addEventListener('touchend', reload_sound_func);
 };
 
 AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd) {
