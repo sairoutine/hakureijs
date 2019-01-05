@@ -11,16 +11,20 @@ var AudioLoader = function() {
 	// which determine what sound is played.
 	this._reserved_play_sound_name_map = {};
 
-	this.audio_context = null;
-	if (window && window.AudioContext) {
-		this.audio_context = new window.AudioContext();
-
-		// for legacy browser
-		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
-	}
-
 	// key: bgm name, value: playing AudioBufferSourceNode instance
 	this._audio_source_map = {};
+
+	this.audio_context = null;
+	if (window) {
+		var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+		if(AudioContext) {
+			this.audio_context = new AudioContext();
+
+			// for legacy browser
+			this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
+		}
+	}
 };
 AudioLoader.prototype.init = function() {
 	// cancel already playing bgms if init method is called by re-init
