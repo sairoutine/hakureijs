@@ -316,7 +316,6 @@ Core.prototype._setupError = function() {
 Core.prototype.fullsize = function() {
 	var self = this;
 	window.onresize = function (e) {
-		console.log("fired!");
 		self._is_resize_fired = true;
 	};
 
