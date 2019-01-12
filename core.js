@@ -164,6 +164,8 @@ Core.prototype.run = function(){
 
 	if(this._is_resize_fired) {
 		this._fullsize();
+
+		this._is_resize_fired = false;
 	}
 
 	// tick
@@ -314,6 +316,7 @@ Core.prototype._setupError = function() {
 Core.prototype.fullsize = function() {
 	var self = this;
 	window.onresize = function (e) {
+		console.log("fired!");
 		self._is_resize_fired = true;
 	};
 
