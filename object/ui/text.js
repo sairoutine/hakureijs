@@ -12,6 +12,7 @@ var ObjectUIText = function(scene, option) {
 		textColor: option.textColor || "black",
 		textSize:  option.textSize  || "24px",
 		textAlign: option.textAlign || "left",
+		textFont:  option.textFont  || "sans-serif",
 	});
 };
 Util.inherit(ObjectUIText, BaseObjectUI);
@@ -20,6 +21,7 @@ Util.defineProperty(ObjectUIText, "text");
 Util.defineProperty(ObjectUIText, "textColor");
 Util.defineProperty(ObjectUIText, "textSize");
 Util.defineProperty(ObjectUIText, "textAlign");
+Util.defineProperty(ObjectUIText, "textFont");
 
 ObjectUIText.prototype.init = function() {
 	BaseObjectUI.prototype.init.apply(this, arguments);
@@ -28,6 +30,7 @@ ObjectUIText.prototype.init = function() {
 	this.textColor(this._default_property.textColor);
 	this.textSize(this._default_property.textSize);
 	this.textAlign(this._default_property.textAlign);
+	this.textFont(this._default_property.textFont);
 };
 
 ObjectUIText.prototype.beforeDraw = function() {
@@ -43,7 +46,7 @@ ObjectUIText.prototype.draw = function() {
 	ctx.save();
 	ctx.fillStyle = this.textColor();
 	ctx.textAlign = this.textAlign();
-	ctx.font = this.textSize() + " 'sans-serif'";
+	ctx.font = this.textSize() + " '" + this.textFont() + "'";
 	ctx.fillText(this.text(), this.x(), this.y());
 	ctx.restore();
 	BaseObjectUI.prototype.draw.apply(this, arguments);
