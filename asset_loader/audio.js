@@ -75,7 +75,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 // enable to play sound in iOS Safari
 AudioLoader.prototype.setupEvents = function() {
 	var sounds = this.sounds;
-	var reload_sound_func = () => {
+	var reload_sound_func = function() {
 		for (var name in sounds) {
 			sounds[name].audio.load();
 		}
