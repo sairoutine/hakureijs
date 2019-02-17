@@ -51,6 +51,10 @@ var Util = {
 		}
 		return false;
 	},
+	isMobile: function() {
+		var r = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+		return !!navigator.userAgent.match(r);
+	},
 	canPlayOgg: function () {
 		var audio = document.createElement('audio');
 		if (audio.canPlayType) {
