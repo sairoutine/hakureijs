@@ -16,6 +16,7 @@ var ObjectUIBase = function(scene, option) {
 
 	// event handler
 	this._event_to_callback = {
+		update: null,
 		beforedraw: null,
 		click: null,
 		draw: null,
@@ -49,11 +50,11 @@ ObjectUIBase.prototype.init = function() {
 	this.show();
 };
 
-ObjectUIBase.prototype.beforeDraw = function() {
-	BaseObject.prototype.beforeDraw.apply(this, arguments);
+ObjectUIBase.prototype.update = function() {
+	BaseObject.prototype.update.apply(this, arguments);
 
-	if(this.isEventSet("beforedraw")) {
-		this._callEvent("beforedraw");
+	if(this.isEventSet("update")) {
+		this._callEvent("update");
 	}
 
 	var x, y;
@@ -82,6 +83,14 @@ ObjectUIBase.prototype.beforeDraw = function() {
 
 			this._is_touched = false;
 		}
+	}
+};
+
+ObjectUIBase.prototype.beforeDraw = function() {
+	BaseObject.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.isEventSet("beforedraw")) {
+		this._callEvent("beforedraw");
 	}
 };
 

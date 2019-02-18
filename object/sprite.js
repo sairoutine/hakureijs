@@ -15,8 +15,8 @@ Sprite.prototype.init = function(){
 	this.current_sprite_index = 0;
 };
 
-Sprite.prototype.beforeDraw = function(){
-	base_object.prototype.beforeDraw.apply(this, arguments);
+Sprite.prototype.update = function(){
+	base_object.prototype.update.apply(this, arguments);
 
 	// animation sprite
 	if(this.frame_count % this.spriteAnimationSpan() === 0) {

@@ -29,8 +29,8 @@ ObjectUISpinner.prototype.init = function() {
 	this._start = new Date();
 };
 
-ObjectUISpinner.prototype.beforeDraw = function() {
-	BaseObjectUI.prototype.beforeDraw.apply(this, arguments);
+ObjectUISpinner.prototype.update = function() {
+	BaseObjectUI.prototype.update.apply(this, arguments);
 
 };
 

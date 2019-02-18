@@ -59,11 +59,11 @@ PoolManager3D.prototype._setOrthographicProjection = function() {
 		near, far);
 };
 
-PoolManager3D.prototype.beforeDraw = function(){
-	base_object.prototype.beforeDraw.apply(this, arguments);
+PoolManager3D.prototype.update = function(){
+	base_object.prototype.update.apply(this, arguments);
 
 	for(var id in this.objects) {
-		this.objects[id].beforeDraw();
+		this.objects[id].update();
 	}
 
 	// update: vertices, indices, texture coordinates, colors
@@ -110,6 +110,13 @@ PoolManager3D.prototype._resetAttributes = function() {
 	this.colors.length      = 0;
 };
 
+
+PoolManager3D.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
+	for(var id in this.objects) {
+		this.objects[id].beforeDraw();
+	}
+};
 
 
 

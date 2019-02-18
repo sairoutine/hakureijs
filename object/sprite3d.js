@@ -166,8 +166,8 @@ Sprite3d.prototype._setOrthographicProjection = function() {
 
 
 
-Sprite3d.prototype.beforeDraw = function(){
-	base_object.prototype.beforeDraw.apply(this, arguments);
+Sprite3d.prototype.update = function(){
+	base_object.prototype.update.apply(this, arguments);
 	// animation sprite
 	if(this.frame_count % this.spriteAnimationSpan() === 0) {
 		this.current_sprite_index++;

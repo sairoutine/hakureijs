@@ -15,6 +15,14 @@ Container.prototype.init = function() {
 	this.objects = {};
 };
 
+Container.prototype.update = function(){
+	BaseObject.prototype.update.apply(this, arguments);
+
+	for(var id in this.objects) {
+		this.objects[id].update();
+	}
+};
+
 Container.prototype.beforeDraw = function(){
 	BaseObject.prototype.beforeDraw.apply(this, arguments);
 

@@ -69,8 +69,8 @@ SceneMovie.prototype.init = function(movie_path, callback) {
 	self.video = video;
 };
 
-SceneMovie.prototype.beforeDraw = function(){
-	base_scene.prototype.beforeDraw.apply(this, arguments);
+SceneMovie.prototype.update = function(){
+	base_scene.prototype.update.apply(this, arguments);
 
 	if(this.is_playing && this.video.ended) {
 		this.notifyEnd();

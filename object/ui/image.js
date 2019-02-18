@@ -36,8 +36,8 @@ ObjectUIImage.prototype.init = function() {
 	}
 };
 
-ObjectUIImage.prototype.beforeDraw = function() {
-	BaseObjectUI.prototype.beforeDraw.apply(this, arguments);
+ObjectUIImage.prototype.update = function() {
+	BaseObjectUI.prototype.update.apply(this, arguments);
 
 };
 

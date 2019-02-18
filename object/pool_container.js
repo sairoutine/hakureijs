@@ -14,6 +14,10 @@ PoolContainer.prototype.init = function() {
 	base_object.prototype.init.apply(this, arguments);
 };
 
+PoolContainer.prototype.update = function(){
+	base_object.prototype.update.apply(this, arguments);
+};
+
 PoolContainer.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 };

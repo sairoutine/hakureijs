@@ -66,8 +66,8 @@ SceneLoading.prototype._loadFonts = function(fonts) {
 	}
 };
 
-SceneLoading.prototype.beforeDraw = function() {
-	base_scene.prototype.beforeDraw.apply(this, arguments);
+SceneLoading.prototype.update = function() {
+	base_scene.prototype.update.apply(this, arguments);
 
 	if (this.core.isAllLoaded()) {
 		this.notifyAllLoaded();

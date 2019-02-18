@@ -33,8 +33,8 @@ ObjectUIText.prototype.init = function() {
 	this.textFont(this._default_property.textFont);
 };
 
-ObjectUIText.prototype.beforeDraw = function() {
-	BaseObjectUI.prototype.beforeDraw.apply(this, arguments);
+ObjectUIText.prototype.update = function() {
+	BaseObjectUI.prototype.update.apply(this, arguments);
 
 };
 

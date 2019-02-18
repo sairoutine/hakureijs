@@ -30,8 +30,8 @@ ObjectUIGroup.prototype.init = function() {
 	this.alpha(this._default_property.alpha);
 };
 
-ObjectUIGroup.prototype.beforeDraw = function() {
-	BaseObjectUI.prototype.beforeDraw.apply(this, arguments);
+ObjectUIGroup.prototype.update = function() {
+	BaseObjectUI.prototype.update.apply(this, arguments);
 
 };
 
