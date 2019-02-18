@@ -39,9 +39,13 @@ TimeManager.prototype.clearTimeout = function (id) {
 	return false;
 };
 
+TimeManager.prototype.update = function () {
+	this._executeEvents();
 
+	this.frame_count++;
+};
 
-TimeManager.prototype.executeEvents = function () {
+TimeManager.prototype._executeEvents = function () {
 	var current_frame_count = this.frame_count;
 	var current_events = this.events[current_frame_count];
 
@@ -54,7 +58,6 @@ TimeManager.prototype.executeEvents = function () {
 		delete this.events[current_frame_count];
 	}
 
-	this.frame_count++;
 };
 
 

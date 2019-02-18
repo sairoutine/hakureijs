@@ -64,7 +64,7 @@ DebugManager.prototype._calculateFps = function () {
 	this._before_time = newTime;
 };
 
-DebugManager.prototype.afterRun = function () {
+DebugManager.prototype.draw = function () {
 	if(this.isShowingFps()) {
 		this._renderFps();
 	}

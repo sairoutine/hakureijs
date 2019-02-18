@@ -142,7 +142,11 @@ AudioLoader.prototype.playSound = function(name) {
 	this._reserved_play_sound_name_map[name] = true;
 };
 
-AudioLoader.prototype.executePlaySound = function() {
+AudioLoader.prototype.update = function() {
+	this._executePlaySound();
+};
+
+AudioLoader.prototype._executePlaySound = function() {
 	for(var name in this._reserved_play_sound_name_map) {
 		// play
 		this.sounds[name].audio.pause();

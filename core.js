@@ -28,7 +28,7 @@ var Core = function(canvas, options) {
 
 	// WebGL 3D mode
 	if(options.webgl) {
-		this.gl = this.createWebGLContext(this.canvas_dom);
+		this.gl = this._createWebGLContext(this.canvas_dom);
 
 		// shader program
 		this.sprite_3d_shader = new ShaderProgram(
@@ -121,45 +121,15 @@ Core.prototype.stopRun = function () {
 
 	this.request_id = null;
 };
+
 Core.prototype.run = function(){
 	// update fps
 	this.debug_manager.beforeRun();
 
-	this.scene_manager.beforeRun();
-	// get gamepad input
-	// get pressed key time
-	this.input_manager.beforeRun();
+	this._update();
 
-	// play sound which already set to play
-	this.time_manager.executeEvents();
+	this._draw();
 
-	// play sound which already set to play
-	this.audio_loader.executePlaySound();
-
-	// change default cursor image
-	this.changeDefaultCursorImage();
-
-	var current_scene = this.scene_manager.currentScene();
-	if(current_scene) {
-		current_scene.beforeDraw();
-
-		// clear already rendered canvas
-		this.clearCanvas();
-
-		current_scene.draw();
-
-		current_scene.afterDraw();
-
-		// draw transtion
-		this.scene_manager.drawTransition();
-
-		// overwrite cursor image on scene
-		this._renderCursorImage();
-	}
-
-	this.frame_count++;
-
-	this.debug_manager.afterRun();
 	this.input_manager.afterRun();
 
 	if(this._is_resize_fired) {
@@ -171,7 +141,58 @@ Core.prototype.run = function(){
 	// tick
 	this.request_id = requestAnimationFrame(Util.bind(this.run, this));
 };
-Core.prototype.clearCanvas = function() {
+
+Core.prototype._update = function(){
+	this.frame_count++;
+
+	this.scene_manager.update();
+
+	// get gamepad input
+	// get pressed key time
+	this.input_manager.update();
+
+	// play sound which already set to play
+	this.time_manager.update();
+
+	// play sound which already set to play
+	this.audio_loader.update();
+
+	var current_scene = this.scene_manager.currentScene();
+
+	if(current_scene) {
+		current_scene.update();
+	}
+};
+
+Core.prototype._draw = function(){
+	// change default cursor image
+	this._changeDefaultCursorImage();
+
+	var current_scene = this.scene_manager.currentScene();
+	if(current_scene) {
+		current_scene.beforeDraw();
+
+		// clear already rendered canvas
+		this._clearCanvas();
+
+		current_scene.draw();
+
+		current_scene.afterDraw();
+
+	}
+
+	// draw transtion
+	this.scene_manager.drawTransition();
+
+	// overwrite cursor image on scene
+	this._renderCursorImage();
+
+	this.debug_manager.draw();
+};
+
+
+
+Core.prototype._clearCanvas = function() {
 	if (this.is2D()) {
 		// 2D
 
@@ -189,57 +210,9 @@ Core.prototype.clearCanvas = function() {
 Core.prototype.is2D = function() {
 	return this.ctx ? true : false;
 };
+
 Core.prototype.is3D = function() {
 	return this.gl ? true : false;
-};
-// this method is deprecated.
-Core.prototype.isKeyDown = function(flag) {
-	return this.input_manager.isKeyDown(flag);
-};
-// this method is deprecated.
-Core.prototype.isKeyPush = function(flag) {
-	return this.input_manager.isKeyPush(flag);
-};
-// this method is deprecated.
-Core.prototype.getKeyDownTime = function(bit_code) {
-	return this.input_manager.getKeyDownTime(bit_code);
-};
-// this method is deprecated.
-Core.prototype.isLeftClickDown = function() {
-	return this.input_manager.isLeftClickDown();
-};
-// this method is deprecated.
-Core.prototype.isLeftClickPush = function() {
-	return this.input_manager.isLeftClickPush();
-};
-// this method is deprecated.
-Core.prototype.isRightClickDown = function() {
-	return this.input_manager.isRightClickDown();
-};
-// this method is deprecated.
-Core.prototype.isRightClickPush = function() {
-	return this.input_manager.isRightClickPush();
-};
-
-// this method is deprecated.
-Core.prototype.mousePositionX = function () {
-	return this.input_manager.mousePositionX();
-};
-// this method is deprecated.
-Core.prototype.mousePositionY = function () {
-	return this.input_manager.mousePositionX();
-};
-// this method is deprecated.
-Core.prototype.mouseMoveX = function () {
-	return this.input_manager.mouseMoveX();
-};
-// this method is deprecated.
-Core.prototype.mouseMoveY = function () {
-	return this.input_manager.mouseMoveY();
-};
-// this method is deprecated.
-Core.prototype.mouseScroll = function () {
-	return this.input_manager.mouseScroll();
 };
 
 Core.prototype.fullscreen = function() {
@@ -402,7 +375,7 @@ Core.prototype.showError = function(msg, file, line, column, err) {
 
 
 
-Core.prototype.createWebGLContext = function(canvas) {
+Core.prototype._createWebGLContext = function(canvas) {
 	var gl;
 	try {
 		gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -440,10 +413,12 @@ Core.prototype.disableCursorImage = function(image_name) {
 	this._cursor_image_name = null;
 	this._default_cursor_image_name = null;
 };
-Core.prototype.changeDefaultCursorImage = function() {
+
+Core.prototype._changeDefaultCursorImage = function() {
 	if (!this.isUsingCursorImage()) return;
 	this._cursor_image_name = this._default_cursor_image_name;
 };
+
 Core.prototype._renderCursorImage = function () {
 	if (!this.isUsingCursorImage()) return;
 
@@ -473,6 +448,54 @@ Core.prototype._renderCursorImage = function () {
 	ctx.restore();
 };
 
+Core.prototype.isKeyDown = function(flag) {
+	console.error("core's isKeyDown method is deprecated.");
+	return this.input_manager.isKeyDown(flag);
+};
+Core.prototype.isKeyPush = function(flag) {
+	console.error("core's isKeyPush method is deprecated.");
+	return this.input_manager.isKeyPush(flag);
+};
+Core.prototype.getKeyDownTime = function(bit_code) {
+	console.error("core's getKeyDownTime method is deprecated.");
+	return this.input_manager.getKeyDownTime(bit_code);
+};
+Core.prototype.isLeftClickDown = function() {
+	console.error("core's isLeftClickDown method is deprecated.");
+	return this.input_manager.isLeftClickDown();
+};
+Core.prototype.isLeftClickPush = function() {
+	console.error("core's isLeftClickPush method is deprecated.");
+	return this.input_manager.isLeftClickPush();
+};
+Core.prototype.isRightClickDown = function() {
+	console.error("core's isRightClickDown method is deprecated.");
+	return this.input_manager.isRightClickDown();
+};
+Core.prototype.isRightClickPush = function() {
+	console.error("core's isRightClickPush method is deprecated.");
+	return this.input_manager.isRightClickPush();
+};
+Core.prototype.mousePositionX = function () {
+	console.error("core's mousePositionX method is deprecated.");
+	return this.input_manager.mousePositionX();
+};
+Core.prototype.mousePositionY = function () {
+	console.error("core's mousePositionY method is deprecated.");
+	return this.input_manager.mousePositionX();
+};
+Core.prototype.mouseMoveX = function () {
+	console.error("core's mouseMoveX method is deprecated.");
+	return this.input_manager.mouseMoveX();
+};
+Core.prototype.mouseMoveY = function () {
+	console.error("core's mouseMoveY method is deprecated.");
+	return this.input_manager.mouseMoveY();
+};
+Core.prototype.mouseScroll = function () {
+	console.error("core's mouseScroll method is deprecated.");
+	return this.input_manager.mouseScroll();
+};
 Core.prototype.setTimeout = function (callback, frame_count) {
 	console.error("core's setTimeout method is deprecated.");
 	this.time_manager.setTimeout(callback, frame_count);

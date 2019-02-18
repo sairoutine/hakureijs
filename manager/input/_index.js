@@ -66,7 +66,7 @@ InputManager.prototype.init = function () {
 	this._click_position_width_ratio = 1;
 	this._click_position_height_ratio = 1;
 };
-InputManager.prototype.beforeRun = function(){
+InputManager.prototype.update = function(){
 	// get gamepad input
 	this._handleGamePad();
 

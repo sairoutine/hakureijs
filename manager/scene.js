@@ -44,7 +44,7 @@ SceneManager.prototype.init = function () {
 	this._is_fade_out_finished = false;
 };
 
-SceneManager.prototype.beforeRun = function () {
+SceneManager.prototype.update = function () {
 	// go to next scene if next scene is set
 	this._changeNextSceneIfReserved();
 };

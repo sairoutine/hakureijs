@@ -57,7 +57,9 @@ SceneBase.prototype.init = function(){
 	}
 };
 
-SceneBase.prototype.beforeDraw = function(){
+SceneBase.prototype.update = function(){
+	this.frame_count++;
+
 	// for setWaitToStartBGM method
 	if (this._wait_to_start_bgm_name) {
 		if(this.frame_count - this._wait_to_start_bgm_start_frame_count >= this._wait_to_start_bgm_duration) {
@@ -74,12 +76,18 @@ SceneBase.prototype.beforeDraw = function(){
 	this.changeNextSubSceneIfReserved();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].update();
+	}
+
+	if(this.currentSubScene()) this.currentSubScene().update();
+};
+
+SceneBase.prototype.beforeDraw = function() {
+	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].beforeDraw();
 	}
 
 	if(this.currentSubScene()) this.currentSubScene().beforeDraw();
-
-	this.frame_count++;
 };
 
 SceneBase.prototype.draw = function(){

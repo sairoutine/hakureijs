@@ -58,18 +58,24 @@ ObjectBase.prototype.init = function(){
 	}
 };
 
-ObjectBase.prototype.beforeDraw = function(){
+ObjectBase.prototype.update = function(){
 	this.frame_count++;
 
 	// check flags that disappears in frame elapsed
 	this._checkAutoDisableFlags();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
-		this.objects[i].beforeDraw();
+		this.objects[i].update();
 	}
 
 	// move if this object is set velocity
 	this.moveByVelocity(this._velocity);
+};
+
+ObjectBase.prototype.beforeDraw = function() {
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		this.objects[i].beforeDraw();
+	}
 };
 
 ObjectBase.prototype.draw = function() {
