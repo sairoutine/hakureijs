@@ -122,8 +122,9 @@ Core.prototype.startRun = function () {
 Core.prototype.stopRun = function () {
 	if(!this.isRunning()) return;
 
-	cancelAnimationFrame(this._request_id);
+	window.cancelAnimationFrame(this._request_id);
 
+	// reset
 	this._currentTime = null;
 	this._accumulator = 0;
 	this._request_id = null;
@@ -162,7 +163,7 @@ Core.prototype.run = function(){
 	}
 
 	// tick
-	this._request_id = requestAnimationFrame(Util.bind(this.run, this));
+	this._request_id = window.requestAnimationFrame(Util.bind(this.run, this));
 };
 
 Core.prototype._update = function(){
@@ -298,7 +299,7 @@ Core.prototype._setupError = function() {
 		self.showError(msg, file, line, column, err);
 
 		// restart game at error point
-		//self._request_id = requestAnimationFrame(Util.bind(self.run, self));
+		//self._request_id = window.requestAnimationFrame(Util.bind(self.run, self));
 
 		// or
 
