@@ -18,6 +18,8 @@ var FS = require("./shader/main.fs");
 
 var DELTA_TIME = 1.0 / 60.0;
 
+var PD = (performance || Date);
+
 var Core = function(canvas, options) {
 	if(!options) {
 		options = {};
@@ -131,38 +133,48 @@ Core.prototype.stopRun = function () {
 };
 
 Core.prototype.run = function(){
-	// update fps
-	this.debug_manager.beforeRun();
+	this.debug_manager.calculateFps();
 
-	var newTime = performance.now();
-	if (this._currentTime === null) { this._currentTime = newTime; }
+	var newTime = this.now();
+
+	if (this._currentTime === null) {
+		this._currentTime = newTime;
+	}
+
 	var fTime = (newTime - this._currentTime) / 1000;
 
-	// number of update to catch up the real clock does not increase too much.
+	// number of calling update to catch up the real clock does not increase too much.
 	if (fTime > 0.25) fTime = 0.25;
+
 	this._currentTime = newTime;
 	this._accumulator += fTime;
 
-	// increase number of update to catch up the real clock.
+	// increase number of calling update to catch up the real clock.
 	while (this._accumulator >= DELTA_TIME) {
-		this._update();
-
 		this._accumulator -= DELTA_TIME;
 
+		// get player's input by gamepad, keyboard, mouse, or other device.
+		this.input_manager.update();
+
+		// update game.
+		this._update();
+
 		if (this._accumulator < DELTA_TIME) {
+			// draw game after only the last update.
 			this._draw();
 		}
 
-		this.input_manager.afterRun();
+		this.input_manager.afterDraw();
 	}
 
+	// resize canvas.
 	if(this._is_resize_fired) {
 		this._fullsize();
 
 		this._is_resize_fired = false;
 	}
 
-	// tick
+	// set next tick.
 	this._request_id = window.requestAnimationFrame(Util.bind(this.run, this));
 };
 
@@ -171,18 +183,13 @@ Core.prototype._update = function(){
 
 	this.scene_manager.update();
 
-	// get gamepad input
-	// get pressed key time
-	this.input_manager.update();
-
-	// play sound which already set to play
+	// execute events set by setTimeout function.
 	this.time_manager.update();
 
-	// play sound which already set to play
+	// play sound which is already set by playSound function.
 	this.audio_loader.update();
 
 	var current_scene = this.scene_manager.currentScene();
-
 	if(current_scene) {
 		current_scene.update();
 	}
@@ -211,10 +218,8 @@ Core.prototype._draw = function(){
 	// overwrite cursor image on scene
 	this._renderCursorImage();
 
-	this.debug_manager.draw();
+	this.debug_manager.renderFps();
 };
-
-
 
 Core.prototype._clearCanvas = function() {
 	if (this.is2D()) {
@@ -231,6 +236,7 @@ Core.prototype._clearCanvas = function() {
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT);
 	}
 };
+
 Core.prototype.is2D = function() {
 	return this.ctx ? true : false;
 };
@@ -309,6 +315,9 @@ Core.prototype._setupError = function() {
 	};
 };
 
+Core.prototype.now = function() {
+	return PD.now();
+};
 
 Core.prototype.fullsize = function() {
 	var self = this;

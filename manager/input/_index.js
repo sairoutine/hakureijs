@@ -77,7 +77,7 @@ InputManager.prototype.update = function(){
 	this._setTouchAsMouse();
 };
 
-InputManager.prototype.afterRun = function(){
+InputManager.prototype.afterDraw = function(){
 	// save key current pressed keys
 	this._before_keyflag = this._current_keyflag;
 	this._before_is_left_clicked = this._is_left_clicked;
