@@ -137,12 +137,12 @@ Core.prototype.run = function(){
 	if (this._currentTime === null) { this._currentTime = newTime; }
 	var fTime = (newTime - this._currentTime) / 1000;
 
-	// 追いつくための実行回数があまりにも増えないようにする
+	// number of update to catch up the real clock does not increase too much.
 	if (fTime > 0.25) fTime = 0.25;
 	this._currentTime = newTime;
 	this._accumulator += fTime;
 
-	// 実行回数を増やして処理を追いつかせる
+	// increase number of update to catch up the real clock.
 	while (this._accumulator >= DELTA_TIME) {
 		this._update();
 
