@@ -16,6 +16,8 @@ var DebugManager = function (core) {
 
 	this._variables = {};
 
+	this._draw_count = 0;
+
 	// Time when FPS was calculated last time(millisecond)
 	this._before_time = 0;
 
@@ -23,6 +25,7 @@ var DebugManager = function (core) {
 	this._fps = 0;
 };
 DebugManager.prototype.init = function () {
+	this._draw_count = 0;
 	this._before_time = 0;
 	this._fps = 0;
 };
@@ -47,13 +50,15 @@ DebugManager.prototype.get = function (name) {
 };
 
 DebugManager.prototype.beforeRun = function () {
+	this._draw_count++;
+
 	if(this.isShowingFps()) {
 		this._calculateFps();
 	}
 };
 
 DebugManager.prototype._calculateFps = function () {
-	if((this.core.frame_count % FPS_CALCULATION_INTERVAL) !== 0) return;
+	if((this._draw_count % FPS_CALCULATION_INTERVAL) !== 0) return;
 
 	var newTime = Date.now();
 

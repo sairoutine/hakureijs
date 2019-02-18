@@ -16,6 +16,7 @@ var ShaderProgram = require('./shader_program');
 var VS = require("./shader/main.vs");
 var FS = require("./shader/main.fs");
 
+var DELTA_TIME = 1.0 / 60.0;
 
 var Core = function(canvas, options) {
 	if(!options) {
@@ -71,7 +72,9 @@ var Core = function(canvas, options) {
 
 	this.frame_count = 0;
 
-	this.request_id = null;
+	this._currentTime = null;
+	this._accumulator = 0;
+	this._request_id = null;
 
 	this.image_loader = new ImageLoader();
 	this.audio_loader = new AudioLoader();
@@ -86,7 +89,9 @@ Core.prototype.init = function () {
 
 	this.frame_count = 0;
 
-	this.request_id = null;
+	this._currentTime = null;
+	this._accumulator = 0;
+	this._request_id = null;
 
 	this.debug_manager.init();
 	this.scene_manager.init();
@@ -107,7 +112,7 @@ Core.prototype.reload = function () {
 };
 
 Core.prototype.isRunning = function () {
-	return this.request_id ? true : false;
+	return this._request_id ? true : false;
 };
 Core.prototype.startRun = function () {
 	if(this.isRunning()) return;
@@ -117,20 +122,38 @@ Core.prototype.startRun = function () {
 Core.prototype.stopRun = function () {
 	if(!this.isRunning()) return;
 
-	cancelAnimationFrame(this.request_id);
+	cancelAnimationFrame(this._request_id);
 
-	this.request_id = null;
+	this._currentTime = null;
+	this._accumulator = 0;
+	this._request_id = null;
 };
 
 Core.prototype.run = function(){
 	// update fps
 	this.debug_manager.beforeRun();
 
-	this._update();
+	var newTime = performance.now();
+	if (this._currentTime === null) { this._currentTime = newTime; }
+	var fTime = (newTime - this._currentTime) / 1000;
 
-	this._draw();
+	// 追いつくための実行回数があまりにも増えないようにする
+	if (fTime > 0.25) fTime = 0.25;
+	this._currentTime = newTime;
+	this._accumulator += fTime;
 
-	this.input_manager.afterRun();
+	// 実行回数を増やして処理を追いつかせる
+	while (this._accumulator >= DELTA_TIME) {
+		this._update();
+
+		this._accumulator -= DELTA_TIME;
+
+		if (this._accumulator < DELTA_TIME) {
+			this._draw();
+		}
+
+		this.input_manager.afterRun();
+	}
 
 	if(this._is_resize_fired) {
 		this._fullsize();
@@ -138,8 +161,17 @@ Core.prototype.run = function(){
 		this._is_resize_fired = false;
 	}
 
-	// tick
-	this.request_id = requestAnimationFrame(Util.bind(this.run, this));
+	// DEBUG:60フレームにつき1回250ms(約16フレーム)処理落ちさせる
+	if (this.frame_count % 60 === 0) {
+		var _this = this;
+		setTimeout(function () {
+			_this._request_id = requestAnimationFrame(Util.bind(_this.run, _this));
+		},250);
+	}
+	else {
+		// tick
+		this._request_id = requestAnimationFrame(Util.bind(this.run, this));
+	}
 };
 
 Core.prototype._update = function(){
@@ -275,7 +307,7 @@ Core.prototype._setupError = function() {
 		self.showError(msg, file, line, column, err);
 
 		// restart game at error point
-		//self.request_id = requestAnimationFrame(Util.bind(self.run, self));
+		//self._request_id = requestAnimationFrame(Util.bind(self.run, self));
 
 		// or
 
