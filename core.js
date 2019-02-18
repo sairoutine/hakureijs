@@ -161,17 +161,8 @@ Core.prototype.run = function(){
 		this._is_resize_fired = false;
 	}
 
-	// DEBUG:60フレームにつき1回250ms(約16フレーム)処理落ちさせる
-	if (this.frame_count % 60 === 0) {
-		var _this = this;
-		setTimeout(function () {
-			_this._request_id = requestAnimationFrame(Util.bind(_this.run, _this));
-		},250);
-	}
-	else {
-		// tick
-		this._request_id = requestAnimationFrame(Util.bind(this.run, this));
-	}
+	// tick
+	this._request_id = requestAnimationFrame(Util.bind(this.run, this));
 };
 
 Core.prototype._update = function(){
