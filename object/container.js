@@ -124,8 +124,13 @@ Container.prototype.checkCollisionWithContainer = function(container) {
 };
 
 Container.prototype.removeOutOfStageObjects = function() {
+	console.error("object's removeOutOfStageObjects method is deprecated.");
+	return this.removeOutOfSceneObjects.apply(this, arguments);
+};
+
+Container.prototype.removeOutOfSceneObjects = function() {
 	for(var id in this.objects) {
-		if(this.objects[id].isOutOfStage()) {
+		if(this.objects[id].isOutOfScene()) {
 			this.remove(id);
 		}
 	}

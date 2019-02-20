@@ -424,11 +424,28 @@ ObjectBase.prototype.moveBack = function() {
 *******************************
 */
 
-ObjectBase.prototype.isOutOfStage = function( ) {
+ObjectBase.prototype.isOutOfStage = function() {
+	console.error("object's isOutOfStage method is deprecated.");
+	return this.isOutOfScene.apply(this, arguments);
+};
+
+ObjectBase.prototype.isOutOfScene = function() {
 	if(this.x() + EXTRA_OUT_OF_SIZE < 0 ||
 	   this.y() + EXTRA_OUT_OF_SIZE < 0 ||
 	   this.x() > this.scene.width  + EXTRA_OUT_OF_SIZE ||
 	   this.y() > this.scene.height + EXTRA_OUT_OF_SIZE
+	  ) {
+		return true;
+	}
+
+	return false;
+};
+
+ObjectBase.prototype.isOutOfView = function() {
+	if(this.globalCenterX() + EXTRA_OUT_OF_SIZE < 0 ||
+	   this.globalCenterY() + EXTRA_OUT_OF_SIZE < 0 ||
+	   this.globalCenterX() > this.core.width  + EXTRA_OUT_OF_SIZE ||
+	   this.globalCenterY() > this.core.height + EXTRA_OUT_OF_SIZE
 	  ) {
 		return true;
 	}

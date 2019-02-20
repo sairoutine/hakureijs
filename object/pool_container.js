@@ -23,6 +23,7 @@ PoolContainer.prototype.beforeDraw = function(){
 };
 
 PoolContainer.prototype.draw = function(){
+
 	base_object.prototype.draw.apply(this, arguments);
 };
 
