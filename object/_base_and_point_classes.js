@@ -374,7 +374,7 @@ ObjectBase.prototype._checkAutoDisableFlags = function() {
 */
 
 ObjectBase.prototype.moveByVelocity = function(velocity) {
-	if (this._velocity.magnitude === 0) {
+	if (velocity.magnitude === 0) {
 		return;
 	}
 
