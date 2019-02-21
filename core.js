@@ -358,7 +358,7 @@ Core.prototype._fullsize = function() {
 };
 
 Core.prototype.showError = function(msg, file, line, column, err) {
-	this.clearCanvas();
+	this._clearCanvas();
 
 	if (this.is2D()) {
 		// TODO: create html dom and overlay it on canvas
