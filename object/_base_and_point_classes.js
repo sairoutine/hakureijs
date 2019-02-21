@@ -104,8 +104,8 @@ ObjectBase.prototype.height = function() {
 };
 
 ObjectBase.prototype.setPosition = function(x, y) {
-	this._x = x;
-	this._y = y;
+	this.x(x);
+	this.y(y);
 };
 
 ObjectBase.prototype.root = function() {
@@ -382,11 +382,11 @@ ObjectBase.prototype.moveByVelocity = function(velocity) {
 	var y = Util.calcMoveYByVelocity(velocity);
 
 	// save previous (x,y)
-	this._previous_x = this._x;
-	this._previous_y = this._y;
+	this._previous_x = this.x();
+	this._previous_y = this.y();
 
-	this._x += x;
-	this._y += y;
+	this.x(this.x() + x);
+	this.y(this.y() + y);
 };
 
 ObjectBase.prototype.setVelocity = function(velocity) {
@@ -408,11 +408,11 @@ ObjectBase.prototype.setVelocityTheta = function(theta) {
 ObjectBase.prototype.moveBack = function() {
 	if (this._previous_x === null && this._previous_y) return;
 
-	var current_x = this._x;
-	var current_y = this._y;
+	var current_x = this.x();
+	var current_y = this.y();
 
-	this._x = this._previous_x;
-	this._y = this._previous_y;
+	this.x(this._previous_x);
+	this.y(this._previous_y);
 
 	this._previous_x = current_x;
 	this._previous_y = current_y;
