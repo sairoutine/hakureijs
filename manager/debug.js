@@ -166,7 +166,7 @@ DebugManager.prototype.addMenuSelect = function (button_value, pulldown_list, fu
 	for (var i = 0, len = pulldown_list.length; i < len; i++) {
 		var opt = pulldown_list[i];
 		var value = opt.value;
-		var name = name in opt ? opt.name : value;
+		var name = "name" in opt ? opt.name : value;
 
 		var option = document.createElement("option");
 		option.setAttribute("value", value);
