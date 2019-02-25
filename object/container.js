@@ -1,13 +1,13 @@
 'use strict';
 var BaseObject = require('./base');
-var util = require('../util');
+var Util = require('../util');
 
 var Container = function(scene) {
 	BaseObject.apply(this, arguments);
 
 	this._objects = {};
 };
-util.inherit(Container, BaseObject);
+Util.inherit(Container, BaseObject);
 
 Container.prototype.init = function() {
 	BaseObject.prototype.init.apply(this, arguments);
@@ -80,7 +80,9 @@ Container.prototype.getAll = function() {
 
 Container.prototype.getRandom = function() {
 	var ids = Object.keys(this._objects);
-	var id = ids[Math.floor(Math.random() * ids.length)];
+	var i = Util.getRandomInt(ids.length) - 1;
+
+	var id = ids[i];
 
 	return this._objects[id];
 };
