@@ -74,6 +74,10 @@ Container.prototype.get = function(id) {
 	return this._objects[id];
 };
 
+Container.prototype.getAll = function() {
+	return Object.values(this._objects);
+};
+
 Container.prototype.getRandom = function() {
 	var ids = Object.keys(this._objects);
 	var id = ids[Math.floor(Math.random() * ids.length)];
