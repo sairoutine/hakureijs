@@ -150,19 +150,7 @@ DebugManager.prototype.addMenuSelect = function (button_value, pulldown_list, fu
 	// select tag
 	var select = window.document.createElement("select");
 
-	// label
-	var option_label = document.createElement("option");
-	option_label.setAttribute("value", "");
-	option_label.appendChild(document.createTextNode(button_value));
-	select.appendChild(option_label);
-
-	// add event
-	select.onchange = function () {
-		if(select.value === "") return;
-		func(core, select.value);
-	};
-
-	// set attributes
+	// set option tag to select attributes
 	for (var i = 0, len = pulldown_list.length; i < len; i++) {
 		var opt = pulldown_list[i];
 		var value = opt.value;
@@ -176,6 +164,21 @@ DebugManager.prototype.addMenuSelect = function (button_value, pulldown_list, fu
 
 	// add element
 	this.dom.appendChild(select);
+
+	// create button tag
+	var input = window.document.createElement('input');
+
+	// set attributes
+	input.setAttribute('type', 'button');
+	input.setAttribute('value', button_value);
+
+	// add event
+	input.onclick = function () {
+		func(core, select.value);
+	};
+
+	// add element
+	this.dom.appendChild(input);
 };
 
 DebugManager.prototype.addGitLatestCommitInfo = function (user_name, repo_name, branch) {
