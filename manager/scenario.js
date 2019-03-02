@@ -291,7 +291,7 @@ ScenarioManager.prototype._startPrintLetter = function () {
 	this._printLetter();
 
 	if (!this.isPrintLetterEnd()) {
-		this._timeoutID = setTimeout(Util.bind(this._startPrintLetter, this), this._typography_speed);
+		this._timeoutID = this.core.time_manager.setTimeout(Util.bind(this._startPrintLetter, this), this._typography_speed);
 	}
 	else {
 		this._timeoutID = null;
