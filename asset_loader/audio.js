@@ -72,8 +72,17 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 
 };
 
-// enable to play sound in iOS Safari
 AudioLoader.prototype.setupEvents = function() {
+	this._setupEventForiOSSafari();
+	this._setupEventForChrome();
+};
+
+// enable to play sound in iOS Safari
+AudioLoader.prototype._setupEventForiOSSafari = function() {
+	if(typeof window.document.ontouchend === 'undefined') {
+		return;
+	}
+
 	var sounds = this.sounds;
 	var reload_sound_func = function() {
 		for (var name in sounds) {
@@ -83,9 +92,22 @@ AudioLoader.prototype.setupEvents = function() {
 		window.document.removeEventListener('touchend', reload_sound_func);
 	};
 
-	// execute Audio's load function again after the user interacted with the page
 	window.document.addEventListener('touchend', reload_sound_func);
 };
+
+// enable to play sound in Chrome
+AudioLoader.prototype._setupEventForChrome = function() {
+	var context = this.audio_context;
+	var eventName = typeof window.document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup';
+	var resume_audio_func = function () {
+		context.resume();
+
+		window.document.removeEventListener(eventName, resume_audio_func);
+	};
+
+	window.document.addEventListener(eventName, resume_audio_func);
+};
+
 
 AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd) {
 	if (!this.audio_context) return;
@@ -151,7 +173,15 @@ AudioLoader.prototype._executePlaySound = function() {
 		// play
 		this.sounds[name].audio.pause();
 		this.sounds[name].audio.currentTime = 0;
-		this.sounds[name].audio.play();
+		var promise = this.sounds[name].audio.play();
+
+		// Ignore unhandled promise rejection caused by the following error in Chrome.
+		//
+		// "The AudioContext was not allowed to start.
+		// It must be resumed (or created) after a user gesture on the page."
+		if (promise) {
+			promise.catch((e) => {});
+		}
 
 		// delete flag
 		delete this._reserved_play_sound_name_map[name];
