@@ -4,6 +4,7 @@ var Util = require('../util');
 
 var SceneBase = function(core) {
 	this.core = core;
+
 	// TODO: parent -> parent() because ajust to root method
 	this.parent = null; // parent scene if this is sub scene
 	this.width = this.core.width; // default
@@ -13,6 +14,8 @@ var SceneBase = function(core) {
 	this._y = 0;
 
 	this.frame_count = 0;
+
+	this._is_inited = false;
 
 	this.objects = [];
 
@@ -42,10 +45,13 @@ SceneBase.prototype.init = function(){
 	this._reserved_next_scene = null; // next scene which changes next frame run
 	this._is_reserved_next_scene_init = true; // is scene will inited?
 
-	this._x = 0;
-	this._y = 0;
+	// NOTE: abolished
+	// this._x = 0;
+	// this._y = 0;
 
 	this.frame_count = 0;
+
+	this._is_inited = true;
 
 	// property for wait to start bgm
 	this._wait_to_start_bgm_name = null;
@@ -139,8 +145,9 @@ SceneBase.prototype.removeObject = function(object){
 	}
 };
 
-
-
+SceneBase.prototype.isInit = function(){
+	return this._is_inited;
+}
 
 // set parent scene if this is sub scene
 SceneBase.prototype.setParent = function(parent_scene) {

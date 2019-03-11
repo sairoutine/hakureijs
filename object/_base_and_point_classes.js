@@ -19,6 +19,8 @@ var ObjectBase = function(scene) {
 
 	this.frame_count = 0;
 
+	this._is_inited = false;
+
 	this._x = 0; // local center x
 	this._y = 0; // local center y
 
@@ -41,6 +43,8 @@ Util.defineProperty(ObjectBase, "y");
 
 ObjectBase.prototype.init = function(){
 	this.frame_count = 0;
+
+	this._is_inited = true;
 
 	// NOTE: abolished
 	//this._x = 0;
@@ -116,6 +120,10 @@ ObjectBase.prototype.root = function() {
 		return this;
 	}
 };
+
+ObjectBase.prototype.isInit = function(){
+	return this._is_inited;
+}
 
 
 

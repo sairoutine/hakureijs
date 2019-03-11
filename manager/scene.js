@@ -76,6 +76,8 @@ SceneManager.prototype.changeScene = function(scene_name, varArgs) {
 SceneManager.prototype.returnScene = function(scene_name) {
 	if(!(scene_name in this._scenes)) throw new Error (scene_name + " scene doesn't exists.");
 
+	if(!this._scenes[scene_name].isInit()) throw new Error (scene_name + " scene is not initialized. Please call init method.");
+
 	this._reserved_next_scene_name_and_arguments = [scene_name];
 	this._is_reserved_next_scene_init = false; // scene will NOT inited
 };
