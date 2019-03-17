@@ -1,40 +1,54 @@
 'use strict';
 
-var CONSTANT = require("../../constant/button");
-var InputManager = require("./_index");
+var BUTTON_CONSTANT = require("../../constant/button");
+var KEYBOARD_CONSTANT = require("../../constant/keyboard/default");
 
-/********************************************
- * keyboard
- ********************************************/
+var KeyboardManager = function () {
+	this._current_keyflag = 0x0;
+	this._before_keyflag = 0x0;
 
-InputManager.prototype.isKeyDown = function(flag) {
-	return((this._current_keyflag & flag) ? true : false);
-};
-
-InputManager.prototype.isKeyPush = function(flag) {
-	return !(this._before_keyflag & flag) && this._current_keyflag & flag;
-};
-
-InputManager.prototype.isKeyRelease = function(flag) {
-	return (this._before_keyflag & flag) && !(this._current_keyflag & flag);
-};
-
-InputManager.prototype.getKeyDownTime = function(bit_code) {
-	return this._key_bit_code_to_down_time[bit_code];
-};
-
-InputManager.prototype._initPressedKeyTime = function() {
 	this._key_bit_code_to_down_time = {};
 
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
+	// e.keyCode => bit code map
+	this._keycode_to_bit_code = this._setupKeycodeMap(KEYBOARD_CONSTANT);
+};
+
+// invert bitcode and keycode map
+// example: Map<bitcode, keycode> => Map<keycode, bitcode>
+KeyboardManager.prototype._setupKeycodeMap = function(keyboard_map) {
+	var keycode_to_bit_code = {};
+	for (var bit_code in keyboard_map) {
+		var keycode = keyboard_map[bit_code];
+		this.keycode_to_bit_code[keycode] = bit_code;
+	}
+
+	return keycode_to_bit_code;
+};
+
+KeyboardManager.prototype.init = function () {
+	this._current_keyflag = 0x0;
+	this._before_keyflag = 0x0;
+
+	this._initPressedKeyTime();
+};
+
+KeyboardManager.prototype._initPressedKeyTime = function() {
+	this._key_bit_code_to_down_time = {};
+
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
 		this._key_bit_code_to_down_time[bit_code] = 0;
 	}
 };
 
-InputManager.prototype._setPressedKeyTime = function() {
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
+KeyboardManager.prototype.update = function(){
+	// count pressed key time
+	this._setPressedKeyTime();
+};
+
+KeyboardManager.prototype._setPressedKeyTime = function() {
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
 		if (this.isKeyDown(bit_code)) {
 			++this._key_bit_code_to_down_time[bit_code];
 		}
@@ -44,44 +58,42 @@ InputManager.prototype._setPressedKeyTime = function() {
 	}
 };
 
-InputManager.prototype._keyCodeToBitCode = function(keyCode) {
-	var flag;
-	switch(keyCode) {
-	case 16: // shift
-		flag = CONSTANT.BUTTON_SHIFT;
-		break;
-	case 32: // space
-		flag = CONSTANT.BUTTON_SPACE;
-		break;
-	case 37: // left
-		flag = CONSTANT.BUTTON_LEFT;
-		break;
-	case 38: // up
-		flag = CONSTANT.BUTTON_UP;
-		break;
-	case 39: // right
-		flag = CONSTANT.BUTTON_RIGHT;
-		break;
-	case 40: // down
-		flag = CONSTANT.BUTTON_DOWN;
-		break;
-	case 88: // x
-		flag = CONSTANT.BUTTON_X;
-		break;
-	case 90: // z
-		flag = CONSTANT.BUTTON_Z;
-		break;
-	}
-	return flag;
+KeyboardManager.prototype.afterDraw = function(){
+	// save key current pressed keys
+	this._before_keyflag = this._current_keyflag;
 };
 
-InputManager.prototype._handleKeyDown = function(e) {
-	this._current_keyflag |= this._keyCodeToBitCode(e.keyCode);
+KeyboardManager.prototype.setupEvents = function(canvas_dom) {
+	var _this = this;
+
+	// bind keyboard
+	window.onkeydown = function(e) { _this._handleKeyDown(e); };
+	window.onkeyup   = function(e) { _this._handleKeyUp(e); };
+};
+
+KeyboardManager.prototype._handleKeyDown = function(e) {
+	this._current_keyflag |= this._keycode_to_bit_code[e.keyCode];
 	e.preventDefault();
 };
-InputManager.prototype._handleKeyUp = function(e) {
-	this._current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
+KeyboardManager.prototype._handleKeyUp = function(e) {
+	this._current_keyflag &= ~this._keycode_to_bit_code[e.keyCode];
 	e.preventDefault();
 };
 
-module.exports = InputManager;
+KeyboardManager.prototype.isKeyDown = function(bit_code) {
+	return((this._current_keyflag & bit_code) ? true : false);
+};
+
+KeyboardManager.prototype.isKeyPush = function(bit_code) {
+	return !(this._before_keyflag & bit_code) && this._current_keyflag & bit_code;
+};
+
+KeyboardManager.prototype.isKeyRelease = function(bit_code) {
+	return (this._before_keyflag & bit_code) && !(this._current_keyflag & bit_code);
+};
+
+KeyboardManager.prototype.getKeyDownTime = function(bit_code) {
+	return this._key_bit_code_to_down_time[bit_code];
+};
+
+module.exports = KeyboardManager;
