@@ -260,7 +260,7 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 	var return_flag = false;
 	for(var i = 0; i < objs.length; i++) {
 		var obj2 = objs[i];
-		if(obj1.checkCollisionByObject(obj2)) {
+		if(obj1.intersect(obj2)) {
 			obj1.onCollision(obj2);
 			obj2.onCollision(obj1);
 			return_flag = true;
@@ -339,7 +339,7 @@ ObjectBase.prototype._drawCollisionArea = function(color) {
 
 // NOTE: deprecated
 ObjectBase.prototype.checkCollision = function(obj) {
-	return this.checkCollisionByObject(obj);
+	return this.intersect(obj);
 };
 
 // NOTE: deprecated
