@@ -19,7 +19,7 @@ KeyboardManager.prototype._setupKeycodeMap = function(keyboard_map) {
 	var keycode_to_bit_code = {};
 	for (var bit_code in keyboard_map) {
 		var keycode = keyboard_map[bit_code];
-		this.keycode_to_bit_code[keycode] = bit_code;
+		keycode_to_bit_code[keycode] = bit_code;
 	}
 
 	return keycode_to_bit_code;
