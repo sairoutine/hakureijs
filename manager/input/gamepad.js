@@ -1,158 +1,209 @@
 'use strict';
 
-var CONSTANT = require("../../constant/button");
-var InputManager = require("./_index");
+var BUTTON_CONSTANT = require("../../constant/button");
+var DEFAULT_CONSTANT = require("../../constant/gamepad/default");
+var XBOX360_CONSTANT = require("../../constant/gamepad/xbox360");
+var SNES_CONSTANT = require("../../constant/gamepad/snes");
+var PS4_CONSTANT = require("../../constant/gamepad/ps4");
 
-/********************************************
- * gamepad
- ********************************************/
+// In the case of a button that supports analog input, a threshold value that indicates how far the button is turned on.
+var ANALOGUE_BUTTON_THRESHOLD = 0.5;
 
-// get one of the pressed button id
-InputManager.prototype.getAnyButtonId = function(){
+var GamepadManager = function (input_manager) {
+	this._is_gamepad_usable = false;
+
+	this._rawgamepads = [];
+	this._before_rawgamepads = [];
+
+	this._pads = [];
+
+	this._bit_code_to_down_time = {};
+};
+
+GamepadManager.prototype.init = function () {
+	this._rawgamepads = [];
+	this._before_rawgamepads = [];
+
+	this._pads = [];
+
+	this._initPressedTime();
+};
+
+GamepadManager.prototype._initPressedTime = function() {
+	this._bit_code_to_down_time = {};
+
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
+		this._bit_code_to_down_time[bit_code] = 0;
+	}
+};
+
+GamepadManager.prototype.update = function(){
+	for (var i = 0, len = this._pads.length; i < len; i++) {
+		this._pads[i].update();
+	}
+
+	// get gamepad input
+	this._handleGamePad();
+
+	// Count button pressed time.
+	this._setPressedTime();
+};
+
+GamepadManager.prototype._setPressedTime = function() {
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
+		if (this.isButtonDown(bit_code)) {
+			++this._bit_code_to_down_time[bit_code];
+		}
+		else {
+			this._bit_code_to_down_time[bit_code] = 0;
+		}
+	}
+};
+
+GamepadManager.prototype._handleGamePad = function() {
 	if(!this._is_gamepad_usable) return;
+	this._rawgamepads = window.navigator.getGamepads();
+};
 
-	var pads = window.navigator.getGamepads();
-	var pad = pads[0]; // 1P gamepad
+GamepadManager.prototype.afterDraw = function(){
+	// save key current pressed buttons
+	this._before_rawgamepads = this._rawgamepads;
+};
 
-	if(!pad) return;
+GamepadManager.prototype.setupEvents = function(canvas_dom) {
+	// bind gamepad
+	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
+		this._is_gamepad_usable = true;
+	}
+};
 
-	for (var i = 0; i < pad.buttons.length; i++) {
-		if(pad.buttons[i].pressed) {
-			return i;
+
+GamepadManager.prototype.getGamepad = function(index) {
+	if (!(index in this._pads)) {
+		this._pads[index] = new Gamepad(this, index);
+	}
+
+	return this._pads[index];
+};
+
+GamepadManager.prototype.getGamepadList = function() {
+	throw new Error("getGamepadList method is not implemented yet.");
+};
+
+GamepadManager.prototype.isGamepadConnected = function(index) {
+	return this._rawgamepads[index] && this._rawgamepads[index].connected;
+};
+
+var Gamepad = function(gamepad_manager, index) {
+	this._gamepad_manager = gamepad_manager;
+	this._index = index;
+
+	this._config = DEFAULT_CONSTANT;
+};
+
+
+Gamepad.prototype.update = function() {
+	this._updateConfig();
+	this._setAnalogStickAsAxis();
+};
+
+Gamepad.prototype._updateConfig = function() {
+	var current_raw = this._rawgamepads[this._index];
+	var before_raw = this._before_rawgamepads[this._index];
+	if (current_raw && before_raw && current_raw.id !== before_raw.id) {
+		if (current_raw.id === "Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)") {
+			this._config = XBOX360_CONSTANT;
+		}
+		else if (current_raw.id === "USB Gamepad  (STANDARD GAMEPAD Vendor: 0079 Product: 0011)") {
+			this._config = SNES_CONSTANT;
+		}
+		else if (current_raw.id === "Sony PlayStation DualShock 4 (v2) wireless controller") {
+			this._config = PS4_CONSTANT;
+		}
+		else {
+			this._config = DEFAULT_CONSTANT;
 		}
 	}
 };
 
-InputManager.prototype._getKeyByButtonId = function(button_id) {
-	var keys = this._button_id_to_key_bit_code[button_id];
-	if(!keys) keys = 0x00;
+GamepadManager.prototype._setAnalogStickAsAxis = function(){
+	var raw = this._gamepad_manager._before_rawgamepads[this._index];
 
-	return keys;
-};
-
-InputManager.prototype._handleGamePad = function() {
-	if(!this._is_gamepad_usable) return;
-	var pads = window.navigator.getGamepads();
-	var pad = pads[0]; // 1P gamepad
-
-	if(!pad) return;
-
-	// button
-	for (var i = 0, len = pad.buttons.length; i < len; i++) {
-		if(!(i in this._button_id_to_key_bit_code)) continue; // ignore if I don't know its button
-		if(pad.buttons[i].pressed) { // pressed
-			this._current_keyflag |= this._getKeyByButtonId(i);
+	if (raw) {
+		if (raw.axes[1] < -ANALOGUE_BUTTON_THRESHOLD) {
+			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_UP] ] = true;
 		}
-		else { // not pressed
-			this._current_keyflag &= ~this._getKeyByButtonId(i);
+		if (raw.axes[1] > ANALOGUE_BUTTON_THRESHOLD) {
+			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_DOWN] ] = true;
+		}
+		if (raw.axes[0] < -ANALOGUE_BUTTON_THRESHOLD) {
+			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_LEFT] ] = true;
+		}
+		if (raw.axes[0] > ANALOGUE_BUTTON_THRESHOLD) {
+			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_RIGHT] ] = true;
 		}
 	}
+};
 
-	// analog stick to arrow keys
-	if (pad.axes[1] < -0.5) {
-		this._current_keyflag |= CONSTANT.BUTTON_UP;
+
+Gamepad.prototype._isBeforeButtonDown = function(bit_code) {
+	var raw = this._gamepad_manager._before_rawgamepads[this._index];
+
+	if (raw) {
+		var button_id = this._gamepad_manager._config[bit_code];
+		return raw.buttons[button_id].pressed;
 	}
 	else {
-		this._current_keyflag &= ~CONSTANT.BUTTON_UP;
+		return false;
 	}
-	if (pad.axes[1] > 0.5) {
-		this._current_keyflag |= CONSTANT.BUTTON_DOWN;
+};
+
+Gamepad.prototype.isButtonDown = function(bit_code) {
+	var raw = this._gamepad_manager._rawgamepads[this._index];
+
+	if (raw) {
+		var button_id = this._gamepad_manager._config[bit_code];
+		return raw.buttons[button_id].pressed;
 	}
 	else {
-		this._current_keyflag &= ~CONSTANT.BUTTON_DOWN;
+		return false;
 	}
-	if (pad.axes[0] < -0.5) {
-		this._current_keyflag |= CONSTANT.BUTTON_LEFT;
+};
+
+Gamepad.prototype.isButtonPush = function(bit_code) {
+	return !this._isBeforeButtonDown() && this.isButtonDown();
+};
+
+Gamepad.prototype.isButtonRelease = function(bit_code) {
+	return this._isBeforeButtonDown() && !this.isButtonDown();
+};
+
+Gamepad.prototype.getButtonDownTime = function(bit_code) {
+	return this._bit_code_to_down_time[bit_code];
+};
+
+Gamepad.prototype.getAxisX = function(){
+	var raw = this._gamepad_manager._rawgamepads[this._index];
+
+	if (raw) {
+		return raw.axes[0];
 	}
 	else {
-		this._current_keyflag &= ~CONSTANT.BUTTON_LEFT;
+		return 0;
 	}
-	if (pad.axes[0] > 0.5) {
-		this._current_keyflag |= CONSTANT.BUTTON_RIGHT;
+};
+
+Gamepad.prototype.getAxisY = function(){
+	var raw = this._gamepad_manager._rawgamepads[this._index];
+
+	if (raw) {
+		return raw.axes[1];
 	}
 	else {
-		this._current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
+		return 0;
 	}
 };
-/*
-InputManager.prototype.setButtonIdMapping = function(button_id, key) {
-	var defined_key = this._button_id_to_key_bit_code[button_id];
 
-	for (var target_button_id in this._button_id_to_key_bit_code) {
-		var target_key = this._button_id_to_key_bit_code[target_button_id];
-		// If there are already set keys in other keys, replace it.
-		if (target_key === key) {
-			if (defined_key) {
-				// replace other key's button_id mapping to current button_id's key.
-				this._button_id_to_key_bit_code[target_button_id] = defined_key;
-			}
-			else {
-				// the player presses target_button_id, no event has occurred.
-				delete this._button_id_to_key_bit_code[target_button_id];
-			}
-		}
-	}
-
-	// set
-	this._button_id_to_key_bit_code[button_id] = key;
-};
-
-InputManager.prototype.setAllButtonIdMapping = function(map) {
-	this._button_id_to_key_bit_code = Util.shallowCopyHash(map);
-};
-
-InputManager.prototype.getButtonIdToKeyMap = function() {
-	return Util.shallowCopyHash(this._button_id_to_key_bit_code);
-};
-// convert { value => key } hash
-InputManager.prototype.getKeyToButtonIdMap = function() {
-	var map = {};
-	for (var button_id in this._button_id_to_key_bit_code) {
-		var key = this._button_id_to_key_bit_code[button_id];
-		map[key] = button_id; // NOTE: cannot duplicate, if it, overwrite it
-	}
-
-	return map;
-};
-
-
-InputManager.prototype.dumpGamePadKey = function() {
-	var dump = {};
-
-	for (var button_id in this._button_id_to_key_bit_code) {
-		var key = this._button_id_to_key_bit_code[ button_id ];
-		switch(key) {
-			case CONSTANT.BUTTON_LEFT:
-				dump[button_id] = "LEFT";
-				break;
-			case CONSTANT.BUTTON_UP:
-				dump[button_id] = "UP";
-				break;
-			case CONSTANT.BUTTON_RIGHT:
-				dump[button_id] = "RIGHT";
-				break;
-			case CONSTANT.BUTTON_DOWN:
-				dump[button_id] = "DOWN";
-				break;
-			case CONSTANT.BUTTON_Z:
-				dump[button_id] = "Z";
-				break;
-			case CONSTANT.BUTTON_X:
-				dump[button_id] = "X";
-				break;
-			case CONSTANT.BUTTON_SHIFT:
-				dump[button_id] = "SHIFT";
-				break;
-			case CONSTANT.BUTTON_SPACE:
-				dump[button_id] = "SPACE";
-				break;
-			default:
-				dump[button_id] = "UNKNOWN";
-		}
-	}
-
-	console.log(dump);
-};
-*/
-
-module.exports = InputManager;
+module.exports = GamepadManager;
