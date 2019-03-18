@@ -3,7 +3,9 @@
 var BUTTON_CONSTANT = require("../../constant/button");
 var KEYBOARD_CONSTANT = require("../../constant/keyboard/default");
 
-var KeyboardManager = function () {
+var KeyboardManager = function (input_manager) {
+	this._input_manager = input_manager;
+
 	this._current_keyflag = 0x0;
 	this._before_keyflag = 0x0;
 
@@ -42,6 +44,9 @@ KeyboardManager.prototype._initPressedKeyTime = function() {
 };
 
 KeyboardManager.prototype.update = function(){
+
+	this._setGamepadAsKeyboard();
+
 	// count pressed key time
 	this._setPressedKeyTime();
 };
@@ -55,6 +60,24 @@ KeyboardManager.prototype._setPressedKeyTime = function() {
 		else {
 			this._key_bit_code_to_down_time[bit_code] = 0;
 		}
+	}
+};
+
+KeyboardManager.prototype._setGamepadAsKeyboard = function(){
+	if (!this._input_manager.isGamepadConnected(0)) return;
+
+	var pad = this._input_manager.getGamepad(0); // 1P gamepad
+
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
+
+		if (pad.isButtonDown(bit_code)) {
+			this._current_keyflag |= bit_code;
+		}
+		else {
+			this._current_keyflag &= ~bit_code;
+		}
+
 	}
 };
 
