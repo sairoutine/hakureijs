@@ -36,41 +36,28 @@ GamepadManager.prototype.update = function(){
 
 GamepadManager.prototype._handleGamePad = function() {
 	if(!this._is_gamepad_usable) return;
-	var rawgamepads = window.navigator.getGamepads();
-
-	this._copy(this._rawgamepads, rawgamepads);
+	this._rawgamepads = window.navigator.getGamepads();
 };
 
-// TODO: bug
-GamepadManager.prototype._copy = function(before, after) {
-	for (var i = 0, len = after.length; i < len; i++) {
-		if (!(i in before)) {
-			before[i] = {};
-		}
-
-		if (!after[i]) {
+// TODO: refactor
+GamepadManager.prototype.afterDraw = function(){
+	// save key current pressed buttons
+	this._before_rawgamepads = [];
+	for (var i = 0, len = this._rawgamepads.length; i < len; i++) {
+		if (!this._rawgamepads[i]) {
+			this._before_rawgamepads[i] = null;
 			continue;
 		}
 
-		before[i].connected = after[i].connected;
-		before[i].id        = after[i].id;
-		before[i].axes      = after[i].axes;
-		if (!("buttons" in before[i])) {
-			before[i].buttons = [];
-		}
-		for (var j = 0, len2 = after[i].buttons.length; j < len2; j++) {
-			if(!(j in before[i].buttons)) {
-				before[i].buttons[j] = {};
-			}
-			before[i].buttons[j].pressed = after[i].buttons[j].pressed;
-			before[i].buttons[j].value = after[i].buttons[j].value;
+		this._before_rawgamepads[i] = {
+			buttons: {},
+			id: this._rawgamepads[i].id,
+		};
+
+		for (var j in this._rawgamepads[i].buttons) {
+			this._before_rawgamepads[i].buttons[j] = {pressed: this._rawgamepads[i].buttons[j].pressed};
 		}
 	}
-};
-
-GamepadManager.prototype.afterDraw = function(){
-	// save key current pressed buttons
-	this._copy(this._before_rawgamepads, this._rawgamepads);
 };
 
 GamepadManager.prototype.setupEvents = function(canvas_dom) {
@@ -93,7 +80,6 @@ GamepadManager.prototype.getGamepadList = function() {
 	throw new Error("getGamepadList method is not implemented yet.");
 };
 
-// TODO: bug
 GamepadManager.prototype.isGamepadConnected = function(index) {
 	return this._rawgamepads[index] && this._rawgamepads[index].connected;
 };
@@ -126,11 +112,9 @@ Gamepad.prototype.update = function() {
 	this._setPressedTime();
 };
 
-// TODO: bug
 Gamepad.prototype._updateConfig = function() {
 	var current_raw = this._gamepad_manager._rawgamepads[this._index];
-	var before_raw = this._gamepad_manager._before_rawgamepads[this._index];
-	if (current_raw && before_raw && current_raw.id !== before_raw.id) {
+	if (current_raw) {
 		if (current_raw.id === "Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)") {
 			this._config = XBOX360_CONSTANT;
 		}
@@ -147,6 +131,7 @@ Gamepad.prototype._updateConfig = function() {
 };
 
 Gamepad.prototype._setAnalogStickAsAxis = function() {
+	return;
 	// TODO: refactor
 	var raw = this._gamepad_manager._rawgamepads[this._index];
 
@@ -184,7 +169,7 @@ Gamepad.prototype._isBeforeButtonDown = function(bit_code) {
 	if (raw) {
 		if (bit_code in this._config) {
 			var button_id = this._config[bit_code];
-			return raw.buttons[button_id].pressed;
+			return raw.buttons[button_id] && raw.buttons[button_id].pressed;
 		}
 		else {
 			return false;
@@ -200,7 +185,7 @@ Gamepad.prototype.isButtonDown = function(bit_code) {
 	if (raw) {
 		if (bit_code in this._config) {
 			var button_id = this._config[bit_code];
-			return raw.buttons[button_id].pressed;
+			return raw.buttons[button_id] && raw.buttons[button_id].pressed;
 		}
 		else {
 			return false;
@@ -211,12 +196,10 @@ Gamepad.prototype.isButtonDown = function(bit_code) {
 	}
 };
 
-// TODO: bug
 Gamepad.prototype.isButtonPush = function(bit_code) {
 	return (!this._isBeforeButtonDown(bit_code) && this.isButtonDown(bit_code));
 };
 
-// TODO: bug
 Gamepad.prototype.isButtonRelease = function(bit_code) {
 	return (this._isBeforeButtonDown(bit_code) && !this.isButtonDown(bit_code));
 };
