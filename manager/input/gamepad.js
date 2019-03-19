@@ -147,7 +147,7 @@ Gamepad.prototype._updateConfig = function() {
 };
 
 Gamepad.prototype._setAnalogStickAsAxis = function() {
-	return;
+	// TODO: refactor
 	var raw = this._gamepad_manager._rawgamepads[this._index];
 
 	if (this._gamepad_manager._rawgamepads[this._index]) {
@@ -236,7 +236,7 @@ Gamepad.prototype.getAxisX = function(){
 	}
 };
 
-Gamepad.prototype.getAxisY = function(){
+Gamepad.prototype.getAxisY = function() {
 	var raw = this._gamepad_manager._rawgamepads[this._index];
 
 	if (raw) {
