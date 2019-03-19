@@ -16,8 +16,6 @@ var GamepadManager = function (input_manager) {
 	this._before_rawgamepads = [];
 
 	this._pads = [];
-
-	this._bit_code_to_down_time = {};
 };
 
 GamepadManager.prototype.init = function () {
@@ -25,51 +23,54 @@ GamepadManager.prototype.init = function () {
 	this._before_rawgamepads = [];
 
 	this._pads = [];
-
-	this._initPressedTime();
-};
-
-GamepadManager.prototype._initPressedTime = function() {
-	this._bit_code_to_down_time = {};
-
-	for (var key in BUTTON_CONSTANT) {
-		var bit_code = BUTTON_CONSTANT[key];
-		this._bit_code_to_down_time[bit_code] = 0;
-	}
 };
 
 GamepadManager.prototype.update = function(){
-	for (var i = 0, len = this._pads.length; i < len; i++) {
-		this._pads[i].update();
-	}
-
 	// get gamepad input
 	this._handleGamePad();
 
-	// Count button pressed time.
-	this._setPressedTime();
-};
-
-GamepadManager.prototype._setPressedTime = function() {
-	for (var key in BUTTON_CONSTANT) {
-		var bit_code = BUTTON_CONSTANT[key];
-		if (this.isButtonDown(bit_code)) {
-			++this._bit_code_to_down_time[bit_code];
-		}
-		else {
-			this._bit_code_to_down_time[bit_code] = 0;
-		}
+	for (var i = 0, len = this._pads.length; i < len; i++) {
+		this._pads[i].update();
 	}
 };
 
 GamepadManager.prototype._handleGamePad = function() {
 	if(!this._is_gamepad_usable) return;
-	this._rawgamepads = window.navigator.getGamepads();
+	var rawgamepads = window.navigator.getGamepads();
+
+	this._copy(this._rawgamepads, rawgamepads);
+};
+
+// TODO: bug
+GamepadManager.prototype._copy = function(before, after) {
+	for (var i = 0, len = after.length; i < len; i++) {
+		if (!(i in before)) {
+			before[i] = {};
+		}
+
+		if (!after[i]) {
+			continue;
+		}
+
+		before[i].connected = after[i].connected;
+		before[i].id        = after[i].id;
+		before[i].axes      = after[i].axes;
+		if (!("buttons" in before[i])) {
+			before[i].buttons = [];
+		}
+		for (var j = 0, len2 = after[i].buttons.length; j < len2; j++) {
+			if(!(j in before[i].buttons)) {
+				before[i].buttons[j] = {};
+			}
+			before[i].buttons[j].pressed = after[i].buttons[j].pressed;
+			before[i].buttons[j].value = after[i].buttons[j].value;
+		}
+	}
 };
 
 GamepadManager.prototype.afterDraw = function(){
 	// save key current pressed buttons
-	this._before_rawgamepads = this._rawgamepads;
+	this._copy(this._before_rawgamepads, this._rawgamepads);
 };
 
 GamepadManager.prototype.setupEvents = function(canvas_dom) {
@@ -92,6 +93,7 @@ GamepadManager.prototype.getGamepadList = function() {
 	throw new Error("getGamepadList method is not implemented yet.");
 };
 
+// TODO: bug
 GamepadManager.prototype.isGamepadConnected = function(index) {
 	return this._rawgamepads[index] && this._rawgamepads[index].connected;
 };
@@ -101,17 +103,33 @@ var Gamepad = function(gamepad_manager, index) {
 	this._index = index;
 
 	this._config = DEFAULT_CONSTANT;
+
+	this._bit_code_to_down_time = {};
+
+	this._initPressedTime();
 };
 
+Gamepad.prototype._initPressedTime = function() {
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
+		this._bit_code_to_down_time[bit_code] = 0;
+	}
+};
 
 Gamepad.prototype.update = function() {
+
 	this._updateConfig();
+
 	this._setAnalogStickAsAxis();
+
+	// Count button pressed time.
+	this._setPressedTime();
 };
 
+// TODO: bug
 Gamepad.prototype._updateConfig = function() {
-	var current_raw = this._rawgamepads[this._index];
-	var before_raw = this._before_rawgamepads[this._index];
+	var current_raw = this._gamepad_manager._rawgamepads[this._index];
+	var before_raw = this._gamepad_manager._before_rawgamepads[this._index];
 	if (current_raw && before_raw && current_raw.id !== before_raw.id) {
 		if (current_raw.id === "Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)") {
 			this._config = XBOX360_CONSTANT;
@@ -128,21 +146,34 @@ Gamepad.prototype._updateConfig = function() {
 	}
 };
 
-GamepadManager.prototype._setAnalogStickAsAxis = function(){
-	var raw = this._gamepad_manager._before_rawgamepads[this._index];
+Gamepad.prototype._setAnalogStickAsAxis = function() {
+	return;
+	var raw = this._gamepad_manager._rawgamepads[this._index];
 
-	if (raw) {
+	if (this._gamepad_manager._rawgamepads[this._index]) {
 		if (raw.axes[1] < -ANALOGUE_BUTTON_THRESHOLD) {
-			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_UP] ] = true;
+			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.UP] ] = {pressed: true};
 		}
 		if (raw.axes[1] > ANALOGUE_BUTTON_THRESHOLD) {
-			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_DOWN] ] = true;
+			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.DOWN] ] = {pressed: true};
 		}
 		if (raw.axes[0] < -ANALOGUE_BUTTON_THRESHOLD) {
-			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_LEFT] ] = true;
+			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.LEFT] ] = {pressed: true};
 		}
 		if (raw.axes[0] > ANALOGUE_BUTTON_THRESHOLD) {
-			raw.buttons[ this._config[BUTTON_CONSTANT.BUTTON_RIGHT] ] = true;
+			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.RIGHT] ] = {pressed: true};
+		}
+	}
+};
+
+Gamepad.prototype._setPressedTime = function() {
+	for (var key in BUTTON_CONSTANT) {
+		var bit_code = BUTTON_CONSTANT[key];
+		if (this.isButtonDown(bit_code)) {
+			++this._bit_code_to_down_time[bit_code];
+		}
+		else {
+			this._bit_code_to_down_time[bit_code] = 0;
 		}
 	}
 };
@@ -150,10 +181,14 @@ GamepadManager.prototype._setAnalogStickAsAxis = function(){
 
 Gamepad.prototype._isBeforeButtonDown = function(bit_code) {
 	var raw = this._gamepad_manager._before_rawgamepads[this._index];
-
 	if (raw) {
-		var button_id = this._gamepad_manager._config[bit_code];
-		return raw.buttons[button_id].pressed;
+		if (bit_code in this._config) {
+			var button_id = this._config[bit_code];
+			return raw.buttons[button_id].pressed;
+		}
+		else {
+			return false;
+		}
 	}
 	else {
 		return false;
@@ -162,22 +197,28 @@ Gamepad.prototype._isBeforeButtonDown = function(bit_code) {
 
 Gamepad.prototype.isButtonDown = function(bit_code) {
 	var raw = this._gamepad_manager._rawgamepads[this._index];
-
 	if (raw) {
-		var button_id = this._gamepad_manager._config[bit_code];
-		return raw.buttons[button_id].pressed;
+		if (bit_code in this._config) {
+			var button_id = this._config[bit_code];
+			return raw.buttons[button_id].pressed;
+		}
+		else {
+			return false;
+		}
 	}
 	else {
 		return false;
 	}
 };
 
+// TODO: bug
 Gamepad.prototype.isButtonPush = function(bit_code) {
-	return !this._isBeforeButtonDown() && this.isButtonDown();
+	return (!this._isBeforeButtonDown(bit_code) && this.isButtonDown(bit_code));
 };
 
+// TODO: bug
 Gamepad.prototype.isButtonRelease = function(bit_code) {
-	return this._isBeforeButtonDown() && !this.isButtonDown();
+	return (this._isBeforeButtonDown(bit_code) && !this.isButtonDown(bit_code));
 };
 
 Gamepad.prototype.getButtonDownTime = function(bit_code) {
