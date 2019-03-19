@@ -23,6 +23,8 @@ GamepadManager.prototype.init = function () {
 };
 
 GamepadManager.prototype.update = function(){
+	if(!this._is_gamepad_usable) return;
+
 	// get gamepad input
 	this._handleGamePad();
 
@@ -32,12 +34,13 @@ GamepadManager.prototype.update = function(){
 };
 
 GamepadManager.prototype._handleGamePad = function() {
-	if(!this._is_gamepad_usable) return;
 	this._rawgamepads = window.navigator.getGamepads();
 };
 
 // TODO: refactor
 GamepadManager.prototype.afterDraw = function(){
+	if(!this._is_gamepad_usable) return;
+
 	// save key current pressed buttons
 	this._before_rawgamepads = [];
 	for (var i = 0, len = this._rawgamepads.length; i < len; i++) {
