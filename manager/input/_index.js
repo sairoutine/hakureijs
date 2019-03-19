@@ -129,19 +129,23 @@ InputManager.prototype.scaleClickPosition = function (width, height) {
  * keyboard
  ********************************************/
 
-InputManager.prototype.isKeyDown = function(flag) {
+InputManager.prototype.isKeyDown = function(bit_code) {
+	if (typeof bit_code === "undefined") throw new Error("isKeyDown needs arguments.");
 	return this._keyboard.isKeyDown.apply(this._keyboard, arguments);
 };
 
-InputManager.prototype.isKeyPush = function(flag) {
+InputManager.prototype.isKeyPush = function(bit_code) {
+	if (typeof bit_code === "undefined") throw new Error("isKeyPush needs arguments.");
 	return this._keyboard.isKeyPush.apply(this._keyboard, arguments);
 };
 
-InputManager.prototype.isKeyRelease = function(flag) {
+InputManager.prototype.isKeyRelease = function(bit_code) {
+	if (typeof bit_code === "undefined") throw new Error("isKeyRelease needs arguments.");
 	return this._keyboard.isKeyRelease.apply(this._keyboard, arguments);
 };
 
 InputManager.prototype.getKeyDownTime = function(bit_code) {
+	if (typeof bit_code === "undefined") throw new Error("getKeyDownTime needs arguments.");
 	return this._keyboard.getKeyDownTime.apply(this._keyboard, arguments);
 };
 
