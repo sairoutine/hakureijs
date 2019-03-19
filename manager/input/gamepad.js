@@ -6,9 +6,6 @@ var XBOX360_CONSTANT = require("../../constant/gamepad/xbox360");
 var SNES_CONSTANT = require("../../constant/gamepad/snes");
 var PS4_CONSTANT = require("../../constant/gamepad/ps4");
 
-// In the case of a button that supports analog input, a threshold value that indicates how far the button is turned on.
-var ANALOGUE_BUTTON_THRESHOLD = 0.5;
-
 var GamepadManager = function (input_manager) {
 	this._is_gamepad_usable = false;
 
@@ -106,8 +103,6 @@ Gamepad.prototype.update = function() {
 
 	this._updateConfig();
 
-	this._setAnalogStickAsAxis();
-
 	// Count button pressed time.
 	this._setPressedTime();
 };
@@ -126,27 +121,6 @@ Gamepad.prototype._updateConfig = function() {
 		}
 		else {
 			this._config = DEFAULT_CONSTANT;
-		}
-	}
-};
-
-Gamepad.prototype._setAnalogStickAsAxis = function() {
-	return;
-	// TODO: refactor
-	var raw = this._gamepad_manager._rawgamepads[this._index];
-
-	if (this._gamepad_manager._rawgamepads[this._index]) {
-		if (raw.axes[1] < -ANALOGUE_BUTTON_THRESHOLD) {
-			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.UP] ] = {pressed: true};
-		}
-		if (raw.axes[1] > ANALOGUE_BUTTON_THRESHOLD) {
-			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.DOWN] ] = {pressed: true};
-		}
-		if (raw.axes[0] < -ANALOGUE_BUTTON_THRESHOLD) {
-			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.LEFT] ] = {pressed: true};
-		}
-		if (raw.axes[0] > ANALOGUE_BUTTON_THRESHOLD) {
-			this._gamepad_manager._rawgamepads[this._index].buttons[ this._config[BUTTON_CONSTANT.RIGHT] ] = {pressed: true};
 		}
 	}
 };

@@ -3,6 +3,9 @@
 var BUTTON_CONSTANT = require("../../constant/button");
 var KEYBOARD_CONSTANT = require("../../constant/keyboard/default");
 
+// In the case of a button that supports analog input, a threshold value that indicates how far the button is turned on.
+var ANALOGUE_STICK_THRESHOLD = 0.5;
+
 var KeyboardManager = function (input_manager) {
 	this._input_manager = input_manager;
 
@@ -74,10 +77,31 @@ KeyboardManager.prototype._setGamepadAsKeyboard = function(){
 		if (pad.isButtonDown(bit_code)) {
 			this._current_keyflag |= bit_code;
 		}
+		else if (this._isGamepPadStickDown(pad, bit_code)) {
+			this._current_keyflag |= bit_code;
+		}
 		else {
 			this._current_keyflag &= ~bit_code;
 		}
 
+	}
+};
+
+KeyboardManager.prototype._isGamepPadStickDown = function(pad, bit_code) {
+	if (bit_code === BUTTON_CONSTANT.UP && pad.getAxisY() < -ANALOGUE_STICK_THRESHOLD) {
+		return true;
+	}
+	else if (bit_code === BUTTON_CONSTANT.DOWN && pad.getAxisY() > ANALOGUE_STICK_THRESHOLD) {
+		return true;
+	}
+	else if (bit_code === BUTTON_CONSTANT.LEFT && pad.getAxisX() < -ANALOGUE_STICK_THRESHOLD) {
+		return true;
+	}
+	else if (bit_code === BUTTON_CONSTANT.RIGHT && pad.getAxisX() > ANALOGUE_STICK_THRESHOLD) {
+		return true;
+	}
+	else {
+		return false;
 	}
 };
 
