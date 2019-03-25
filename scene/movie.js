@@ -126,7 +126,7 @@ SceneMovie.prototype.notifyEnd = function(){
 	this.is_playing = false;
 
 
-	this._callback();
+	this._callback(this.core);
 };
 SceneMovie.prototype.isStopBGM = function(){
 	return true;
