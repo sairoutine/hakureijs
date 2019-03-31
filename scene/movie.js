@@ -20,7 +20,7 @@ var SceneMovie = function(core) {
 	this._top    = null;
 	this._left   = null;
 
-	this.is_mute = false;
+	this._is_mute = false;
 };
 util.inherit(SceneMovie, base_scene);
 
@@ -59,7 +59,7 @@ SceneMovie.prototype.init = function(movie_path, callback) {
 		self.is_playing = true;
 	};
 
-	if (this.is_mute) {
+	if (this._is_mute) {
 		video.muted = true;
 	}
 
@@ -132,5 +132,10 @@ SceneMovie.prototype.isStopBGM = function(){
 	return true;
 };
 
+SceneMovie.prototype.mute = function(){
+	this._is_mute = true;
+
+	return this;
+};
 
 module.exports = SceneMovie;
