@@ -54,6 +54,10 @@ Container.prototype.addObjects = function(object_list){
 		this._objects[object.id] = object;
 	}
 };
+Container.prototype.setObjects = function(object_list){
+	this.removeAllObject();
+	this.addObjects(object_list);
+};
 Container.prototype.removeAllObject = function() {
 	this._objects = {};
 };
