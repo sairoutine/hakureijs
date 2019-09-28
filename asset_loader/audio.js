@@ -72,6 +72,17 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 
 };
 
+AudioLoader.prototype.unloadSound = function(name) {
+	var self = this;
+	if(!(name in self.sounds)) return;
+
+	self.loading_audio_num--;
+	self.loaded_audio_num--;
+
+	delete self.sounds[name];
+};
+
+
 AudioLoader.prototype.setupEvents = function() {
 	this._setupEventForiOSSafari();
 	this._setupEventForChrome();
@@ -152,6 +163,16 @@ AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd)
 	xhr.responseType = 'arraybuffer';
 	xhr.send(null);
 };
+
+AudioLoader.prototype.unloadBGM = function(name) {
+	var self = this;
+	if(!(name in self.bgms)) return;
+
+	self.loading_audio_num--;
+	self.loaded_audio_num--;
+	delete self.bgms[name];
+};
+
 
 AudioLoader.prototype.isAllLoaded = function() {
 	return this.loaded_audio_num === this.loading_audio_num;

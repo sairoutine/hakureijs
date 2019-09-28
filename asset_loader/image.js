@@ -35,6 +35,16 @@ ImageLoader.prototype.loadImage = function(name, path, scale_width, scale_height
 	this.images[name] = image;
 };
 
+ImageLoader.prototype.unloadImage = function(name) {
+	var self = this;
+	if(!(name in self.images)) return;
+
+	self.loading_image_num--;
+	self.loaded_image_num--;
+	delete self.images[name];
+};
+
+
 ImageLoader.prototype._generateImageCanvas = function(name, scale_width, scale_height) {
 	scale_width = typeof scale_width === "undefined" ? 1 : scale_width;
 	scale_height = typeof scale_height === "undefined" ? 1 : scale_height;
