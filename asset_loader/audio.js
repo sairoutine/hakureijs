@@ -175,7 +175,9 @@ AudioLoader.prototype.unloadBGM = function(name) {
 
 
 AudioLoader.prototype.isAllLoaded = function() {
-	return this.loaded_audio_num === this.loading_audio_num;
+	// NOTE: sometimes the duplicated "canplay" event in loadSound function,
+	//       so DO NOT compare with using equal.
+	return this.loaded_audio_num >= this.loading_audio_num;
 };
 
 AudioLoader.prototype.playSound = function(name) {
