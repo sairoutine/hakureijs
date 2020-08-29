@@ -5,6 +5,8 @@ var base_object = require('./base');
 var Util = require('../util');
 
 var ObjectUIParts = function(scene, x, y, width, height, draw_function) {
+	console.error("UIParts of Object is deprecated.");
+
 	base_object.apply(this, arguments);
 
 	this.x(x);
@@ -21,6 +23,7 @@ var ObjectUIParts = function(scene, x, y, width, height, draw_function) {
 	this._is_show_rect = false;
 
 	this._collision_callback = null;
+
 };
 Util.inherit(ObjectUIParts, base_object);
 
