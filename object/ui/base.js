@@ -58,7 +58,7 @@ ObjectUIBase.prototype.update = function() {
 	}
 
 	var x, y;
-	if (this.isEventSet("click") && this.core.input_manager.isLeftClickPush()) {
+	if (this.isEventSet("click") && this.isShow() && this.core.input_manager.isLeftClickPush()) {
 		x = this.core.input_manager.mousePositionX();
 		y = this.core.input_manager.mousePositionY();
 
@@ -67,7 +67,7 @@ ObjectUIBase.prototype.update = function() {
 		}
 	}
 
-	if (this.isEventSet("touch")) {
+	if (this.isEventSet("touch") && this.isShow()) {
 		var touch = this.core.input_manager.getTouch(0);
 
 		x = touch.x();
