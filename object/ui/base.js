@@ -3,6 +3,8 @@
 var BaseObject = require('../base');
 var Util = require('../../util');
 
+var MOVE_ON_CLICK_PX = 3;
+
 var ObjectUIBase = function(scene, option) {
 	BaseObject.apply(this, arguments);
 
@@ -23,6 +25,8 @@ var ObjectUIBase = function(scene, option) {
 		clickend: null,
 		draw: null,
 	};
+
+	this._move_on_click_px = 0;
 
 	// children
 	this.objects = this._default_property.children;
@@ -70,11 +74,14 @@ ObjectUIBase.prototype._updateClick = function() {
 	if(this.core.input_manager.isLeftClickPush()) {
 		// check whether the event handler is set
 		// because calling checkCollisionWithPosition is heavy for performance.
-		if (this.isEventSet("click") || this.isEventSet("clickstart") || this.isEventSet("clickend")) {
+		if (this.isEventSet("click") || this.isEventSet("clickstart") || this.isEventSet("clickend") || this._move_on_click_px) {
 			if(this.checkCollisionWithPosition(x, y)) {
 				this._is_clicked = true;
 
+				this._moveOnClickStart();
+
 				if (this.isEventSet("clickstart")) {
+
 					this._callEvent("clickstart");
 				}
 			}
@@ -83,6 +90,8 @@ ObjectUIBase.prototype._updateClick = function() {
 	else if (this.core.input_manager.isLeftClickRelease()) {
 		if(this._is_clicked) {
 			this._is_clicked = false;
+
+			this._moveOnClickEnd();
 
 			if (this.isEventSet("clickend")) {
 				this._callEvent("clickend");
@@ -114,6 +123,12 @@ ObjectUIBase.prototype.draw = function() {
 	if(this.isEventSet("draw")) {
 		this._callEvent("draw");
 	}
+};
+
+ObjectUIBase.prototype.setMoveOnClick = function () {
+	this._move_on_click_px = MOVE_ON_CLICK_PX;
+
+	return this;
 };
 
 ObjectUIBase.prototype.on = function (event, callback) {
@@ -156,6 +171,33 @@ ObjectUIBase.prototype.hide = function() {
 
 ObjectUIBase.prototype._callEvent = function (event) {
 	this._event_to_callback[event].apply(this);
+};
+
+ObjectUIBase.prototype._moveOnClickStart = function () {
+	if (this._move_on_click_px === 0) return;
+
+	this.x(this.x() + this._move_on_click_px);
+	this.y(this.y() + this._move_on_click_px);
+
+	for (var i = 0, len = this.objects.length; i < len; i++) {
+		var child = this.objects[i];
+		child.x(child.x() + this._move_on_click_px);
+		child.y(child.y() + this._move_on_click_px);
+	}
+
+};
+
+ObjectUIBase.prototype._moveOnClickEnd = function () {
+	if (this._move_on_click_px === 0) return;
+
+	this.x(this.x() - this._move_on_click_px);
+	this.y(this.y() - this._move_on_click_px);
+
+	for (var i = 0, len = this.objects.length; i < len; i++) {
+		var child = this.objects[i];
+		child.x(child.x() - this._move_on_click_px);
+		child.y(child.y() - this._move_on_click_px);
+	}
 };
 
 module.exports = ObjectUIBase;
