@@ -22,9 +22,6 @@ var ObjectUIBase = function(scene, option) {
 		clickstart: null,
 		clickend: null,
 		draw: null,
-		touch: null,
-		touchstart: null,
-		touchend: null,
 	};
 
 	// children
@@ -32,7 +29,6 @@ var ObjectUIBase = function(scene, option) {
 
 	this._show_call_count = 0;
 
-	this._is_touched = false;
 	this._is_clicked = false;
 };
 Util.inherit(ObjectUIBase, BaseObject);
@@ -45,7 +41,6 @@ ObjectUIBase.prototype.init = function() {
 
 	this._show_call_count = 0;
 
-	this._is_touched = false;
 	this._is_clicked = false;
 
 	// position
@@ -65,7 +60,6 @@ ObjectUIBase.prototype.update = function() {
 
 	if (this.isShow()) {
 		this._updateClick();
-		this._updateTouch();
 	}
 };
 
@@ -97,41 +91,6 @@ ObjectUIBase.prototype._updateClick = function() {
 			if(this.checkCollisionWithPosition(x, y)) {
 				if (this.isEventSet("click")) {
 					this._callEvent("click");
-				}
-			}
-		}
-	}
-};
-
-ObjectUIBase.prototype._updateTouch = function() {
-	var touch = this.core.input_manager.getTouch(0);
-	var x = touch.x();
-	var y = touch.y();
-
-	if (touch.isTap()) {
-		// check whether the event handler is set
-		// because calling checkCollisionWithPosition is heavy for performance.
-		if (this.isEventSet("touch") || this.isEventSet("touchstart") || this.isEventSet("touchend")) {
-			if(this.checkCollisionWithPosition(x, y)) {
-				this._is_touched = true;
-
-				if (this.isEventSet("touchstart")) {
-					this._callEvent("touchstart");
-				}
-			}
-		}
-	}
-	else if (touch.isTouchRelease()) {
-		if(this._is_touched) {
-			this._is_touched = false;
-
-			if (this.isEventSet("touchend")) {
-				this._callEvent("touchend");
-			}
-
-			if(this.checkCollisionWithPosition(x, y)) {
-				if (this.isEventSet("touch")) {
-					this._callEvent("touch");
 				}
 			}
 		}
@@ -190,9 +149,8 @@ ObjectUIBase.prototype.show = function() {
 ObjectUIBase.prototype.hide = function() {
 	this._show_call_count = 0;
 
-	// If the game hides the UI while the user is clicking or touching, this._is_XXX will be kept true even after the user releases it.
+	// If the game hides the UI while the user is clicking, this._is_clicked will be kept true even after the user releases it.
 	// Therefore, force to turn false if the ui is hidden.
-	this._is_touched = false;
 	this._is_clicked = false;
 };
 
