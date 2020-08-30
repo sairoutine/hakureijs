@@ -29,6 +29,7 @@ var ObjectUIBase = function(scene, option) {
 	this._show_call_count = 0;
 
 	this._is_touched = false;
+	this._is_clicked = false;
 };
 Util.inherit(ObjectUIBase, BaseObject);
 
@@ -41,6 +42,7 @@ ObjectUIBase.prototype.init = function() {
 	this._show_call_count = 0;
 
 	this._is_touched = false;
+	this._is_clicked = false;
 
 	// position
 	this.x(this._default_property.x);
@@ -58,26 +60,37 @@ ObjectUIBase.prototype.update = function() {
 	}
 
 	var x, y;
-	if (this.isEventSet("click") && this.isShow() && this.core.input_manager.isLeftClickPush()) {
+	if (this.isEventSet("click") && this.isShow()) {
 		x = this.core.input_manager.mousePositionX();
 		y = this.core.input_manager.mousePositionY();
 
-		if(this.checkCollisionWithPosition(x, y)) {
-			this._callEvent("click");
+		if(this.core.input_manager.isLeftClickPush()) {
+			if(this.checkCollisionWithPosition(x, y)) {
+				this._is_clicked = true;
+			}
+		}
+		else if (this.core.input_manager.isLeftClickRelease()) {
+			if(this._is_clicked && this.checkCollisionWithPosition(x, y)) {
+				this._callEvent("click");
+			}
+
+			this._is_clicked = false;
 		}
 	}
 
 	if (this.isEventSet("touch") && this.isShow()) {
 		var touch = this.core.input_manager.getTouch(0);
 
-		x = touch.x();
-		y = touch.y();
-
 		if (touch.isTap()) {
-			this._is_touched = true;
+			if(this.checkCollisionWithPosition(x, y)) {
+				this._is_touched = true;
+			}
 		}
 		else if (touch.isTouchRelease()) {
-			if(this.checkCollisionWithPosition(x, y)) {
+			x = touch.x();
+			y = touch.y();
+
+			if(this._is_touched && this.checkCollisionWithPosition(x, y)) {
 				this._callEvent("touch");
 			}
 
