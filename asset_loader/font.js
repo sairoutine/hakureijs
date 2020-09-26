@@ -103,6 +103,12 @@ FontLoader.prototype.checkFontLoaded = function(name) {
 			this._hiddenCanvas = window.document.createElement('canvas');
 		}
 		var context = this._hiddenCanvas.getContext('2d');
+
+		// NOTE: some mobile devices return null perhaps due to low memory.
+		if (context === null) {
+			return false;
+		}
+
 		var text = 'abcdefghijklmnopqrstuvwxyz';
 		var width1, width2;
 		context.font = '40px ' + name + ', sans-serif';

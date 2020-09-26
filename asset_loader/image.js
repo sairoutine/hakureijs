@@ -60,7 +60,10 @@ ImageLoader.prototype._generateImageCanvas = function(name, scale_width, scale_h
 
 	var ctx = offscreen.getContext('2d');
 
-	ctx.drawImage(image, 0, 0, width, height);
+	// NOTE: some mobile devices return null perhaps due to low memory.
+	if (ctx !== null) {
+		ctx.drawImage(image, 0, 0, width, height);
+	}
 
 	return offscreen;
 };
