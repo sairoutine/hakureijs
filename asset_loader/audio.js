@@ -46,7 +46,7 @@ AudioLoader.prototype.init = function() {
 };
 
 AudioLoader.prototype.loadSound = function(name, path, volume) {
-	if(!window || !window.Audio) return;
+	if(typeof window === "undefined" || typeof window.Audio !== "undefined") return;
 
 	var self = this;
 	self.loading_audio_num++;
@@ -212,7 +212,7 @@ AudioLoader.prototype._executePlaySound = function() {
 };
 
 AudioLoader.prototype.playSoundByDataURL = function(dataurl, volume) {
-	if(!window || !window.Audio) return;
+	if(typeof window === "undefined" || typeof window.Audio !== "undefined") return;
 
 	if(typeof volume === 'undefined') volume = 1.0;
 

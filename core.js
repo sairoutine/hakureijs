@@ -278,7 +278,7 @@ Core.prototype.isAllLoaded = function() {
 
 // TODO: If destroy core instance, delete event handler, if do not, memory leak
 Core.prototype.setupEvents = function() {
-	if(!window) return;
+	if(typeof window === "undefined") return;
 
 	// setup requestAnimationFrame
 	window.requestAnimationFrame = (function(){

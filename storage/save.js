@@ -11,7 +11,7 @@ var PREFIX = "hakurei_engine";
 var KEY = "save";
 
 StorageSave.KEY = function(){
-	if (!this.isLocalMode() && window && window.location) {
+	if (!this.isLocalMode() && typeof window !== "undefined" && window.location) {
 		// localstorage key for browser
 		return([PREFIX, KEY, window.location.pathname].join(":"));
 	}

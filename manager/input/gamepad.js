@@ -62,7 +62,7 @@ GamepadManager.prototype.afterDraw = function(){
 
 GamepadManager.prototype.setupEvents = function(canvas_dom) {
 	// bind gamepad
-	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
+	if(typeof window !== "undefined" && window.Gamepad && window.navigator && window.navigator.getGamepads) {
 		this._is_gamepad_usable = true;
 	}
 };

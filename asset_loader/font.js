@@ -124,7 +124,7 @@ FontLoader.prototype.checkFontLoaded = function(name) {
 };
 
 FontLoader.prototype.loadFont = function(name, url, format) {
-	if (!window.document) return false;
+	if (typeof window === "undefined" || typeof window.document === "undefined") return false;
 
 	this._fontStatues[name] = {
 		is_loaded: false,
