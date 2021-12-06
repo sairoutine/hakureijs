@@ -18,7 +18,13 @@ var FS = require("./shader/main.fs");
 
 var DELTA_TIME = 1.0 / 60.0;
 
-var PD = (performance || Date);
+var PD;
+if (typeof performance !== "undefined") {
+	PD = performance;
+}
+else {
+	PD = Date;
+}
 
 var Core = function(canvas, options) {
 	if(!options) {

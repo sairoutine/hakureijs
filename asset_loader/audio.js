@@ -16,7 +16,7 @@ var AudioLoader = function() {
 
 	// setup WebAudio
 	this.audio_context = null;
-	if (window) {
+	if (typeof window !== "undefined") {
 		var AudioContext = window.AudioContext || window.webkitAudioContext;
 
 		if(AudioContext) {

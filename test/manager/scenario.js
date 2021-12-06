@@ -8,7 +8,7 @@ var Core = require('../../core');
 var ScenarioManager = require('../../manager/scenario');
 
 describe('ScenarioManager', function() {
-	var core, scenario;
+	var core, scenario, intervalID;
 	before(function() {
 		// canvas mock
 		var canvas = dom.window.document.createElement("canvas");
