@@ -17,10 +17,17 @@ describe('ScenarioManager', function() {
 		core = new Core(canvas);
 		core.init();
 		scenario = new ScenarioManager(core);
+
+		// TimeManager's event is not fired because update() is not running in the test env.
+		// so mimick the update() like the browser env.
+		intervalID = setInterval(function () {
+			core.time_manager.update();
+		}, 1/60);
 	});
 	after(function () {
-		// TODO: fix not call private method
-		scenario._stopPrintLetter();
+		scenario.pausePrintLetter();
+
+		clearInterval(intervalID);
 	});
 
 	describe('#init()', function() {
